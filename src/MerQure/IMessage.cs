@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace MerQure
 {
-    interface IMessage<T>
+    interface IMessage
     {
+        string RoutingKey { get; }
+
+        IDictionary<string, object> HeaderProperties { get; }
+
+        string Body { get; set; }
     }
 }
