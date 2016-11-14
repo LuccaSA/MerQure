@@ -40,12 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IConsumer.cs" />
-    <Compile Include="IMessage.cs" />
-    <Compile Include="IMessagingEvent.cs" />
+    <Compile Include="Clients\IConsumer.cs" />
+    <Compile Include="Content\IMessage.cs" />
+    <Compile Include="Events\IMessagingEvent.cs" />
     <Compile Include="IMessagingService.cs" />
-    <Compile Include="IPublisher.cs" />
-    <Compile Include="ISubscriber.cs" />
+    <Compile Include="Clients\IPublisher.cs" />
+    <Compile Include="Clients\ISubscriber.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
