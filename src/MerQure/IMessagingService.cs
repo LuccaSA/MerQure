@@ -13,6 +13,6 @@ namespace MerQure
 
         ISubscriber GetSubscriber(string queueName);
 
-        IConsumer GetConsumer(string queueName, bool noAck);
+        IConsumer GetConsumer(string queueName);
     }
 }
