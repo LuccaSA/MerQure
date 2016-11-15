@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MerQure
+﻿namespace MerQure
 {
-    // TODO rename ?
-    interface IMessagingService
+    public interface IMessagingService
     {
         IPublisher GetPublisher(string exchangeName);
 

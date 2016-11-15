@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MerQure
+﻿namespace MerQure
 {
-    interface IPublisher
+    public interface IPublisher
     {
         string ExchangeName { get; }
 

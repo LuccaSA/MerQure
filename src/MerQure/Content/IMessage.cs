@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MerQure.Content;
 
 namespace MerQure
 {
-    interface IMessage
+    public interface IMessage
     {
         string RoutingKey { get; }
 
