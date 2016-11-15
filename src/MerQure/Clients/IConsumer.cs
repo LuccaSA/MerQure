@@ -6,8 +6,6 @@ namespace MerQure
     {
         string QueueName { get; }
 
-        bool WithAcknowledgement { get; }
-
         void Consume(EventHandler<IMessagingEvent> OnMessageReceived);
 
         void AcknowlegdeDeliveredMessage(IMessagingEvent args);
