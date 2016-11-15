@@ -10,7 +10,7 @@ namespace MerQure
     {
         string RoutingKey { get; }
 
-        IDictionary<string, object> HeaderProperties { get; }
+        IHeader Header { get; }
 
         string Body { get; set; }
     }
