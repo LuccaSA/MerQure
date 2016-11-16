@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MerQure.RMQ.Content
 {
-    class Header : IHeader
+    public class Header : IHeader
     {
         private IDictionary<string, object> HeaderProperties;
 

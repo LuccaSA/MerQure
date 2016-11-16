@@ -16,9 +16,9 @@ namespace MerQure.RMQ
         /// <param name="body"></param>
         public Message(string routingKey, IHeader header, string body)
         {
-            this.RoutingKey = RoutingKey;
-            this.Header = Header;
-            this.Body = Body;
+            this.RoutingKey = routingKey;
+            this.Header = header;
+            this.Body = body;
         }
     }
 }
