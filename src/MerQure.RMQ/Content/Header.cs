@@ -1,7 +1,7 @@
 ﻿using MerQure.Content;
 using System.Collections.Generic;
 
-namespace MerQure.RabbitMQ.Content
+namespace MerQure.RMQ.Content
 {
     class Header : IHeader
     {

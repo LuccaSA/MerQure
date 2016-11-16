@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure", "MerQure\MerQure.csproj", "{E38F2572-D955-475B-A79A-DE4E9A607A87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.RabbitMQ", "MerQure.RabbitMQ\MerQure.RabbitMQ.csproj", "{13D74416-5AD3-473E-8A99-19D3A713A1DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.RMQ", "MerQure.RMQ\MerQure.RMQ.csproj", "{13D74416-5AD3-473E-8A99-19D3A713A1DA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E38F2572-D955-475B-A79A-DE4E9A607A87} = {E38F2572-D955-475B-A79A-DE4E9A607A87}
 	EndProjectSection

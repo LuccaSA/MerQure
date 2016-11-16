@@ -1,13 +1,11 @@
-﻿using MerQure.RabbitMQ;
-using MerQure.RabbitMQ.Clients;
-using MerQure.RabbitMQ.Content;
-using MerQure.RabbitMQ.Events;
+﻿using MerQure.RMQ.Content;
+using MerQure.RMQ.Events;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Text;
 
-namespace MerQure.Clients
+namespace MerQure.RMQ.Clients
 {
     class Consumer : RabbitMQClient, IConsumer
     {

@@ -2,7 +2,7 @@
 using System;
 using System.Text;
 
-namespace MerQure.RabbitMQ.Clients
+namespace MerQure.RMQ.Clients
 {
     class Publisher : RabbitMQClient, IPublisher
     {
@@ -14,6 +14,7 @@ namespace MerQure.RabbitMQ.Clients
 
         public string ExchangeName { get; private set; }
         public string ExchangeType { get; private set; }
+        public bool Durable { get; private set; }
 
         /// <summary>
         /// Create a RabbitMQ Publisher
@@ -21,7 +22,7 @@ namespace MerQure.RabbitMQ.Clients
         /// <param name="channel"></param>
         /// <param name="exchangeName"></param>
         /// <param name="exchangeType"></param>
-        public Publisher(IModel channel, string exchangeName, string exchangeType)
+        public Publisher(IModel channel, string exchangeName, string exchangeType, bool durable)
             : base(channel)
         {
             if(String.IsNullOrWhiteSpace(exchangeName))
@@ -33,11 +34,12 @@ namespace MerQure.RabbitMQ.Clients
             }
             this.ExchangeName = exchangeName.ToLowerInvariant();
             this.ExchangeType = exchangeType;
+            this.Durable = durable;
         }
 
         public void Declare()
         {
-            this.Channel.ExchangeDeclare(this.ExchangeName, this.ExchangeType, durable: true);
+            this.Channel.ExchangeDeclare(this.ExchangeName, this.ExchangeType, this.Durable);
         }
 
         public void Publish(IMessage message)

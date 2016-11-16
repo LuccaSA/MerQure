@@ -7,8 +7,8 @@
     <ProjectGuid>{13D74416-5AD3-473E-8A99-19D3A713A1DA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MerQure.RabbitMQ</RootNamespace>
-    <AssemblyName>MerQure.RabbitMQ</AssemblyName>
+    <RootNamespace>MerQure.RMQ</RootNamespace>
+    <AssemblyName>MerQure.RMQ</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -51,6 +51,7 @@
     <Compile Include="Content\Header.cs" />
     <Compile Include="Content\Message.cs" />
     <Compile Include="Events\MessagingEvent.cs" />
+    <Compile Include="MessagingService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿using RabbitMQ.Client;
 using System.Collections.Generic;
 
-namespace MerQure.RabbitMQ.Clients
+namespace MerQure.RMQ.Clients
 {
     class Subscriber : RabbitMQClient, ISubscriber
     {
