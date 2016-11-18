@@ -1,11 +1,24 @@
 ﻿namespace MerQure
 {
-    public interface IPublisher
+	/// <summary>
+	/// Publisher interface. Used to publish messages on an exchange.
+	/// </summary>
+	public interface IPublisher
     {
+		/// <summary>
+		/// Exhange where publish messages
+		/// </summary>
         string ExchangeName { get; }
 
-        void Declare();
+		/// <summary>
+		/// Declare an exchange
+		/// </summary>
+		void Declare();
 
-        void Publish(IMessage message);
+		/// <summary>
+		/// Publishes a message
+		/// </summary>
+		/// <param name="message"></param>
+		void Publish(IMessage message);
     }
 }
