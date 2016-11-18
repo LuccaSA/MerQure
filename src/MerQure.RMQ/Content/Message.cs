@@ -1,6 +1,6 @@
 ﻿using MerQure.Content;
 
-namespace MerQure.RMQ
+namespace MerQure.RMQ.Content
 {
     public class Message : IMessage
     {
@@ -19,6 +19,15 @@ namespace MerQure.RMQ
             this.RoutingKey = routingKey;
             this.Header = header;
             this.Body = body;
+        }
+        /// <summary>
+        /// Create a RabbitMQ Message
+        /// </summary>
+        /// <param name="routingKey"></param>
+        /// <param name="body"></param>
+        public Message(string routingKey, string body)
+            : this(routingKey, new Header(), body)
+        {
         }
     }
 }
