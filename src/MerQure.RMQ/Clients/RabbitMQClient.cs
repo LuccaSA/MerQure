@@ -1,6 +1,6 @@
 ﻿using RabbitMQ.Client;
 
-namespace MerQure.RMQ.Clients
+namespace MerQure.RbMQ.Clients
 {
     abstract class RabbitMQClient
     {

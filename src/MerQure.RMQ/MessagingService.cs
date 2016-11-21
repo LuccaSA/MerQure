@@ -1,8 +1,8 @@
-﻿using MerQure.RMQ.Clients;
+﻿using MerQure.RbMQ.Clients;
 using RabbitMQ.Client;
 using System;
 
-namespace MerQure.RMQ
+namespace MerQure.RbMQ
 {
     public class MessagingService : IMessagingService
     {

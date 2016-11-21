@@ -2,7 +2,7 @@
 using System;
 using System.Text;
 
-namespace MerQure.RMQ.Clients
+namespace MerQure.RbMQ.Clients
 {
     class Publisher : RabbitMQClient, IPublisher
     {

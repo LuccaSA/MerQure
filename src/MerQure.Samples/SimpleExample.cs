@@ -1,13 +1,13 @@
-﻿using MerQure.RMQ;
-using MerQure.RMQ.Content;
+﻿using MerQure.RbMQ;
+using MerQure.RbMQ.Content;
 using System;
 using System.Collections.Generic;
 
 namespace MerQure.Samples
 {
-    class SimpleExample
+    static class SimpleExample
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var messagingService = new MessagingService();
 

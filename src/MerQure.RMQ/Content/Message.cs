@@ -1,6 +1,6 @@
 ﻿using MerQure.Content;
 
-namespace MerQure.RMQ.Content
+namespace MerQure.RbMQ.Content
 {
     public class Message : IMessage
     {

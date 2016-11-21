@@ -1,4 +1,4 @@
-﻿namespace MerQure.RMQ.Events
+﻿namespace MerQure.RbMQ.Events
 {
     class MessagingEvent : IMessagingEvent
     {
