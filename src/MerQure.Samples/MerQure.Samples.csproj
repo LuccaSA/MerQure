@@ -50,7 +50,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MerQure.RMQ\MerQure.RbMQ.csproj">
+    <ProjectReference Include="..\MerQure.RbMQ\MerQure.RbMQ.csproj">
       <Project>{13d74416-5ad3-473e-8a99-19d3a713a1da}</Project>
       <Name>MerQure.RbMQ</Name>
     </ProjectReference>
