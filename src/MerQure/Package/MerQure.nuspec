@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>MerQure</id>
+    <version>0.1.0</version>
+    <authors>Benoit Belz, Brice Francois</authors>
+    <owners>Lucca SA</owners>
+    <licenseUrl>https://github.com/LuccaSA/MerQure/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/LuccaSA/MerQure</projectUrl>
+    <iconUrl>http://www.lucca.fr/img/favicon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>a simple .Net Message Broker. It provides a KISS abstraction of the Advanced Message Queuing Protocol (AMQP) such as used by RabbitMQ.</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>MessageBroker AMQP RabbitMQ</tags>
+    <dependencies>
+    </dependencies>
+  </metadata>
+</package>
