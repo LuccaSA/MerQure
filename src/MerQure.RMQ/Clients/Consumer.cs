@@ -9,8 +9,6 @@ namespace MerQure.RbMQ.Clients
 {
     class Consumer : RabbitMQClient, IConsumer
     {
-        private EventingBasicConsumer consumer;
-
         public string QueueName { get; }
 
         public Consumer(IModel channel, string queueName)
@@ -23,7 +21,7 @@ namespace MerQure.RbMQ.Clients
         {
             this.Channel.BasicQos(0, 1, false);
 
-            consumer = new EventingBasicConsumer(Channel);
+            var consumer = new EventingBasicConsumer(Channel);
             consumer.Received += ((object sender, BasicDeliverEventArgs args) =>
             {
                 if (onMessageReceived != null)
