@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>MerQure</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Benoit Belz, Brice Francois</authors>
     <owners>Lucca SA</owners>
     <licenseUrl>https://github.com/LuccaSA/MerQure/blob/master/LICENSE</licenseUrl>
@@ -16,4 +16,7 @@
     <dependencies>
     </dependencies>
   </metadata>
+  <files>
+    <file src="bin\Debug\MerQure.dll" target="lib\net452\" />
+  </files>
 </package>
