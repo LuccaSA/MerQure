@@ -1,4 +1,5 @@
-﻿using MerQure.Content;
+﻿using System;
+using MerQure.Content;
 
 namespace MerQure.RbMQ.Content
 {
@@ -28,6 +29,21 @@ namespace MerQure.RbMQ.Content
         public Message(string routingKey, string body)
             : this(routingKey, new Header(), body)
         {
+        }
+
+        public string GetRoutingKey()
+        {
+            return RoutingKey;
+        }
+
+        public IHeader GetHeader()
+        {
+            return Header;
+        }
+
+        public string GetBody()
+        {
+            return Body;
         }
     }
 }

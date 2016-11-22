@@ -5,7 +5,7 @@ namespace MerQure.RbMQ.Content
 {
     public class Header : IHeader
     {
-        private IDictionary<string, object> HeaderProperties;
+        private readonly IDictionary<string, object> HeaderProperties;
 
         public Header()
         {

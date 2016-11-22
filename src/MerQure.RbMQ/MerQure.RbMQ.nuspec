@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>MerQure.RbMQ</id>
+    <version>$version$</version>
+    <authors>Benoit Belz, Brice Francois</authors>
+    <owners>Lucca SA</owners>
+    <licenseUrl>https://github.com/LuccaSA/MerQure/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/LuccaSA/MerQure/tree/master/src/MerQure.RbMQ</projectUrl>
+    <iconUrl>http://www.lucca.fr/img/favicon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>a simple .Net Message Broker client for RabbitMQ.</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>MessageBroker AMQP RabbitMQ</tags>
+    <dependencies>
+      <dependency id="MerQure" version="0.1.2" />
+      <dependency id="RabbitMQ.Client" version="4.1.1" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Debug\MerQure.RbMQ.dll" target="lib\net452\" />
+  </files>
+</package>

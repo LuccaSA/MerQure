@@ -47,11 +47,11 @@ namespace MerQure.RbMQ.Clients
             IBasicProperties basicProperties = this.Channel.CreateBasicProperties();
             basicProperties.DeliveryMode = (byte)DeliveryMode.Persistent;
             basicProperties.CorrelationId = Guid.NewGuid().ToString();
-            basicProperties.Headers = message.Header.GetHeaderProperties();
+            basicProperties.Headers = message.GetHeader().GetHeaderProperties();
 
-            byte[] messageBytes = Encoding.UTF8.GetBytes(message.Body);
+            byte[] messageBytes = Encoding.UTF8.GetBytes(message.GetBody());
 
-            this.Channel.BasicPublish(ExchangeName, message.RoutingKey, basicProperties, messageBytes);
+            this.Channel.BasicPublish(ExchangeName, message.GetRoutingKey(), basicProperties, messageBytes);
         }
     }
 }
