@@ -4,10 +4,10 @@ namespace MerQure
 {
     public interface IMessage
     {
-        string RoutingKey { get; }
+        string GetRoutingKey();
 
-        IHeader Header { get; }
+        IHeader GetHeader();
 
-        string Body { get; set; }
+        string GetBody();
     }
 }
