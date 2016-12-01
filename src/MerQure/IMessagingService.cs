@@ -13,7 +13,7 @@
         IPublisher GetPublisher(string exchangeName);
 
         /// <summary>
-        /// Get the subscriber, used to declare queues and their subscribtions on exchanges
+        /// Get the subscriber, used to declare queues and their subscriptions on exchanges
         /// </summary>
         /// <param name="queueName"></param>
         /// <returns></returns>

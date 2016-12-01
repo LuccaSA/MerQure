@@ -6,7 +6,7 @@
     public interface IPublisher
     {
         /// <summary>
-        /// Exhange where publish messages
+        /// Exchange where publish messages
         /// </summary>
         string ExchangeName { get; }
 
