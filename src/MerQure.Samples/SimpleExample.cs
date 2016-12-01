@@ -11,14 +11,18 @@ namespace MerQure.Samples
         {
             var messagingService = new MessagingService();
 
+            // Get the publisher and declare Exhange where publish messages
             var publisher = messagingService.GetPublisher("simple.exchange");
             publisher.Declare();
 
-            messagingService.GetSubscriber("simple.queue").DeclareSubscribtion("simple.exchange", "simple.key");
+            // Get the subscriber on a queue and declare a subscription on the existing exchange
+            messagingService.GetSubscriber("simple.queue").DeclareSubscribtion("simple.exchange", "simple.message.*");
 
-            var message = new Message("simple.key", "TEST_BODY");
-            publisher.Publish(message);
+            // publish messages
+            publisher.Publish(new Message("simple.message.test1", "Hello world !"));
+            publisher.Publish(new Message("simple.message.test2", "John Doe was here."));
 
+            // Get the consumer on the existing queue and consume its messages
             messagingService.GetConsumer("simple.queue").Consume((object sender, IMessagingEvent e) =>
             {
                 Console.WriteLine(e.Message.Body);
