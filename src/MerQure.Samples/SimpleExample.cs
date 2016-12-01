@@ -16,16 +16,32 @@ namespace MerQure.Samples
             publisher.Declare();
 
             // Get the subscriber on a queue and declare a subscription on the existing exchange
-            messagingService.GetSubscriber("simple.queue").DeclareSubscribtion("simple.exchange", "simple.message.*");
+            messagingService.GetSubscriber("simple.queue").DeclareSubscription("simple.exchange", "simple.message.*");
 
             // publish messages
-            publisher.Publish(new Message("simple.message.test1", "Hello world !"));
-            publisher.Publish(new Message("simple.message.test2", "John Doe was here."));
+            for (int i = 0; i <= 10; i++)
+            {
+                publisher.Publish(new Message("simple.message.test" + i, string.Format("Hello world {0} !", i)));
+            }
 
             // Get the consumer on the existing queue and consume its messages
-            messagingService.GetConsumer("simple.queue").Consume((object sender, IMessagingEvent e) =>
+            var consumer = messagingService.GetConsumer("simple.queue");
+            var random = new Random();
+            consumer.Consume((object sender, IMessagingEvent args) =>
             {
-                Console.WriteLine(e.Message.Body);
+                // we simulate the delivery success
+                if (random.Next() % 2 == 0)
+                {
+                    Console.WriteLine("Retry " + args.Message.GetRoutingKey());
+                    // send NACK: negative acknowlegdment to the queue
+                    consumer.RejectDeliveredMessage(args);
+                }
+                else
+                {
+                    Console.WriteLine(args.Message.GetBody());
+                    // send ACK: acknowlegdment to the queue 
+                    consumer.AcknowlegdeDeliveredMessage(args);
+                }
             });
         }
     }
