@@ -26,7 +26,7 @@ namespace MerQure.RbMQ.Clients
             this.AutoDeleteQueue = autoDeleteQueue;
         }
 
-        public void DeclareSubscribtion(string exchangeName, string routingKey)
+        public void DeclareSubscription(string exchangeName, string routingKey)
         {
             if (!queueDeclared)
             {

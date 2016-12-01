@@ -6,16 +6,20 @@ namespace MerQure.RbMQ
 {
     public class MessagingService : IMessagingService
     {
+        private static string RabbitMqConnectionUri 
+        {
+            get
+            {
+                return System.Configuration.ConfigurationManager.ConnectionStrings["RabbitMQ"].ConnectionString;
+            }
+        }
         private static IConnection GetRabbitMqConnection()
         {
-            ConnectionFactory connectionFactory = new ConnectionFactory();
-            // TODO load from config
-            connectionFactory.HostName = "localhost";
-            connectionFactory.UserName = "guest";
-            connectionFactory.Password = "guest";
-
-            connectionFactory.AutomaticRecoveryEnabled = true;
-            connectionFactory.TopologyRecoveryEnabled = true;
+            ConnectionFactory connectionFactory = new ConnectionFactory {
+                Uri = RabbitMqConnectionUri,
+                AutomaticRecoveryEnabled = true,
+                TopologyRecoveryEnabled = true
+            };
 
             return connectionFactory.CreateConnection();
         }
