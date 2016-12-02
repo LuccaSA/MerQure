@@ -1,3 +1,7 @@
+## 0.1.5 - 2016-12-02
+### Changed
+- HeaderProperties' values as string
+
 ## 0.1.4 - 2016-12-02
 ### Added
 - logo
