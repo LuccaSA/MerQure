@@ -1,5 +1,6 @@
 ﻿using RabbitMQ.Client;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace MerQure.RbMQ.Clients
@@ -47,7 +48,7 @@ namespace MerQure.RbMQ.Clients
             IBasicProperties basicProperties = this.Channel.CreateBasicProperties();
             basicProperties.DeliveryMode = (byte)DeliveryMode.Persistent;
             basicProperties.CorrelationId = Guid.NewGuid().ToString();
-            basicProperties.Headers = message.GetHeader().GetHeaderProperties();
+            basicProperties.Headers = message.GetHeader().GetProperties().ToDictionary(kvp => kvp.Key, kvp => (object)kvp.Value);
 
             byte[] messageBytes = Encoding.UTF8.GetBytes(message.GetBody());
 

@@ -3,6 +3,7 @@ using MerQure.RbMQ.Events;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace MerQure.RbMQ.Clients
@@ -28,7 +29,7 @@ namespace MerQure.RbMQ.Clients
                 {
                     var message = new Message(
                         args.RoutingKey,
-                        new Header(args.BasicProperties.Headers),
+                        new Header(args.BasicProperties.Headers.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString())),
                         Encoding.UTF8.GetString(args.Body)
                     );
                     var messageEventArgs = new MessagingEvent(message, args.DeliveryTag.ToString());
