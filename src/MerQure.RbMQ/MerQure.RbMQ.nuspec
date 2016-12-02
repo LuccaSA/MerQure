@@ -7,7 +7,7 @@
     <owners>Lucca SA</owners>
     <licenseUrl>https://github.com/LuccaSA/MerQure/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/LuccaSA/MerQure/tree/master/src/MerQure.RbMQ</projectUrl>
-    <iconUrl>http://www.lucca.fr/img/favicon.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/LuccaSA/MerQure/master/MerQure-logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>a simple .Net Message Broker client for RabbitMQ.</description>
     <releaseNotes></releaseNotes>
