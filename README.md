@@ -1,6 +1,8 @@
 # MerQure
  A simple .Net Message Broker. It provides an abstraction of the Advanced Message Queuing Protocol (AMQP) such as used by RabbitMQ.
-
+ 
+[![Build status](https://ci.appveyor.com/api/projects/status/nxaitfp0w56wx2ef?svg=true)](https://ci.appveyor.com/project/BriceFrancois/merqure)
+ 
 # Coding Conventions
 https://msdn.microsoft.com/en-us/library/ff926074.aspx
  
