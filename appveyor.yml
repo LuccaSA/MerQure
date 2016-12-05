@@ -1,0 +1,10 @@
+configuration: Release
+
+before_build:
+- nuget restore
+
+notifications:
+  - provider: GitHubPullRequest
+    auth_token:
+      secure: mIWjgBPlebPHnHk+SkKhZqHOkD6LIZrh1tnOq+f9pWxASTTvlwmAEgZF3kvH6Em6
+    template: "{{#passed}}:white_check_mark:{{/passed}}{{#failed}}:x:{{/failed}} [Build {{&projectName}} {{buildVersion}} {{status}}]({{buildUrl}}) (commit {{commitUrl}} by @{{&commitAuthorUsername}})"
