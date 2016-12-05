@@ -33,14 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MerQure, Version=0.1.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MerQure.0.1.5\lib\net452\MerQure.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MerQure.RbMQ, Version=0.1.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MerQure.RbMQ.0.1.5\lib\net452\MerQure.RbMQ.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="RabbitMQ.Client, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
       <HintPath>..\packages\RabbitMQ.Client.4.1.1\lib\net451\RabbitMQ.Client.dll</HintPath>
       <Private>True</Private>
@@ -58,7 +50,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MerQure.RbMQ\MerQure.RbMQ.csproj">
+      <Project>{13d74416-5ad3-473e-8a99-19d3a713a1da}</Project>
+      <Name>MerQure.RbMQ</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MerQure\MerQure.csproj">
+      <Project>{e38f2572-d955-475b-a79a-de4e9a607a87}</Project>
+      <Name>MerQure</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
