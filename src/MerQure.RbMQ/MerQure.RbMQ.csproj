@@ -47,7 +47,7 @@
   <ItemGroup>
     <Compile Include="Clients\Consumer.cs" />
     <Compile Include="Clients\Publisher.cs" />
-    <Compile Include="Clients\RabbitMQClient.cs" />
+    <Compile Include="Clients\RabbitMqClient.cs" />
     <Compile Include="Clients\Subscriber.cs" />
     <Compile Include="Content\Header.cs" />
     <Compile Include="Content\Message.cs" />

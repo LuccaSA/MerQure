@@ -8,7 +8,7 @@ using System.Text;
 
 namespace MerQure.RbMQ.Clients
 {
-    class Consumer : RabbitMQClient, IConsumer
+    class Consumer : RabbitMqClient, IConsumer
     {
         public string QueueName { get; }
 
