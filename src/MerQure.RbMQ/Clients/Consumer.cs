@@ -29,7 +29,7 @@ namespace MerQure.RbMQ.Clients
                 {
                     var message = new Message(
                         args.RoutingKey,
-                        new Header(args.BasicProperties.Headers.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString())),
+                        new Header(args.BasicProperties.Headers.ToDictionary(kvp => kvp.Key, kvp => Encoding.UTF8.GetString((byte[])kvp.Value))),
                         Encoding.UTF8.GetString(args.Body)
                     );
                     var messageEventArgs = new MessagingEvent(message, args.DeliveryTag.ToString());
