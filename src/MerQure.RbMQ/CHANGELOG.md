@@ -1,3 +1,7 @@
+## 0.1.8 - 2016-12-07
+### Fixed
+- use a default connectionString (localhost/guest) when not configured
+
 ## 0.1.7 - 2016-12-07
 ### Added
 - IsConsuming: indicates when a consumer is registered
