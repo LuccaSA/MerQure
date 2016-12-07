@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MerQure.RbMQ.Clients
 {
-    class Publisher : RabbitMQClient, IPublisher
+    class Publisher : RabbitMqClient, IPublisher
     {
         internal enum DeliveryMode : byte
         {

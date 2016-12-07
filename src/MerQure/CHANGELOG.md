@@ -1,3 +1,8 @@
+## 0.1.6 - 2016-12-07
+### Added
+- IsConsuming: indicates when a consumer is registered
+- StopConsuming: unregister a consumer
+
 ## 0.1.5 - 2016-12-02
 ### Changed
 - HeaderProperties' values as string

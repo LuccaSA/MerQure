@@ -2,12 +2,12 @@
 
 namespace MerQure.RbMQ.Clients
 {
-    abstract class RabbitMQClient
+    abstract class RabbitMqClient
     {
         // rabbitmq-dotnet-client key objet
         public IModel Channel { get; set; }
 
-        public RabbitMQClient(IModel channel)
+        public RabbitMqClient(IModel channel)
         {
             this.Channel = channel;
         }

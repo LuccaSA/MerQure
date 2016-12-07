@@ -6,11 +6,13 @@ namespace MerQure.RbMQ
 {
     public class MessagingService : IMessagingService
     {
+        private const string DefaultRabbitMqConnectionUri = "amqp://guest:guest@localhost:5672/";
         private static string RabbitMqConnectionUri 
         {
             get
             {
-                return System.Configuration.ConfigurationManager.ConnectionStrings["RabbitMQ"].ConnectionString;
+                var connectionStringSetting = System.Configuration.ConfigurationManager.ConnectionStrings["RabbitMQ"];
+                return connectionStringSetting != null ? connectionStringSetting.ConnectionString : DefaultRabbitMqConnectionUri;
             }
         }
         private static IConnection GetRabbitMqConnection()

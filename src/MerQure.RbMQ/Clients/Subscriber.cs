@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MerQure.RbMQ.Clients
 {
-    class Subscriber : RabbitMQClient, ISubscriber
+    class Subscriber : RabbitMqClient, ISubscriber
     {
         private bool queueDeclared = false;
 
