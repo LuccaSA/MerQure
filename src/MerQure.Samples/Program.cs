@@ -10,8 +10,11 @@ namespace MerQure.Samples
     {
         static void Main()
         {
+            Console.WriteLine("Running sample 1: simple");
             SimpleExample.Run();
-            //StopExample.Run();
+            System.Threading.Thread.Sleep(500);
+            Console.WriteLine("Running sample 2: stop");
+            StopExample.Run();
         }
     }
 }
