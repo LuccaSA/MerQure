@@ -19,15 +19,24 @@ namespace MerQure
         void Consume(EventHandler<IMessagingEvent> OnMessageReceived);
 
         /// <summary>
+        /// Indicates if the Consumer is registred on the queue and waiting for messages
+        /// </summary>
+        bool IsConsuming();
+
+        /// <summary>
+        /// Unregister Consumer from the queue
+        /// </summary>
+        /// <param name="onConsumerStopped">Handler called when queu has unregistered the consumer</param>
+        void StopConsuming(EventHandler onConsumerStopped);
+
+        /// <summary>
         /// Acknowledge a delivered message.
         /// </summary>
-        /// <param name="args"></param>
         void AcknowlegdeDeliveredMessage(IMessagingEvent args);
 
         /// <summary>
         /// Reject a delivered message.
         /// </summary>
-        /// <param name="args"></param>
         void RejectDeliveredMessage(IMessagingEvent args);
     }
 }

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace MerQure.Samples
 {
-    static class SimpleExample
+    public static class SimpleExample
     {
-        static void Main()
+        public static void Run()
         {
             var messagingService = new MessagingService();
 
