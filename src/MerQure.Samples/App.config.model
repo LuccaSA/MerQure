@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-  <connectionStrings>
-    <!-- RabbitMQ URI Specification: https://www.rabbitmq.com/uri-spec.html -->
-    <add name="RabbitMQ" connectionString="amqp://guest:guest@localhost:5672/" />
-  </connectionStrings>
-</configuration>

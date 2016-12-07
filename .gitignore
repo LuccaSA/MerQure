@@ -240,4 +240,3 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
-src/MerQure.Samples/App.config

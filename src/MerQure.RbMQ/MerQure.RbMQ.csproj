@@ -49,6 +49,9 @@
     <Compile Include="Clients\Publisher.cs" />
     <Compile Include="Clients\RabbitMqClient.cs" />
     <Compile Include="Clients\Subscriber.cs" />
+    <Compile Include="Config\RabbitMqConfiguration.cs" />
+    <Compile Include="Config\RabbitMqConfigurationSection.cs" />
+    <Compile Include="Config\RabbitMqConnectionConfigurationElement.cs" />
     <Compile Include="Content\Header.cs" />
     <Compile Include="Content\Message.cs" />
     <Compile Include="Events\MessagingEvent.cs" />
@@ -58,6 +61,9 @@
   <ItemGroup>
     <None Include="App.config.model" />
     <None Include="packages.config" />
+    <None Include="rabbitMQ.config.model">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MerQure\MerQure.csproj">

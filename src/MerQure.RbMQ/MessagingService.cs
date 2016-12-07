@@ -6,21 +6,14 @@ namespace MerQure.RbMQ
 {
     public class MessagingService : IMessagingService
     {
-        private const string DefaultRabbitMqConnectionUri = "amqp://guest:guest@localhost:5672/";
-        private static string RabbitMqConnectionUri 
-        {
-            get
-            {
-                var connectionStringSetting = System.Configuration.ConfigurationManager.ConnectionStrings["RabbitMQ"];
-                return connectionStringSetting != null ? connectionStringSetting.ConnectionString : DefaultRabbitMqConnectionUri;
-            }
-        }
         private static IConnection GetRabbitMqConnection()
         {
+            var rabbitMqConnection = Config.RabbitMqConfiguration.GetConfig().Connection;
+
             ConnectionFactory connectionFactory = new ConnectionFactory {
-                Uri = RabbitMqConnectionUri,
-                AutomaticRecoveryEnabled = true,
-                TopologyRecoveryEnabled = true
+                Uri = rabbitMqConnection.ConnectionString,
+                AutomaticRecoveryEnabled = rabbitMqConnection.AutomaticRecoveryEnabled,
+                TopologyRecoveryEnabled = rabbitMqConnection.TopologyRecoveryEnabled
             };
 
             return connectionFactory.CreateConnection();
@@ -37,9 +30,10 @@ namespace MerQure.RbMQ
 
         public MessagingService()
         {
-            // TODO Laod Parameters from config
-            this.Durable = true;
-            this.AutoDeleteQueue = false;
+            var rabbitMqConfig = Config.RabbitMqConfiguration.GetConfig();
+
+            this.Durable = rabbitMqConfig.Durable;
+            this.AutoDeleteQueue = rabbitMqConfig.AutoDeleteQueue;
             this.ExchangeType = RabbitMQ.Client.ExchangeType.Topic;
         }
 
