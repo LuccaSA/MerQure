@@ -52,7 +52,10 @@
     <Compile Include="StopExample.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config.model" />
+    <None Include="rabbitMQ.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="App.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

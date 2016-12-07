@@ -1,3 +1,7 @@
+## 0.1.9 - 2016-12-07
+### Added
+- rabbitMQ.config file, declare connectionString and others configuration parameters
+
 ## 0.1.8 - 2016-12-07
 ### Fixed
 - use a default connectionString (localhost/guest) when not configured
