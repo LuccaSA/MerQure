@@ -11,12 +11,13 @@ namespace MerQure.Samples
         {
             var messagingService = new MessagingService();
 
+            // RabbitMQ init
+            messagingService.DeclareExchange("stop.exchange");
+            messagingService.DeclareQueue("stop.queue");
+            messagingService.DeclareBinding("stop.exchange", "stop.message.* ", "stop.queue");
+
             // Get the publisher and declare Exhange where publish messages
             var publisher = messagingService.GetPublisher("stop.exchange");
-            publisher.Declare();
-
-            // Get the subscriber on a queue and declare a subscription on the existing exchange
-            messagingService.GetSubscriber("stop.queue").DeclareSubscription("stop.exchange", "stop.message.*");
 
             // publish messages
             for (int i = 0; i <= 20; i++)
