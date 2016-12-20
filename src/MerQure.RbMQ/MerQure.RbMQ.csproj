@@ -48,7 +48,6 @@
     <Compile Include="Clients\Consumer.cs" />
     <Compile Include="Clients\Publisher.cs" />
     <Compile Include="Clients\RabbitMqClient.cs" />
-    <Compile Include="Clients\Subscriber.cs" />
     <Compile Include="Config\RabbitMqConfiguration.cs" />
     <Compile Include="Config\RabbitMqConfigurationSection.cs" />
     <Compile Include="Config\RabbitMqConnectionConfigurationElement.cs" />

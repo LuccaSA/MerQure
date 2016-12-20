@@ -46,7 +46,6 @@
     <Compile Include="Events\IMessagingEvent.cs" />
     <Compile Include="IMessagingService.cs" />
     <Compile Include="Clients\IPublisher.cs" />
-    <Compile Include="Clients\ISubscriber.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
