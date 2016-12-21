@@ -1,3 +1,7 @@
+## 0.2.0 - 2016-12-21
+### Changed
+- MerQure 0.2.0 impacts on IMessagingService implementation
+
 ## 0.1.9 - 2016-12-07
 ### Added
 - rabbitMQ.config file, declare connectionString and others configuration parameters
