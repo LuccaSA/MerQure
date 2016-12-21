@@ -46,8 +46,10 @@
     <Compile Include="Events\IMessagingEvent.cs" />
     <Compile Include="IMessagingService.cs" />
     <Compile Include="Clients\IPublisher.cs" />
-    <Compile Include="Clients\ISubscriber.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CHANGELOG.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

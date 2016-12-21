@@ -1,3 +1,12 @@
+## 0.2.0 - 2016-12-21
+### Removed
+- ISubcriber: was ambiguous, replaced by specific methods
+### Added
+- IMessagingService.DeclareExchange
+- IMessagingService.DeclareQueue
+- IMessagingService.DeclareBinding
+- IMessagingService.CancelBinding
+
 ## 0.1.6 - 2016-12-07
 ### Added
 - IsConsuming: indicates when a consumer is registered

@@ -11,11 +11,6 @@
         string ExchangeName { get; }
 
         /// <summary>
-        /// Declare an exchange
-        /// </summary>
-        void Declare();
-
-        /// <summary>
         /// Publishes a message
         /// </summary>
         /// <param name="message"></param>

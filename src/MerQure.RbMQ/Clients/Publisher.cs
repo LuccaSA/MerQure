@@ -23,24 +23,15 @@ namespace MerQure.RbMQ.Clients
         /// <param name="channel"></param>
         /// <param name="exchangeName"></param>
         /// <param name="exchangeType"></param>
-        public Publisher(IModel channel, string exchangeName, string exchangeType, bool durable)
+        public Publisher(IModel channel, string exchangeName)
             : base(channel)
         {
             if(String.IsNullOrWhiteSpace(exchangeName))
             {
                 throw new Exception("exchangeName cannot be null or empty");
-            } else if (String.IsNullOrWhiteSpace(exchangeType))
-            {
-                throw new Exception("exchangeType cannot be null or empty");
             }
-            this.ExchangeName = exchangeName.ToLowerInvariant();
-            this.ExchangeType = exchangeType;
-            this.Durable = durable;
-        }
 
-        public void Declare()
-        {
-            this.Channel.ExchangeDeclare(this.ExchangeName, this.ExchangeType, this.Durable);
+            this.ExchangeName = exchangeName.ToLowerInvariant();
         }
 
         public void Publish(IMessage message)

@@ -48,7 +48,6 @@
     <Compile Include="Clients\Consumer.cs" />
     <Compile Include="Clients\Publisher.cs" />
     <Compile Include="Clients\RabbitMqClient.cs" />
-    <Compile Include="Clients\Subscriber.cs" />
     <Compile Include="Config\RabbitMqConfiguration.cs" />
     <Compile Include="Config\RabbitMqConfigurationSection.cs" />
     <Compile Include="Config\RabbitMqConnectionConfigurationElement.cs" />
@@ -60,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config.model" />
+    <None Include="CHANGELOG.md" />
     <None Include="packages.config" />
     <None Include="rabbitMQ.config.model">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

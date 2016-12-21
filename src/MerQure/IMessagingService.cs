@@ -6,24 +6,44 @@
     public interface IMessagingService
     {
         /// <summary>
+        /// Declare an Exchange (if it doesn't exists)
+        /// </summary>
+        /// <param name="exchangeName"></param>
+        void DeclareExchange(string exchangeName);
+
+        /// <summary>
+        /// Declare an Exchange (if it doesn't exists)
+        /// </summary>
+        /// <param name="queueName"></param>
+        void DeclareQueue(string queueName);
+
+        /// <summary>
+        /// Declare an Binding (if it doesn't exists)
+        /// A Binding is the link between an Exchange and a Queue via a RoutingKey
+        /// </summary>
+        /// <param name="exchangeName"></param>
+        /// <param name="routingKey"></param>
+        /// <param name="queueName"></param>
+        void DeclareBinding(string exchangeName, string routingKey, string queueName);
+
+        /// <summary>
+        /// Cancel an Binding
+        /// </summary>
+        /// <param name="exchangeName"></param>
+        /// <param name="routingKey"></param>
+        /// <param name="queueName"></param>
+        void CancelBinding(string exchangeName, string routingKey, string queueName);
+
+        /// <summary>
         /// Get the publisher, used to declare exchanges et publish messages on it.
         /// </summary>
         /// <param name="exchangeName"></param>
-        /// <returns></returns>
         IPublisher GetPublisher(string exchangeName);
-
-        /// <summary>
-        /// Get the subscriber, used to declare queues and their subscriptions on exchanges
-        /// </summary>
-        /// <param name="queueName"></param>
-        /// <returns></returns>
-        ISubscriber GetSubscriber(string queueName);
 
         /// <summary>
         /// Get the consumer, used to receive messages of a queue
         /// </summary>
         /// <param name="queueName"></param>
-        /// <returns></returns>
         IConsumer GetConsumer(string queueName);
     }
 }

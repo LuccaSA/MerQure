@@ -1,6 +1,7 @@
 ﻿using MerQure.RbMQ.Clients;
 using RabbitMQ.Client;
 using System;
+using System.Collections.Generic;
 
 namespace MerQure.RbMQ
 {
@@ -37,16 +38,48 @@ namespace MerQure.RbMQ
             this.ExchangeType = RabbitMQ.Client.ExchangeType.Topic;
         }
 
+        public void DeclareExchange(string exchangeName)
+        {
+            var channel = CurrentConnection.CreateModel();
+
+            if (String.IsNullOrWhiteSpace(exchangeName))
+            {
+                throw new Exception("exchangeName cannot be null or empty");
+            }
+            else if (String.IsNullOrWhiteSpace(this.ExchangeType))
+            {
+                throw new Exception("exchangeType cannot be null or empty");
+            }
+
+            channel.ExchangeDeclare(exchangeName.ToLowerInvariant(), this.ExchangeType, this.Durable);
+        }
+
+        public void DeclareQueue(string queueName)
+        {
+            var channel = CurrentConnection.CreateModel();
+
+            var queueArgs = new Dictionary<string, object>();
+            channel.QueueDeclare(queueName, this.Durable, false, this.AutoDeleteQueue, queueArgs);
+        }
+
+        public void DeclareBinding(string exchangeName, string routingKey, string queueName)
+        {
+            var channel = CurrentConnection.CreateModel();
+
+            channel.QueueBind(queueName, exchangeName.ToLowerInvariant(), routingKey.ToLowerInvariant());
+        }
+
+        public void CancelBinding(string exchangeName, string routingKey, string queueName)
+        {
+            var channel = CurrentConnection.CreateModel();
+
+            channel.QueueUnbind(queueName, exchangeName.ToLowerInvariant(), routingKey.ToLowerInvariant());
+        }
+
         public IPublisher GetPublisher(string exchangeName)
         {
             var channel = CurrentConnection.CreateModel();
-            return new Publisher(channel, exchangeName, this.ExchangeType, this.Durable);
-        }
-
-        public ISubscriber GetSubscriber(string queueName)
-        {
-            var channel = CurrentConnection.CreateModel();
-            return new Subscriber(channel, queueName, this.Durable, this.AutoDeleteQueue);
+            return new Publisher(channel, exchangeName);
         }
 
         public IConsumer GetConsumer(string queueName)
