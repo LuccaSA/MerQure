@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.Samples", "MerQure.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.RbMQ", "MerQure.RbMQ\MerQure.RbMQ.csproj", "{13D74416-5AD3-473E-8A99-19D3A713A1DA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SonarQube", "SonarQube", "{C6E07FC0-AD11-4FE0-8281-D001373EE9F8}"
+	ProjectSection(SolutionItems) = preProject
+		SonarQube\MerQureCSharp.ruleset = SonarQube\MerQureCSharp.ruleset
+		SonarQube\SolutionBinding.sqconfig = SonarQube\SolutionBinding.sqconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
