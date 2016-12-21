@@ -1,3 +1,7 @@
+## 0.2.1 - 2016-12-21
+### Added
+- Sonar ruleset
+
 ## 0.2.0 - 2016-12-21
 ### Removed
 - ISubcriber: was ambiguous, replaced by specific methods

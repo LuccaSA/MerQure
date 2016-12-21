@@ -1,3 +1,7 @@
+## 0.2.1 - 2016-12-21
+### Added
+- Sonar ruleset
+
 ## 0.2.0 - 2016-12-21
 ### Changed
 - MerQure 0.2.0 impacts on IMessagingService implementation
