@@ -15,8 +15,8 @@ namespace MerQure
         /// <summary>
         /// Start listening on the queue
         /// </summary>
-        /// <param name="OnMessageReceived">Handler called each time a message arrives for this consumer.</param>
-        void Consume(EventHandler<IMessagingEvent> OnMessageReceived);
+        /// <param name="onMessageReceived">Handler called each time a message arrives for this consumer.</param>
+        void Consume(EventHandler<IMessagingEvent> onMessageReceived);
 
         /// <summary>
         /// Indicates if the Consumer is registred on the queue and waiting for messages

@@ -1,15 +1,23 @@
-﻿using RabbitMQ.Client;
+﻿using System;
+using RabbitMQ.Client;
 
 namespace MerQure.RbMQ.Clients
 {
-    abstract class RabbitMqClient
+    internal abstract class RabbitMqClient : IDisposable
     {
-        // rabbitmq-dotnet-client key objet
+        /// <summary>
+        /// rabbitmq-dotnet-client key objet
+        /// </summary>
         public IModel Channel { get; set; }
 
-        public RabbitMqClient(IModel channel)
+        protected RabbitMqClient(IModel channel)
         {
             this.Channel = channel;
+        }
+
+        public void Dispose()
+        {
+            Channel?.Dispose();
         }
     }
 }
