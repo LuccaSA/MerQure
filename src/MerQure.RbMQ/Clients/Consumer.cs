@@ -12,7 +12,7 @@ namespace MerQure.RbMQ.Clients
     {
         public string QueueName { get; }
         private EventingBasicConsumer _consumer;
-        private static Object _consumingLock = new Object();
+        private static readonly object _consumingLock = new object();
 
         public Consumer(IModel channel, string queueName)
             : base(channel)
