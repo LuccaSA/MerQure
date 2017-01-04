@@ -22,17 +22,17 @@
         /// A Binding is the link between an Exchange and a Queue via a RoutingKey
         /// </summary>
         /// <param name="exchangeName"></param>
-        /// <param name="routingKey"></param>
         /// <param name="queueName"></param>
-        void DeclareBinding(string exchangeName, string routingKey, string queueName);
+        /// <param name="routingKey"></param>
+        void DeclareBinding(string exchangeName, string queueName, string routingKey);
 
         /// <summary>
         /// Cancel an Binding
         /// </summary>
         /// <param name="exchangeName"></param>
-        /// <param name="routingKey"></param>
         /// <param name="queueName"></param>
-        void CancelBinding(string exchangeName, string routingKey, string queueName);
+        /// <param name="routingKey"></param>
+        void CancelBinding(string exchangeName, string queueName, string routingKey);
 
         /// <summary>
         /// Get the publisher, used to declare exchanges et publish messages on it.

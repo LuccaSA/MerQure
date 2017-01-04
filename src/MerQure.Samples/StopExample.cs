@@ -14,7 +14,7 @@ namespace MerQure.Samples
             // RabbitMQ init
             messagingService.DeclareExchange("stop.exchange");
             messagingService.DeclareQueue("stop.queue");
-            messagingService.DeclareBinding("stop.exchange", "stop.message.* ", "stop.queue");
+            messagingService.DeclareBinding("stop.exchange", "stop.queue", "stop.message.* ");
 
             // Get the publisher and declare Exhange where publish messages
             var publisher = messagingService.GetPublisher("stop.exchange");
@@ -22,7 +22,7 @@ namespace MerQure.Samples
             // publish messages
             for (int i = 0; i <= 20; i++)
             {
-                publisher.Publish(new Message("stop.message.test" + i, string.Format("Hello world {0} !", i)));
+                publisher.Publish(new Message("stop.message.test" + i, $"Hello world {i} !"));
             }
 
             // Get the consumer on the existing queue and consume its messages
