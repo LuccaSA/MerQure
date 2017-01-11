@@ -17,13 +17,15 @@ namespace MerQure.Samples
             messagingService.DeclareBinding("simple.exchange", "simple.queue", "simple.message.*");
 
             // Get the publisher and declare Exhange where publish messages
-            var publisher = messagingService.GetPublisher("simple.exchange");
-
-            // publish messages
-            for (int i = 0; i <= 10; i++)
+            using (var publisher = messagingService.GetPublisher("simple.exchange"))
             {
-                publisher.Publish(new Message("simple.message.test" + i, $"Hello world {i} !"));
+                // publish messages
+                for (int i = 0; i <= 10; i++)
+                {
+                    publisher.Publish(new Message($"simple.message.test{i}", $"Hello world {i} !"));
+                }
             }
+
 
             // Get the consumer on the existing queue and consume its messages
             var consumer = messagingService.GetConsumer("simple.queue");

@@ -17,7 +17,7 @@ namespace MerQure.RbMQ.Clients
 
         public void Dispose()
         {
-            Channel?.Dispose();
+            Channel?.Close();
         }
     }
 }

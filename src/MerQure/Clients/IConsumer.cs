@@ -5,7 +5,7 @@ namespace MerQure
     /// <summary>
     /// Consumer interface. Used to receive messages from a queue by subscription.
     /// </summary>
-    public interface IConsumer
+    public interface IConsumer : IDisposable
     {
         /// <summary>
         /// name of the queue subscribed by the consumer

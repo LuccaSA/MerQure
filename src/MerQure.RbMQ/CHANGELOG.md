@@ -1,3 +1,7 @@
+## 0.2.2 - 2017-01-11
+### Changed
+- Publisher and Consumer close explicitly the channel on Dispose()
+
 ## 0.2.1 - 2016-12-21
 ### Added
 - Sonar ruleset

@@ -1,9 +1,11 @@
-﻿namespace MerQure
+﻿using System;
+
+namespace MerQure
 {
     /// <summary>
     /// Publisher interface. Used to publish messages on an exchange.
     /// </summary>
-    public interface IPublisher
+    public interface IPublisher : IDisposable
     {
         /// <summary>
         /// Exchange where publish messages
