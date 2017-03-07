@@ -1,4 +1,6 @@
-﻿namespace MerQure
+﻿using System.Collections.Generic;
+
+namespace MerQure
 {
     /// <summary>
     /// This service expose all clients necessary to used basic functionnalities of a Message Broker 
@@ -12,10 +14,28 @@
         void DeclareExchange(string exchangeName);
 
         /// <summary>
-        /// Declare an Exchange (if it doesn't exists)
+        /// Declare a queue iwth dead letter policy
+        /// </summary>
+        /// <param name="queueName"></param>
+        /// <param name="deadLetterExchange"></param>
+        /// <param name="messageTimeToLive"></param>
+        /// <param name="deadLetterRoutingKey"></param>
+        /// <see cref="https://www.rabbitmq.com/dlx.html"/>
+        void DeclareQueueWithDeadLetterPolicy(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey);
+
+        /// <summary>
+        /// Declare a queue (if it doesn't exists) with specifi arguments
+        /// </summary>
+        /// <param name="queueName"></param>
+        /// <param name="queueArgs">Queue's arguments</param>
+        void DeclareQueue(string queueName, Dictionary<string, object> queueArgs);
+
+        /// <summary>
+        /// Declare a queue (if it doesn't exists)
         /// </summary>
         /// <param name="queueName"></param>
         void DeclareQueue(string queueName);
+
 
         /// <summary>
         /// Declare an Binding (if it doesn't exists)

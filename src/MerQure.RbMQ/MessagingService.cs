@@ -48,12 +48,28 @@ namespace MerQure.RbMQ
 
         public void DeclareQueue(string queueName)
         {
+            DeclareQueue(queueName, new Dictionary<string, object>());
+        }
+        public void DeclareQueueWithDeadLetterPolicy(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey)
+        {
+            if (string.IsNullOrWhiteSpace(deadLetterExchange)) throw new ArgumentNullException(nameof(deadLetterExchange));
+            if (messageTimeToLive <= 0) throw new ArgumentOutOfRangeException(nameof(messageTimeToLive));
+
+            var queueArgs = new Dictionary<string, object> {
+                { Constants.QueueDeadLetterExchange, deadLetterExchange },
+                { Constants.QueueMessageTTL, messageTimeToLive },
+                { Constants.QueueDeadLetterRoutingKey, deadLetterRoutingKey }
+            };
+            DeclareQueue(queueName, queueArgs);
+        }
+        public void DeclareQueue(string queueName, Dictionary<string, object> queueArgs)
+        {
             if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
+            if (queueArgs == null) throw new ArgumentNullException(nameof(queueArgs));
 
             using (var channel = CurrentConnection.CreateModel())
             {
-                var queueArgs = new Dictionary<string, object>();
-                channel.QueueDeclare(queueName.ToLowerInvariant(), this.Durable, false, this.AutoDeleteQueue, queueArgs);
+                channel.QueueDeclare(queueName.ToLowerInvariant(), this.Durable, false, this.AutoDeleteQueue, queueArgs ?? new Dictionary<string, object>());
             }
         }
 
