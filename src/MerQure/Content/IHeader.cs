@@ -4,6 +4,6 @@ namespace MerQure.Content
 {
     public interface IHeader
     {
-        IDictionary<string, string> GetProperties();
+        IDictionary<string, object> GetProperties();
     }
 }

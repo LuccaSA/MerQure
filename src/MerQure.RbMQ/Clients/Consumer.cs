@@ -55,7 +55,13 @@ namespace MerQure.RbMQ.Clients
         {
             return new Header(args.BasicProperties.Headers.ToDictionary(kvp => kvp.Key, kvp => ParseHeaderProperty(kvp.Value)));
         }
-        private string ParseHeaderProperty(object propertyValue)
+        /// <summary>
+        /// Parse header properties, ignoring complex type as "Nested Table"
+        /// </summary>
+        /// <param name="propertyValue"></param>
+        /// <returns></returns>
+        /// <see cref="https://www.rabbitmq.com/amqp-0-9-1-errata.html"/>
+        private object ParseHeaderProperty(object propertyValue)
         {
             if (propertyValue is byte[])
             {
