@@ -3,6 +3,7 @@ using MerQure.RbMQ.Events;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -31,11 +32,7 @@ namespace MerQure.RbMQ.Clients
                 {
                     lock (_consumingLock)
                     {
-                        var message = new Message(
-                            args.RoutingKey,
-                            new Header(args.BasicProperties.Headers.ToDictionary(kvp => kvp.Key, kvp => Encoding.UTF8.GetString((byte[])kvp.Value))),
-                            Encoding.UTF8.GetString(args.Body)
-                        );
+                        var message = ParseDeliveredMessage(args);
                         var messageEventArgs = new MessagingEvent(message, args.DeliveryTag.ToString());
                         onMessageReceived(sender, messageEventArgs);
                     }
@@ -43,6 +40,28 @@ namespace MerQure.RbMQ.Clients
             });
 
             Channel.BasicConsume(this.QueueName, false, _consumer);
+        }
+
+        private IMessage ParseDeliveredMessage(BasicDeliverEventArgs args)
+        {
+            return new Message(
+                args.RoutingKey,
+                ParseHeader(args),
+                Encoding.UTF8.GetString(args.Body)
+            );
+        }
+
+        private Header ParseHeader(BasicDeliverEventArgs args)
+        {
+            return new Header(args.BasicProperties.Headers.ToDictionary(kvp => kvp.Key, kvp => ParseHeaderProperty(kvp.Value)));
+        }
+        private string ParseHeaderProperty(object propertyValue)
+        {
+            if (propertyValue is byte[])
+            {
+                return Encoding.UTF8.GetString((byte[])propertyValue);
+            }
+            return null;
         }
 
         public bool IsConsuming()
