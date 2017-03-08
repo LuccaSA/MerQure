@@ -67,7 +67,7 @@ namespace MerQure.RbMQ.Clients
             {
                 return Encoding.UTF8.GetString((byte[])propertyValue);
             }
-            return null;
+            return propertyValue;
         }
 
         public bool IsConsuming()
