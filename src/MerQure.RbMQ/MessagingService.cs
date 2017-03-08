@@ -72,9 +72,12 @@ namespace MerQure.RbMQ
 
             var queueArgs = new Dictionary<string, object> {
                 { Constants.QueueDeadLetterExchange, deadLetterExchange },
-                { Constants.QueueMessageTTL, messageTimeToLive },
-                { Constants.QueueDeadLetterRoutingKey, deadLetterRoutingKey }
+                { Constants.QueueMessageTTL, messageTimeToLive }
             };
+            if (!string.IsNullOrEmpty(deadLetterRoutingKey))
+            {
+                queueArgs.Add(Constants.QueueDeadLetterRoutingKey, deadLetterRoutingKey);
+            }
             DeclareQueue(queueName, queueArgs);
         }
         public void DeclareQueue(string queueName, Dictionary<string, object> queueArgs)
