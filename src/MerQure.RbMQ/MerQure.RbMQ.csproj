@@ -53,6 +53,7 @@
     <Compile Include="Config\RabbitMqConfiguration.cs" />
     <Compile Include="Config\RabbitMqConfigurationSection.cs" />
     <Compile Include="Config\RabbitMqConnectionConfigurationElement.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Content\Header.cs" />
     <Compile Include="Content\Message.cs" />
     <Compile Include="Events\MessagingEvent.cs" />
