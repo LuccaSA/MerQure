@@ -38,13 +38,18 @@ namespace MerQure.RbMQ
         
         public void DeclareExchange(string exchangeName)
         {
+            DeclareExchange(exchangeName, this.ExchangeType);
+        }
+        public void DeclareExchange(string exchangeName, string exchangeType)
+        {
             if (string.IsNullOrWhiteSpace(exchangeName)) throw new ArgumentNullException(nameof(exchangeName));
 
             using (var channel = CurrentConnection.CreateModel())
             {
-                channel.ExchangeDeclare(exchangeName.ToLowerInvariant(), this.ExchangeType, this.Durable);
+                channel.ExchangeDeclare(exchangeName.ToLowerInvariant(), exchangeType, this.Durable);
             }
         }
+
 
         public void DeclareQueue(string queueName, int maxPriority)
         {
@@ -85,13 +90,17 @@ namespace MerQure.RbMQ
 
         public void DeclareBinding(string exchangeName, string queueName, string routingKey)
         {
+            DeclareBinding(exchangeName, queueName, routingKey, null);
+        }
+        public void DeclareBinding(string exchangeName, string queueName, string routingKey, Dictionary<string, object> headerBindings)
+        {
             if (string.IsNullOrWhiteSpace(exchangeName)) throw new ArgumentNullException(nameof(exchangeName));
             if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
             if (string.IsNullOrWhiteSpace(routingKey)) throw new ArgumentNullException(nameof(routingKey));
 
             using (var channel = CurrentConnection.CreateModel())
             {
-                channel.QueueBind(queueName.ToLowerInvariant(), exchangeName.ToLowerInvariant(), routingKey.ToLowerInvariant());
+                channel.QueueBind(queueName.ToLowerInvariant(), exchangeName.ToLowerInvariant(), routingKey.ToLowerInvariant(), headerBindings);
             }
         }
 

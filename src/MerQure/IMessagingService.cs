@@ -13,6 +13,13 @@ namespace MerQure
         /// <param name="exchangeName"></param>
         void DeclareExchange(string exchangeName);
 
+        /// <summary>
+        /// Declare an Exchange (if it doesn't exists)
+        /// </summary>
+        /// <param name="exchangeName"></param>
+        /// <param name="exchangeType">fanout, direct, topic, headers</param>
+        void DeclareExchange(string exchangeName, string exchangeType);
+
         void DeclareQueue(string queueName, int maxPriority);
 
         /// <summary>
@@ -38,7 +45,6 @@ namespace MerQure
         /// <param name="queueName"></param>
         void DeclareQueue(string queueName);
 
-
         /// <summary>
         /// Declare an Binding (if it doesn't exists)
         /// A Binding is the link between an Exchange and a Queue via a RoutingKey
@@ -47,6 +53,15 @@ namespace MerQure
         /// <param name="queueName"></param>
         /// <param name="routingKey"></param>
         void DeclareBinding(string exchangeName, string queueName, string routingKey);
+        /// <summary>
+        /// Declare an Binding (if it doesn't exists)
+        /// A Binding is the link between an Exchange and a Queue
+        /// </summary>
+        /// <param name="exchangeName"></param>
+        /// <param name="queueName"></param>
+        /// <param name="routingKey"></param>
+        /// <param name="headerBindings"></param>
+        void DeclareBinding(string exchangeName, string queueName, string routingKey, Dictionary<string, object> headerBindings);
 
         /// <summary>
         /// Cancel an Binding
