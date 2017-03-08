@@ -51,10 +51,8 @@ namespace MerQure.RbMQ
         }
 
 
-        public void DeclareQueue(string queueName, int maxPriority)
+        public void DeclareQueue(string queueName, byte maxPriority)
         {
-            if (maxPriority < 0 || maxPriority > 255) throw new ArgumentOutOfRangeException(nameof(maxPriority));
-
             var queueArgs = new Dictionary<string, object> {
                 { Constants.QueueMaxPriority, maxPriority }
             };

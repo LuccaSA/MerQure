@@ -20,7 +20,7 @@ namespace MerQure
         /// <param name="exchangeType">fanout, direct, topic, headers</param>
         void DeclareExchange(string exchangeName, string exchangeType);
 
-        void DeclareQueue(string queueName, int maxPriority);
+        void DeclareQueue(string queueName, byte maxPriority);
 
         /// <summary>
         /// Declare a queue iwth dead letter policy
