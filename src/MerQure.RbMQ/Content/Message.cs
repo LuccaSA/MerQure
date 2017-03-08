@@ -8,6 +8,7 @@ namespace MerQure.RbMQ.Content
         public string RoutingKey { get; }
         public IHeader Header { get; }
         public string Body { get; set; }
+        public byte? Priority { get; set; }
 
         /// <summary>
         /// Create a RabbitMQ Message
@@ -44,6 +45,11 @@ namespace MerQure.RbMQ.Content
         public string GetBody()
         {
             return Body;
+        }
+
+        public byte? GetPriority()
+        {
+            return Priority;
         }
     }
 }

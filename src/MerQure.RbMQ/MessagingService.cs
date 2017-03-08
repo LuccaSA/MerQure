@@ -46,6 +46,16 @@ namespace MerQure.RbMQ
             }
         }
 
+        public void DeclareQueue(string queueName, int maxPriority)
+        {
+            if (maxPriority < 0 || maxPriority > 255) throw new ArgumentOutOfRangeException(nameof(maxPriority));
+
+            var queueArgs = new Dictionary<string, object> {
+                { Constants.QueueMaxPriority, maxPriority }
+            };
+            DeclareQueue(queueName, queueArgs);
+        }
+
         public void DeclareQueue(string queueName)
         {
             DeclareQueue(queueName, new Dictionary<string, object>());
@@ -69,7 +79,7 @@ namespace MerQure.RbMQ
 
             using (var channel = CurrentConnection.CreateModel())
             {
-                channel.QueueDeclare(queueName.ToLowerInvariant(), this.Durable, false, this.AutoDeleteQueue, queueArgs ?? new Dictionary<string, object>());
+                channel.QueueDeclare(queueName.ToLowerInvariant(), this.Durable, false, this.AutoDeleteQueue, queueArgs);
             }
         }
 

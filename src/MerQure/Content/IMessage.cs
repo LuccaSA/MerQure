@@ -1,4 +1,5 @@
 ﻿using MerQure.Content;
+using System.Collections.Generic;
 
 namespace MerQure
 {
@@ -9,5 +10,7 @@ namespace MerQure
         IHeader GetHeader();
 
         string GetBody();
+
+        byte? GetPriority();
     }
 }

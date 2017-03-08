@@ -13,6 +13,8 @@ namespace MerQure
         /// <param name="exchangeName"></param>
         void DeclareExchange(string exchangeName);
 
+        void DeclareQueue(string queueName, int maxPriority);
+
         /// <summary>
         /// Declare a queue iwth dead letter policy
         /// </summary>

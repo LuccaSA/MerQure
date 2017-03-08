@@ -39,7 +39,11 @@ namespace MerQure.RbMQ.Clients
             IBasicProperties basicProperties = this.Channel.CreateBasicProperties();
             basicProperties.DeliveryMode = (byte)DeliveryMode.Persistent;
             basicProperties.CorrelationId = Guid.NewGuid().ToString();
-            basicProperties.Headers = message.GetHeader().GetProperties().ToDictionary(kvp => kvp.Key, kvp => (object)kvp.Value);
+            basicProperties.Headers = message.GetHeader().GetProperties();
+            if (message.GetPriority() != null)
+            {
+                basicProperties.Priority = message.GetPriority().Value;
+            }
 
             byte[] messageBytes = Encoding.UTF8.GetBytes(message.GetBody());
 

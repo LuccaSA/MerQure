@@ -16,6 +16,19 @@ namespace MerQure
         /// Header property with the dead lettering reason (of type 'NESTED TABLE')
         /// </summary>
         public const string HeaderDeath = "x-death";
+        
+        public const string MessageContentType = "content_type";
+        public const string MessageContentEncoding = "content_encoding";
+        public const string MessagePriority = "priority";
+        public const string MessageCorrelationId = "correlation_id";
+        public const string MessageReplyTo = "reply_to";
+        public const string MessageExpiration = "expiration";
+        public const string MessageId = "message_id";
+        public const string MessageTimestamp = "timestamp";
+        public const string MessageType = "type";
+        public const string MessageUserId = "user_id";
+        public const string MessageAppId = "app_id";
+        public const string MessageClusterId = "cluster_id";
 
         public const string AlternateExchange = "alternate-exchange";
 
