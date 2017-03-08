@@ -28,7 +28,7 @@ namespace MerQure.RbMQ.Clients
         {
             if(String.IsNullOrWhiteSpace(exchangeName))
             {
-                throw new Exception("exchangeName cannot be null or empty");
+                throw new ArgumentException("exchangeName cannot be null or empty", nameof(exchangeName));
             }
 
             this.ExchangeName = exchangeName.ToLowerInvariant();
