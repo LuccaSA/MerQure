@@ -1,3 +1,11 @@
+## 0.3.0 - 2017-03-08
+### Changed
+- HeaderProperties' values as object
+### Added
+- Message Priority Support
+- DeadLetter Policy Support
+- Exchange type support: direct, fanout, topic, headers
+
 ## 0.2.2 - 2017-01-11
 ### Changed
 - Publisher and Consumer close explicitly the channel on Dispose()
