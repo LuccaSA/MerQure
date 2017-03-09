@@ -5,13 +5,13 @@ namespace MerQure.RbMQ.Content
 {
     public class Header : IHeader
     {
-        private readonly IDictionary<string, string> HeaderProperties;
+        private readonly IDictionary<string, object> HeaderProperties;
 
         public Header()
         {
-            HeaderProperties = new Dictionary<string, string>();
+            HeaderProperties = new Dictionary<string, object>();
         }
-        internal Header(IDictionary<string, string> headerProperties)
+        internal Header(IDictionary<string, object> headerProperties)
             : this()
         {
             foreach (var headerProperty in headerProperties)
@@ -24,12 +24,12 @@ namespace MerQure.RbMQ.Content
         {
         }
 
-        public void Add(string propertyName, string value)
+        public void Add(string propertyName, object value)
         {
             HeaderProperties.Add(propertyName, value);
         }
 
-        public IDictionary<string, string> GetProperties()
+        public IDictionary<string, object> GetProperties()
         {
             return HeaderProperties;
         }

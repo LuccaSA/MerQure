@@ -38,26 +38,62 @@ namespace MerQure.RbMQ
         
         public void DeclareExchange(string exchangeName)
         {
+            DeclareExchange(exchangeName, this.ExchangeType);
+        }
+        public void DeclareExchange(string exchangeName, string exchangeType)
+        {
             if (string.IsNullOrWhiteSpace(exchangeName)) throw new ArgumentNullException(nameof(exchangeName));
 
             using (var channel = CurrentConnection.CreateModel())
             {
-                channel.ExchangeDeclare(exchangeName.ToLowerInvariant(), this.ExchangeType, this.Durable);
+                channel.ExchangeDeclare(exchangeName.ToLowerInvariant(), exchangeType, this.Durable);
             }
+        }
+
+
+        public void DeclareQueue(string queueName, byte maxPriority)
+        {
+            var queueArgs = new Dictionary<string, object> {
+                { Constants.QueueMaxPriority, maxPriority }
+            };
+            DeclareQueue(queueName, queueArgs);
         }
 
         public void DeclareQueue(string queueName)
         {
+            DeclareQueue(queueName, new Dictionary<string, object>());
+        }
+        public void DeclareQueueWithDeadLetterPolicy(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey)
+        {
+            if (string.IsNullOrWhiteSpace(deadLetterExchange)) throw new ArgumentNullException(nameof(deadLetterExchange));
+            if (messageTimeToLive <= 0) throw new ArgumentOutOfRangeException(nameof(messageTimeToLive));
+
+            var queueArgs = new Dictionary<string, object> {
+                { Constants.QueueDeadLetterExchange, deadLetterExchange },
+                { Constants.QueueMessageTTL, messageTimeToLive }
+            };
+            if (!string.IsNullOrEmpty(deadLetterRoutingKey))
+            {
+                queueArgs.Add(Constants.QueueDeadLetterRoutingKey, deadLetterRoutingKey);
+            }
+            DeclareQueue(queueName, queueArgs);
+        }
+        public void DeclareQueue(string queueName, Dictionary<string, object> queueArgs)
+        {
             if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
+            if (queueArgs == null) throw new ArgumentNullException(nameof(queueArgs));
 
             using (var channel = CurrentConnection.CreateModel())
             {
-                var queueArgs = new Dictionary<string, object>();
                 channel.QueueDeclare(queueName.ToLowerInvariant(), this.Durable, false, this.AutoDeleteQueue, queueArgs);
             }
         }
 
         public void DeclareBinding(string exchangeName, string queueName, string routingKey)
+        {
+            DeclareBinding(exchangeName, queueName, routingKey, null);
+        }
+        public void DeclareBinding(string exchangeName, string queueName, string routingKey, Dictionary<string, object> headerBindings)
         {
             if (string.IsNullOrWhiteSpace(exchangeName)) throw new ArgumentNullException(nameof(exchangeName));
             if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
@@ -65,7 +101,7 @@ namespace MerQure.RbMQ
 
             using (var channel = CurrentConnection.CreateModel())
             {
-                channel.QueueBind(queueName.ToLowerInvariant(), exchangeName.ToLowerInvariant(), routingKey.ToLowerInvariant());
+                channel.QueueBind(queueName.ToLowerInvariant(), exchangeName.ToLowerInvariant(), routingKey.ToLowerInvariant(), headerBindings);
             }
         }
 

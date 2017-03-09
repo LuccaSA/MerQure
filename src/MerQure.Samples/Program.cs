@@ -12,9 +12,14 @@ namespace MerQure.Samples
         {
             Console.WriteLine("Running sample 1: simple");
             SimpleExample.Run();
+
             System.Threading.Thread.Sleep(500);
             Console.WriteLine("Running sample 2: stop");
             StopExample.Run();
+
+            System.Threading.Thread.Sleep(500);
+            Console.WriteLine("Running sample 3: deadletter");
+            DeadLetterExample.Run();
         }
     }
 }
