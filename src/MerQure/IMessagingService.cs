@@ -82,5 +82,13 @@ namespace MerQure
         /// </summary>
         /// <param name="queueName"></param>
         IConsumer GetConsumer(string queueName);
+
+        /// <summary>
+        /// Get the consumer, used to receive messages of a queue
+        /// </summary>
+        /// <param name="queueName"></param>
+        /// <param name="prefetchCount">maximum number of messages that the server will deliver, 0 if unlimited</param>
+        /// <returns></returns>
+        IConsumer GetConsumer(string queueName, ushort prefetchCount);
     }
 }

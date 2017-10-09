@@ -12,18 +12,21 @@ namespace MerQure.RbMQ.Clients
     class Consumer : RabbitMqClient, IConsumer
     {
         public string QueueName { get; }
+        
         private EventingBasicConsumer _consumer;
+        private readonly ushort _prefetchCount;
         private static readonly object _consumingLock = new object();
 
-        public Consumer(IModel channel, string queueName)
+        public Consumer(IModel channel, string queueName, ushort prefetchCount)
             : base(channel)
         {
             this.QueueName = queueName.ToLowerInvariant();
+            _prefetchCount = prefetchCount; 
         }
 
         public void Consume(EventHandler<IMessagingEvent> onMessageReceived)
         {
-            this.Channel.BasicQos(0, 1, false);
+            this.Channel.BasicQos(0, _prefetchCount, false);
 
             _consumer = new EventingBasicConsumer(Channel);
             _consumer.Received += ((object sender, BasicDeliverEventArgs args) =>

@@ -40,6 +40,7 @@ namespace MerQure.RbMQ
         {
             DeclareExchange(exchangeName, this.ExchangeType);
         }
+
         public void DeclareExchange(string exchangeName, string exchangeType)
         {
             if (string.IsNullOrWhiteSpace(exchangeName)) throw new ArgumentNullException(nameof(exchangeName));
@@ -49,7 +50,6 @@ namespace MerQure.RbMQ
                 channel.ExchangeDeclare(exchangeName.ToLowerInvariant(), exchangeType, this.Durable);
             }
         }
-
 
         public void DeclareQueue(string queueName, byte maxPriority)
         {
@@ -127,10 +127,16 @@ namespace MerQure.RbMQ
 
         public IConsumer GetConsumer(string queueName)
         {
+           return GetConsumer(queueName, 1);
+        }
+
+        public IConsumer GetConsumer(string queueName, ushort prefetchCount)
+        {
             if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
 
             var channel = CurrentConnection.CreateModel();
-            return new Consumer(channel, queueName);
+            return new Consumer(channel, queueName, prefetchCount);
         }
+
     }
 }
