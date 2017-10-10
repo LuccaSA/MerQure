@@ -63,6 +63,7 @@ namespace MerQure.RbMQ
         {
             DeclareQueue(queueName, new Dictionary<string, object>());
         }
+
         public void DeclareQueueWithDeadLetterPolicy(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey)
         {
             if (string.IsNullOrWhiteSpace(deadLetterExchange)) throw new ArgumentNullException(nameof(deadLetterExchange));
@@ -119,10 +120,15 @@ namespace MerQure.RbMQ
 
         public IPublisher GetPublisher(string exchangeName)
         {
+            return GetPublisher(exchangeName, false);
+        }
+
+        public IPublisher GetPublisher(string exchangeName, bool enablePublisherAcknowledgements)
+        {
             if (string.IsNullOrWhiteSpace(exchangeName)) throw new ArgumentNullException(nameof(exchangeName));
 
             var channel = CurrentConnection.CreateModel();
-            return new Publisher(channel, exchangeName);
+            return new Publisher(channel, exchangeName, enablePublisherAcknowledgements);
         }
 
         public IConsumer GetConsumer(string queueName)
@@ -137,6 +143,5 @@ namespace MerQure.RbMQ
             var channel = CurrentConnection.CreateModel();
             return new Consumer(channel, queueName, prefetchCount);
         }
-
     }
 }

@@ -10,9 +10,17 @@ namespace MerQure.RbMQ.Clients
         /// </summary>
         public IModel Channel { get; set; }
 
-        protected RabbitMqClient(IModel channel)
+        protected RabbitMqClient(IModel channel): this(channel, false)
         {
-            this.Channel = channel;
+        }
+
+        protected RabbitMqClient(IModel channel, bool enablePublisherAcknowledgements)
+        {
+            Channel = channel;
+            if(enablePublisherAcknowledgements)
+            {
+                channel.ConfirmSelect();
+            }
         }
 
         public void Dispose()

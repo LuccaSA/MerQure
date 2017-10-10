@@ -17,16 +17,9 @@ namespace MerQure.RbMQ.Clients
         public string ExchangeType { get; private set; }
         public bool Durable { get; private set; }
 
-        /// <summary>
-        /// Create a RabbitMQ Publisher
-        /// </summary>
-        /// <param name="channel"></param>
-        /// <param name="exchangeName"></param>
-        /// <param name="exchangeType"></param>
-        public Publisher(IModel channel, string exchangeName)
-            : base(channel)
+        public Publisher(IModel channel, string exchangeName, bool enablePublisherAcknowledgements) : base(channel, enablePublisherAcknowledgements)
         {
-            if(String.IsNullOrWhiteSpace(exchangeName))
+            if (String.IsNullOrWhiteSpace(exchangeName))
             {
                 throw new ArgumentException("exchangeName cannot be null or empty", nameof(exchangeName));
             }
@@ -35,6 +28,20 @@ namespace MerQure.RbMQ.Clients
         }
 
         public void Publish(IMessage message)
+        {
+            IBasicProperties basicProperties = CreateBasicProperties(message);
+            this.Channel.BasicPublish(ExchangeName, message.GetRoutingKey(), basicProperties, EncodeMessage(message));
+        }
+
+        public bool Publish(IMessage message, TimeSpan timeout)
+        {
+            IBasicProperties basicProperties = CreateBasicProperties(message);
+
+            this.Channel.BasicPublish(ExchangeName, message.GetRoutingKey(), basicProperties, EncodeMessage(message));
+            return this.Channel.WaitForConfirms(timeout);
+        }
+
+        private IBasicProperties CreateBasicProperties(IMessage message)
         {
             IBasicProperties basicProperties = this.Channel.CreateBasicProperties();
             basicProperties.DeliveryMode = (byte)DeliveryMode.Persistent;
@@ -45,9 +52,12 @@ namespace MerQure.RbMQ.Clients
                 basicProperties.Priority = message.GetPriority().Value;
             }
 
-            byte[] messageBytes = Encoding.UTF8.GetBytes(message.GetBody());
+            return basicProperties;
+        }
 
-            this.Channel.BasicPublish(ExchangeName, message.GetRoutingKey(), basicProperties, messageBytes);
+        private static byte[] EncodeMessage(IMessage message)
+        {
+            return Encoding.UTF8.GetBytes(message.GetBody());
         }
     }
 }
