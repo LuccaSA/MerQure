@@ -2,7 +2,7 @@
   durable="true"
   autoDeleteQueue="false"
   defaultPrefetchCount="1"
-  publisherAcknowledgementsTimeoutInMS="100000">
+  publisherAcknowledgementsTimeoutInMilliseconds="10000">
   
   <connection
     connectionString="amqp://guest:guest@localhost:5672/"

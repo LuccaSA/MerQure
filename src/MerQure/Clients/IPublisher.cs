@@ -20,11 +20,11 @@ namespace MerQure
 
         /// <summary>
         /// Publishes a message with broker confirmation.
-        /// Waits until all messages published since the last call have been confirmed. Default timeout is 60000MS. 
-        /// Set the publisherAcknowledgementsTimeoutInMS attribute in RabbitMQ.config to change it.
+        /// Waits until all messages published since the last call have been confirmed. Default timeout is 10000 milliseconds. 
+        /// Set the publisherAcknowledgementsTimeoutInMilliseconds attribute in RabbitMQ.config to change it.
         /// </summary>
         /// <param name="message">message</param>
-        /// <see>http://www.rabbitmq.com/blog/2011/02/10/introducing-publisher-confirms/</see>
+        /// <see cref="http://www.rabbitmq.com/blog/2011/02/10/introducing-publisher-confirms/"/>
         bool PublishWithAcknowledgement(IMessage message);
     }
 }
