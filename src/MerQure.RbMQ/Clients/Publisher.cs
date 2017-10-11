@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using MerQure.RbMQ.Helpers;
 
 namespace MerQure.RbMQ.Clients
 {
@@ -16,25 +17,32 @@ namespace MerQure.RbMQ.Clients
         public string ExchangeName { get; private set; }
         public string ExchangeType { get; private set; }
         public bool Durable { get; private set; }
+        public long TimeoutInMilliseconds { get; set; }
 
-        /// <summary>
-        /// Create a RabbitMQ Publisher
-        /// </summary>
-        /// <param name="channel"></param>
-        /// <param name="exchangeName"></param>
-        /// <param name="exchangeType"></param>
-        public Publisher(IModel channel, string exchangeName)
-            : base(channel)
+        public Publisher(IModel channel, string exchangeName, long acknowledgementsTimeoutInMilliseconds) : base(channel)
         {
-            if(String.IsNullOrWhiteSpace(exchangeName))
+            if (String.IsNullOrWhiteSpace(exchangeName))
             {
                 throw new ArgumentException("exchangeName cannot be null or empty", nameof(exchangeName));
             }
-
+            this.TimeoutInMilliseconds = acknowledgementsTimeoutInMilliseconds;
             this.ExchangeName = exchangeName.ToLowerInvariant();
         }
 
+
+        public bool PublishWithAcknowledgement(IMessage message)
+        {
+            Publish(message);
+            return this.Channel.WaitForConfirms(new TimeSpan(TimeoutInMilliseconds * TimeSpan.TicksPerMillisecond));
+        }
+
         public void Publish(IMessage message)
+        {
+            IBasicProperties basicProperties = CreateBasicProperties(message);
+            this.Channel.BasicPublish(ExchangeName, message.GetRoutingKey(), basicProperties, message.GetBody().ToByte());
+        }
+
+        private IBasicProperties CreateBasicProperties(IMessage message)
         {
             IBasicProperties basicProperties = this.Channel.CreateBasicProperties();
             basicProperties.DeliveryMode = (byte)DeliveryMode.Persistent;
@@ -45,9 +53,9 @@ namespace MerQure.RbMQ.Clients
                 basicProperties.Priority = message.GetPriority().Value;
             }
 
-            byte[] messageBytes = Encoding.UTF8.GetBytes(message.GetBody());
-
-            this.Channel.BasicPublish(ExchangeName, message.GetRoutingKey(), basicProperties, messageBytes);
+            return basicProperties;
         }
+
+
     }
 }

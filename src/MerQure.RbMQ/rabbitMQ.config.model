@@ -1,10 +1,12 @@
-﻿<rabbitMQ 
-  durable="true" 
-  autoDeleteQueue="false">
+﻿<rabbitMQ
+  durable="true"
+  autoDeleteQueue="false"
+  defaultPrefetchCount="1"
+  publisherAcknowledgementsTimeoutInMilliseconds="10000">
   
-  <connection 
-    connectionString="amqp://guest:guest@localhost:5672/" 
-    automaticRecoveryEnabled="true" 
+  <connection
+    connectionString="amqp://guest:guest@localhost:5672/"
+    automaticRecoveryEnabled="true"
     topologyRecoveryEnabled="true" />
-  
+
 </rabbitMQ>

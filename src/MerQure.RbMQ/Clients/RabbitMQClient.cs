@@ -12,7 +12,7 @@ namespace MerQure.RbMQ.Clients
 
         protected RabbitMqClient(IModel channel)
         {
-            this.Channel = channel;
+            Channel = channel;
         }
 
         public void Dispose()

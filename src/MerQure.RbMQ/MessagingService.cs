@@ -26,6 +26,8 @@ namespace MerQure.RbMQ
         public bool Durable { get; private set; }
         public bool AutoDeleteQueue { get; private set; }
         public string ExchangeType { get; private set; }
+        public ushort DefaultPrefetchCount { get; set; }
+        public long PublisherAcknowledgementsTimeoutInMilliseconds { get; set; }
 
         public MessagingService()
         {
@@ -33,6 +35,8 @@ namespace MerQure.RbMQ
 
             this.Durable = rabbitMqConfig.Durable;
             this.AutoDeleteQueue = rabbitMqConfig.AutoDeleteQueue;
+            this.DefaultPrefetchCount = rabbitMqConfig.DefaultPrefetchCount;
+            this.PublisherAcknowledgementsTimeoutInMilliseconds = rabbitMqConfig.PublisherAcknowledgementsTimeoutInMilliseconds;
             this.ExchangeType = RabbitMQ.Client.ExchangeType.Topic;
         }
         
@@ -40,6 +44,7 @@ namespace MerQure.RbMQ
         {
             DeclareExchange(exchangeName, this.ExchangeType);
         }
+
         public void DeclareExchange(string exchangeName, string exchangeType)
         {
             if (string.IsNullOrWhiteSpace(exchangeName)) throw new ArgumentNullException(nameof(exchangeName));
@@ -49,7 +54,6 @@ namespace MerQure.RbMQ
                 channel.ExchangeDeclare(exchangeName.ToLowerInvariant(), exchangeType, this.Durable);
             }
         }
-
 
         public void DeclareQueue(string queueName, byte maxPriority)
         {
@@ -63,6 +67,7 @@ namespace MerQure.RbMQ
         {
             DeclareQueue(queueName, new Dictionary<string, object>());
         }
+
         public void DeclareQueueWithDeadLetterPolicy(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey)
         {
             if (string.IsNullOrWhiteSpace(deadLetterExchange)) throw new ArgumentNullException(nameof(deadLetterExchange));
@@ -78,6 +83,7 @@ namespace MerQure.RbMQ
             }
             DeclareQueue(queueName, queueArgs);
         }
+
         public void DeclareQueue(string queueName, Dictionary<string, object> queueArgs)
         {
             if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
@@ -119,18 +125,30 @@ namespace MerQure.RbMQ
 
         public IPublisher GetPublisher(string exchangeName)
         {
+            return GetPublisher(exchangeName, false);
+        }
+
+        public IPublisher GetPublisher(string exchangeName, bool enablePublisherAcknowledgements)
+        {
             if (string.IsNullOrWhiteSpace(exchangeName)) throw new ArgumentNullException(nameof(exchangeName));
 
             var channel = CurrentConnection.CreateModel();
-            return new Publisher(channel, exchangeName);
+            channel.ConfirmSelect();
+
+            return new Publisher(channel, exchangeName, PublisherAcknowledgementsTimeoutInMilliseconds);
         }
 
         public IConsumer GetConsumer(string queueName)
         {
+           return GetConsumer(queueName, DefaultPrefetchCount);
+        }
+
+        public IConsumer GetConsumer(string queueName, ushort prefetchCount)
+        {
             if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
 
             var channel = CurrentConnection.CreateModel();
-            return new Consumer(channel, queueName);
+            return new Consumer(channel, queueName, prefetchCount);
         }
     }
 }

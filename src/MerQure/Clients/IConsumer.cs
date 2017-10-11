@@ -35,8 +35,20 @@ namespace MerQure
         void AcknowlegdeDeliveredMessage(IMessagingEvent args);
 
         /// <summary>
+        /// Acknowledge a delivered message.
+        /// </summary>
+        /// <param name="deliveryTag">delivery tag</param>
+        void AcknowlegdeDeliveredMessage(string deliveryTag);
+
+        /// <summary>
         /// Reject a delivered message.
         /// </summary>
         void RejectDeliveredMessage(IMessagingEvent args);
+
+        /// <summary>
+        /// Reject a delivered message.
+        /// </summary>
+        /// <param name="deliveryTag">delivery tag</param>
+        void RejectDeliveredMessage(string deliveryTag);
     }
 }
