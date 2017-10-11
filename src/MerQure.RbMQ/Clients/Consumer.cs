@@ -98,7 +98,7 @@ namespace MerQure.RbMQ.Clients
 
         public void AcknowlegdeDeliveredMessage(IMessagingEvent args)
         {
-            this.Channel.BasicAck(ulong.Parse(args.DeliveryTag), false);
+            AcknowlegdeDeliveredMessage(args.DeliveryTag);
         }
 
         public void AcknowlegdeDeliveredMessage(string deliveryTag)
@@ -108,7 +108,7 @@ namespace MerQure.RbMQ.Clients
 
         public void RejectDeliveredMessage(IMessagingEvent args)
         {
-            this.Channel.BasicNack(ulong.Parse(args.DeliveryTag), false, true);
+            RejectDeliveredMessage(args.DeliveryTag);
         }
 
         public void RejectDeliveredMessage(string deliveryTag)

@@ -26,6 +26,8 @@ namespace MerQure.RbMQ
         public bool Durable { get; private set; }
         public bool AutoDeleteQueue { get; private set; }
         public string ExchangeType { get; private set; }
+        public ushort DefaultPrefetchCount { get; set; }
+        public long PublisherAcknowledgementsTimeoutInMS { get; set; }
 
         public MessagingService()
         {
@@ -33,6 +35,8 @@ namespace MerQure.RbMQ
 
             this.Durable = rabbitMqConfig.Durable;
             this.AutoDeleteQueue = rabbitMqConfig.AutoDeleteQueue;
+            this.DefaultPrefetchCount = rabbitMqConfig.DefaultPrefetchCount;
+            this.PublisherAcknowledgementsTimeoutInMS = rabbitMqConfig.PublisherAcknowledgementsTimeout;
             this.ExchangeType = RabbitMQ.Client.ExchangeType.Topic;
         }
         
@@ -79,6 +83,7 @@ namespace MerQure.RbMQ
             }
             DeclareQueue(queueName, queueArgs);
         }
+
         public void DeclareQueue(string queueName, Dictionary<string, object> queueArgs)
         {
             if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
@@ -128,12 +133,12 @@ namespace MerQure.RbMQ
             if (string.IsNullOrWhiteSpace(exchangeName)) throw new ArgumentNullException(nameof(exchangeName));
 
             var channel = CurrentConnection.CreateModel();
-            return new Publisher(channel, exchangeName, enablePublisherAcknowledgements);
+            return new Publisher(channel, exchangeName, PublisherAcknowledgementsTimeoutInMS);
         }
 
         public IConsumer GetConsumer(string queueName)
         {
-           return GetConsumer(queueName, 1);
+           return GetConsumer(queueName, DefaultPrefetchCount);
         }
 
         public IConsumer GetConsumer(string queueName, ushort prefetchCount)

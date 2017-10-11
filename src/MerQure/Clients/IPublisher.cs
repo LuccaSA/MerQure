@@ -19,13 +19,12 @@ namespace MerQure
         void Publish(IMessage message);
 
         /// <summary>
-        /// Publishes a message with borker confirmation.
-        /// Waits until all messages published since the last call have
-        /// throws an exception when called on a non-Confirm channel
+        /// Publishes a message with broker confirmation.
+        /// Waits until all messages published since the last call have been confirmed. Default timeout is 60000MS. 
+        /// Set the publisherAcknowledgementsTimeoutInMS attribute in RabbitMQ.config to change it.
         /// </summary>
         /// <param name="message">message</param>
-        /// <param name="timeout">how long to wait (at most) before returning</param>
-        /// <returns>True if no nacks were received within the timeout, otherwise false</returns>
-        bool Publish(IMessage message, TimeSpan timeout);
+        /// <see>http://www.rabbitmq.com/blog/2011/02/10/introducing-publisher-confirms/</see>
+        bool PublishWithAcknowledgement(IMessage message);
     }
 }

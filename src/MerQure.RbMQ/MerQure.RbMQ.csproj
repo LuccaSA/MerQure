@@ -57,6 +57,7 @@
     <Compile Include="Content\Header.cs" />
     <Compile Include="Content\Message.cs" />
     <Compile Include="Events\MessagingEvent.cs" />
+    <Compile Include="Helpers\EncodingHelper.cs" />
     <Compile Include="MessagingService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

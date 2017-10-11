@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using MerQure.RbMQ.Helpers;
 
 namespace MerQure.RbMQ.Clients
 {
@@ -16,29 +17,29 @@ namespace MerQure.RbMQ.Clients
         public string ExchangeName { get; private set; }
         public string ExchangeType { get; private set; }
         public bool Durable { get; private set; }
+        public long TimeoutInMs { get; set; }
 
-        public Publisher(IModel channel, string exchangeName, bool enablePublisherAcknowledgements) : base(channel, enablePublisherAcknowledgements)
+        public Publisher(IModel channel, string exchangeName, long acknowledgementsTimeoutInMS) : base(channel)
         {
             if (String.IsNullOrWhiteSpace(exchangeName))
             {
                 throw new ArgumentException("exchangeName cannot be null or empty", nameof(exchangeName));
             }
-
+            this.TimeoutInMs = acknowledgementsTimeoutInMS;
             this.ExchangeName = exchangeName.ToLowerInvariant();
+        }
+
+
+        public bool PublishWithAcknowledgement(IMessage message)
+        {
+            Publish(message);
+            return this.Channel.WaitForConfirms(new TimeSpan(TimeoutInMs * TimeSpan.TicksPerMillisecond));
         }
 
         public void Publish(IMessage message)
         {
             IBasicProperties basicProperties = CreateBasicProperties(message);
-            this.Channel.BasicPublish(ExchangeName, message.GetRoutingKey(), basicProperties, EncodeMessage(message));
-        }
-
-        public bool Publish(IMessage message, TimeSpan timeout)
-        {
-            IBasicProperties basicProperties = CreateBasicProperties(message);
-
-            this.Channel.BasicPublish(ExchangeName, message.GetRoutingKey(), basicProperties, EncodeMessage(message));
-            return this.Channel.WaitForConfirms(timeout);
+            this.Channel.BasicPublish(ExchangeName, message.GetRoutingKey(), basicProperties, message.GetBody().ToByte());
         }
 
         private IBasicProperties CreateBasicProperties(IMessage message)
@@ -55,9 +56,6 @@ namespace MerQure.RbMQ.Clients
             return basicProperties;
         }
 
-        private static byte[] EncodeMessage(IMessage message)
-        {
-            return Encoding.UTF8.GetBytes(message.GetBody());
-        }
+
     }
 }

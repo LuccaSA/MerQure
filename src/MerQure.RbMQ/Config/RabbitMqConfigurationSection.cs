@@ -11,7 +11,12 @@ namespace MerQure.RbMQ.Config
     {
         private const string DurablePropertyName = "durable";
         private const string AutoDeleteQueuePropertyName = "autoDeleteQueue";
-        
+        private const string DefaultPrefetchCountPropertyName = "defaultPrefetchCount";
+        private const string PublisherAcknowledgementsTimeoutPropertyName = "publisherAcknowledgementsTimeoutInMS";
+
+        private const long PublisherAcknowledgementsTimeoutDefaultValue = 60000;
+        private const ushort DefaultPrefetchCountDefaultValue = 1;
+
         [ConfigurationProperty(DurablePropertyName, DefaultValue = true, IsRequired = false)]
         public Boolean Durable
         {
@@ -35,6 +40,32 @@ namespace MerQure.RbMQ.Config
             set
             {
                 this[AutoDeleteQueuePropertyName] = value;
+            }
+        }
+
+        [ConfigurationProperty(DefaultPrefetchCountPropertyName, DefaultValue = DefaultPrefetchCountDefaultValue, IsRequired = false)]
+        public ushort DefaultPrefetchCount
+        {
+            get
+            {
+                return (ushort)this[DefaultPrefetchCountPropertyName];
+            }
+            set
+            {
+                this[DefaultPrefetchCountPropertyName] = value;
+            }
+        }
+
+        [ConfigurationProperty(PublisherAcknowledgementsTimeoutPropertyName, DefaultValue = PublisherAcknowledgementsTimeoutDefaultValue, IsRequired = false)]
+        public long PublisherAcknowledgementsTimeout
+        {
+            get
+            {
+                return (long)this[PublisherAcknowledgementsTimeoutPropertyName];
+            }
+            set
+            {
+                this[PublisherAcknowledgementsTimeoutPropertyName] = value;
             }
         }
 
