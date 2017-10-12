@@ -1,3 +1,9 @@
+## 0.4.0 - 2017-10-12
+### Added
+- Prefetch count support
+- Publisher acknowledgement support
+- Ack and Nack support with delivery tag
+
 ## 0.3.0 - 2017-03-08
 ### Changed
 - HeaderProperties' values as object
