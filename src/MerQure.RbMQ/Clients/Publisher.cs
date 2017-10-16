@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Text;
 using MerQure.RbMQ.Helpers;
+using MerQure.RbMQ.Content;
 
 namespace MerQure.RbMQ.Clients
 {
@@ -29,6 +30,10 @@ namespace MerQure.RbMQ.Clients
             this.ExchangeName = exchangeName.ToLowerInvariant();
         }
 
+        public bool PublishWithAcknowledgement(string queueName, string message)
+        {
+            return PublishWithAcknowledgement(new Message(queueName, message));
+        }
 
         public bool PublishWithAcknowledgement(IMessage message)
         {

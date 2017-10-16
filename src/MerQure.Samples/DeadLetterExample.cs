@@ -45,7 +45,7 @@ namespace MerQure.Samples
             }
 
             // Get the consumer on the existing queue and consume its messages
-            var consumer = messagingService.GetConsumer("deadletter.queue");
+            var consumer = messagingService.GetOrCreateConsumer("deadletter.queue");
             consumer.Consume((object sender, IMessagingEvent args) =>
             {
                 var realDelay = DateTime.Now.Subtract(dateStart).TotalSeconds;

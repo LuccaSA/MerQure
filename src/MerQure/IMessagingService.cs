@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using MerQure.Configuration;
+using MerQure.Content;
+using System.Collections.Generic;
 
 namespace MerQure
 {
@@ -85,17 +87,30 @@ namespace MerQure
         IPublisher GetPublisher(string exchangeName, bool enablePublisherAcknowledgements);
 
         /// <summary>
-        /// Get the consumer, used to receive messages of a queue
+        /// Get the consumer or create if it is not existing, used to receive messages of a queue
         /// </summary>
         /// <param name="queueName"></param>
-        IConsumer GetConsumer(string queueName);
+        IConsumer GetOrCreateConsumer(string queueName);
 
         /// <summary>
-        /// Get the consumer, used to receive messages of a queue
+        /// Get the consumer or create if it is not existing, used to receive messages of a queue
         /// </summary>
         /// <param name="queueName"></param>
         /// <param name="prefetchCount">maximum number of messages that the server will deliver, 0 if unlimited</param>
         /// <returns></returns>
-        IConsumer GetConsumer(string queueName, ushort prefetchCount);
+        IConsumer GetOrCreateConsumer(string queueName, ushort prefetchCount);
+
+        /// <summary>
+        /// Create a new consumer, used to receive messages of a queue
+        /// </summary>
+        /// <param name="queueName"></param>
+        IConsumer CreateConsumer(string queueName);
+
+        /// <summary>
+        /// Create a new consumer, used to receive messages of a queue
+        /// </summary>
+        /// <param name="queueName"></param>
+        /// <param name="prefetchCount">maximum number of messages that the server will deliver, 0 if unlimited</param>
+        IConsumer CreateConsumer(string queueName, ushort prefetchCount);
     }
 }

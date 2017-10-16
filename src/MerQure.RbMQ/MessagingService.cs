@@ -2,6 +2,8 @@
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
+using MerQure.Configuration;
+using MerQure.Content;
 
 namespace MerQure.RbMQ
 {
@@ -20,6 +22,7 @@ namespace MerQure.RbMQ
 
             return connectionFactory.CreateConnection();
         }
+
         private static readonly Lazy<IConnection> currentConnection = new Lazy<IConnection>(GetRabbitMqConnection);
         public static IConnection CurrentConnection => currentConnection.Value;
 
@@ -28,6 +31,8 @@ namespace MerQure.RbMQ
         public string ExchangeType { get; private set; }
         public ushort DefaultPrefetchCount { get; set; }
         public long PublisherAcknowledgementsTimeoutInMilliseconds { get; set; }
+
+        private readonly Dictionary<string, IConsumer> _consumers;
 
         public MessagingService()
         {
@@ -38,8 +43,11 @@ namespace MerQure.RbMQ
             this.DefaultPrefetchCount = rabbitMqConfig.DefaultPrefetchCount;
             this.PublisherAcknowledgementsTimeoutInMilliseconds = rabbitMqConfig.PublisherAcknowledgementsTimeoutInMilliseconds;
             this.ExchangeType = RabbitMQ.Client.ExchangeType.Topic;
+            _consumers = new Dictionary<string, IConsumer>();
         }
-        
+
+
+
         public void DeclareExchange(string exchangeName)
         {
             DeclareExchange(exchangeName, this.ExchangeType);
@@ -138,17 +146,43 @@ namespace MerQure.RbMQ
             return new Publisher(channel, exchangeName, PublisherAcknowledgementsTimeoutInMilliseconds);
         }
 
-        public IConsumer GetConsumer(string queueName)
+        public IConsumer GetOrCreateConsumer(string queueName)
         {
-           return GetConsumer(queueName, DefaultPrefetchCount);
+           return GetOrCreateConsumer(queueName, DefaultPrefetchCount);
         }
 
-        public IConsumer GetConsumer(string queueName, ushort prefetchCount)
+        public IConsumer GetOrCreateConsumer(string queueName, ushort prefetchCount)
+        {
+            IConsumer consumer;
+            lock (_consumers)
+            {
+                string key = $"{queueName}.{prefetchCount}";
+                if (_consumers.ContainsKey(key))
+                {
+                    consumer = _consumers[key];
+                }
+                else
+                {
+                    consumer = CreateConsumer(queueName, prefetchCount);
+                    _consumers.Add(key, consumer);
+                }
+            }
+            return consumer;
+        }
+
+        public IConsumer CreateConsumer(string queueName)
+        {
+            return CreateConsumer(queueName, DefaultPrefetchCount);
+        }
+
+        public IConsumer CreateConsumer(string queueName, ushort prefetchCount)
         {
             if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
 
             var channel = CurrentConnection.CreateModel();
             return new Consumer(channel, queueName, prefetchCount);
         }
+
+
     }
 }

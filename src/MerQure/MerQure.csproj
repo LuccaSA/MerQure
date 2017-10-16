@@ -35,6 +35,9 @@
     <CodeAnalysisRuleSet>MerQure.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,13 +49,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clients\IConsumer.cs" />
+    <Compile Include="Configuration\RetryExchangeConfiguration.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Content\IAmqpIdentity.cs" />
     <Compile Include="Content\IHeader.cs" />
     <Compile Include="Content\IMessage.cs" />
     <Compile Include="Events\IMessagingEvent.cs" />
+    <Compile Include="Exceptions\MerQureException.cs" />
+    <Compile Include="IRetryExchange.cs" />
     <Compile Include="IMessagingService.cs" />
     <Compile Include="Clients\IPublisher.cs" />
+    <Compile Include="IRetryExchangeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RetryExchangeService.cs" />
+    <Compile Include="RetryExchange\EncapsuledMessage.cs" />
+    <Compile Include="RetryExchange\MessageTechnicalInformations.cs" />
+    <Compile Include="RetryExchange\RetryConsumer.cs" />
+    <Compile Include="RetryExchange\RetryExchange.cs" />
+    <Compile Include="RetryExchange\RetryPublisher.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CHANGELOG.md" />
@@ -64,6 +78,7 @@
     <Analyzer Include="..\packages\SonarAnalyzer.CSharp.1.23.0.1857\analyzers\SonarAnalyzer.CSharp.dll" />
     <Analyzer Include="..\packages\SonarAnalyzer.CSharp.1.23.0.1857\analyzers\SonarAnalyzer.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
