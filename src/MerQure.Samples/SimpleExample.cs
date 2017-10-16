@@ -28,7 +28,7 @@ namespace MerQure.Samples
 
 
             // Get the consumer on the existing queue and consume its messages
-            var consumer = messagingService.GetConsumer("simple.queue");
+            var consumer = messagingService.GetOrCreateConsumer("simple.queue");
             var random = new Random();
             consumer.Consume((object sender, IMessagingEvent args) =>
             {

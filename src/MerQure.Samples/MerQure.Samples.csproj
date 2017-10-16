@@ -50,6 +50,12 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="DeadLetterExample.cs" />
+    <Compile Include="RetryExchange\Domain\ISomethingService.cs" />
+    <Compile Include="RetryExchange\Domain\SampleService.cs" />
+    <Compile Include="RetryExchange\Domain\Something.cs" />
+    <Compile Include="RetryExchange\Domain\SomethingException.cs" />
+    <Compile Include="RetryExchange\Infra\SomethingQueuesName.cs" />
+    <Compile Include="RetryExchange\Infra\SomethingService.cs" />
     <Compile Include="SimpleExample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StopExample.cs" />

@@ -27,7 +27,7 @@ namespace MerQure.Samples
             }
 
             // Get the consumer on the existing queue and consume its messages
-            var consumer = messagingService.GetConsumer("stop.queue");
+            var consumer = messagingService.GetOrCreateConsumer("stop.queue");
             consumer.Consume((object sender, IMessagingEvent args) =>
             {
                 Console.WriteLine("Consumer Working: " + consumer.IsConsuming());
