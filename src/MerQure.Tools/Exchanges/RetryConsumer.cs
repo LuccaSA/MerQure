@@ -26,24 +26,24 @@ namespace MerQure.Tools.Exchanges
         {
             if (String.IsNullOrEmpty(delivredMessage.DeliveryTag))
                 throw new ArgumentNullException(nameof(delivredMessage.DeliveryTag));
-            if (!_technicalInformations.ContainsKey(delivredMessage.DeliveryTag))
+            if (!TechnicalInformations.ContainsKey(delivredMessage.DeliveryTag))
                 throw new MerqureToolsException($"unknown delivery tag {delivredMessage.DeliveryTag}");
 
-            MessageTechnicalInformations technicalInformations = _technicalInformations[delivredMessage.DeliveryTag];
+            MessageTechnicalInformations technicalInformations = TechnicalInformations[delivredMessage.DeliveryTag];
 
             _producer.PublishOnErrorExchange(channel, delivredMessage, technicalInformations);
              AcknowlegdeDelivredMessage(channel, delivredMessage);
-            _technicalInformations.Remove(delivredMessage.DeliveryTag);
+            TechnicalInformations.Remove(delivredMessage.DeliveryTag);
         }
 
         public void ApplyRetryStrategy(Channel channel, T delivredMessage)
         {
             if (String.IsNullOrEmpty(delivredMessage.DeliveryTag))
                 throw new ArgumentNullException(nameof(delivredMessage.DeliveryTag));
-            if (!_technicalInformations.ContainsKey(delivredMessage.DeliveryTag))
+            if (!TechnicalInformations.ContainsKey(delivredMessage.DeliveryTag))
                 throw new MerqureToolsException($"unknown delivery tag {delivredMessage.DeliveryTag}");
 
-            MessageTechnicalInformations technicalInformations = _technicalInformations[delivredMessage.DeliveryTag];
+            MessageTechnicalInformations technicalInformations = TechnicalInformations[delivredMessage.DeliveryTag];
 
             if (IsGoingToErrorExchange(technicalInformations))
             {
@@ -54,7 +54,7 @@ namespace MerQure.Tools.Exchanges
                 _producer.PublishOnRetryExchange(channel, delivredMessage, technicalInformations);
             }
             AcknowlegdeDelivredMessage(channel, delivredMessage);
-            _technicalInformations.Remove(delivredMessage.DeliveryTag);
+            TechnicalInformations.Remove(delivredMessage.DeliveryTag);
         }
 
 
