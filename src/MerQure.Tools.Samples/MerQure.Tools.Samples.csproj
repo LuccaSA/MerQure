@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A3CBDD3F-4AA1-474A-944B-14BFFFA02A59}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MerQure.Tools.Samples</RootNamespace>
+    <AssemblyName>MerQure.Tools.Samples</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="RetryExchangeExample\Domain\ActionService.cs" />
+    <Compile Include="RetryExchangeExample\Domain\ISomethingService.cs" />
+    <Compile Include="RetryExchangeExample\Domain\Something.cs" />
+    <Compile Include="RetryExchangeExample\Domain\SomethingException.cs" />
+    <Compile Include="RetryExchangeExample\Infra\SomethingChannels.cs" />
+    <Compile Include="RetryExchangeExample\Infra\SomethingService.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MerQure.RbMQ\MerQure.RbMQ.csproj">
+      <Project>{13d74416-5ad3-473e-8a99-19d3a713a1da}</Project>
+      <Name>MerQure.RbMQ</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MerQure.Tools\MerQure.Tools.csproj">
+      <Project>{0b3456a7-0079-455a-ae49-2d094127f521}</Project>
+      <Name>MerQure.Tools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MerQure\MerQure.csproj">
+      <Project>{e38f2572-d955-475b-a79a-de4e9a607a87}</Project>
+      <Name>MerQure</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
