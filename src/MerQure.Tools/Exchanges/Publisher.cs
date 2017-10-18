@@ -9,12 +9,12 @@ using MerQure.Tools.Configurations;
 
 namespace MerQure.Tools.Exchanges
 {
-    internal class Producer<T> where T : IAMQPIdentity
+    internal class Publisher<T> where T : IAMQPIdentity
     {
         private readonly RetryExchangeConfiguration _messageBrokerConfiguration;
         private readonly IMessagingService _messagingService;
 
-        public Producer(IMessagingService messagingService, RetryExchangeConfiguration retryConfiguration)
+        public Publisher(IMessagingService messagingService, RetryExchangeConfiguration retryConfiguration)
         {
             _messagingService = messagingService;
             _messageBrokerConfiguration = retryConfiguration;

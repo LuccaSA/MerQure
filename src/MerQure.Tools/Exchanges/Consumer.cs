@@ -12,20 +12,20 @@ namespace MerQure.Tools.Exchanges
     internal class Consumer<T> where T : IAMQPIdentity
     {
         private readonly ConsumerProvider _consumerProvider;
-        internal Dictionary<string, MessageTechnicalInformations> _technicalInformations;
+        internal Dictionary<string, MessageTechnicalInformations> TechnicalInformations { get; } = new Dictionary<string, MessageTechnicalInformations>();
 
         public Consumer(IMessagingService messagingService)
         {
             _consumerProvider = new ConsumerProvider(messagingService);
-            _technicalInformations = new Dictionary<string, MessageTechnicalInformations>();
         }
+
         public void Consume(Channel channel, EventHandler<T> callback)
         {
             _consumerProvider.Get(channel).Consume((object sender, IMessagingEvent messagingEvent) =>
             {
                 EncapsuledMessage<T> deserializedMessage = JsonConvert.DeserializeObject<EncapsuledMessage<T>>(messagingEvent.Message.GetBody());
                 deserializedMessage.OriginalMessage.DeliveryTag = messagingEvent.DeliveryTag;
-                _technicalInformations.Add(messagingEvent.DeliveryTag, deserializedMessage.TechnicalInformation);
+                TechnicalInformations.Add(messagingEvent.DeliveryTag, deserializedMessage.TechnicalInformation);
 
                 callback(this, deserializedMessage.OriginalMessage);
             });

@@ -10,7 +10,7 @@ namespace MerQure.Tools.Configurations
     public class RetryExchangeConfiguration
     {
         public string ExchangeName { get; set; }
-        public List<Channel> Channels { get; set; }
+        public List<Channel> Channels { get; set; } = new List<Channel>();
 
         /// <summary>
         /// Empty list = 0 retry 
@@ -19,9 +19,5 @@ namespace MerQure.Tools.Configurations
 
         public bool EndOnErrorExchange { get; set; }
 
-        public RetryExchangeConfiguration()
-        {
-            Channels = new List<Channel>();
-        }
     }
 }
