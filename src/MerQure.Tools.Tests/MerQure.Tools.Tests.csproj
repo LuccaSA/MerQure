@@ -61,12 +61,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StopExample.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\xunit.analyzers.0.7.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MerQure.RbMQ\MerQure.RbMQ.csproj">
+      <Project>{13d74416-5ad3-473e-8a99-19d3a713a1da}</Project>
+      <Name>MerQure.RbMQ</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MerQure\MerQure.csproj">
+      <Project>{E38F2572-D955-475B-A79A-DE4E9A607A87}</Project>
+      <Name>MerQure</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
