@@ -20,18 +20,24 @@ namespace MerQure.Tools.Exchanges
             _messageBrokerConfiguration = retryConfiguration;
         }
 
+        public void PublishWithTransaction(Channel channel, IEnumerable<T> messages)
+        {
+            var serializedMessages = new List<string>();
+            foreach (T message in messages)
+            {
+                serializedMessages.Add(JsonConvert.SerializeObject(EncapsulateMessage(message)));
+            }
+            using (var publisher = _messagingService.GetPublisher(_messageBrokerConfiguration.ExchangeName, false))
+            {
+                PublishWithTransaction(publisher, channel.Value, serializedMessages);
+            }
+        }
+
         public void Publish(Channel channel, T message)
         {
             using (var publisher = _messagingService.GetPublisher(_messageBrokerConfiguration.ExchangeName, true))
             {
-                var encapsuledMessage = new EncapsuledMessage<T>
-                {
-                    TechnicalInformation = new MessageTechnicalInformations
-                    {
-                        NumberOfRetry = 0
-                    },
-                    OriginalMessage = message
-                };
+                var encapsuledMessage = EncapsulateMessage(message);
                 TryPublishWithBrokerAcknowledgement(publisher, channel.Value, JsonConvert.SerializeObject(encapsuledMessage));
             }
         }
@@ -61,7 +67,7 @@ namespace MerQure.Tools.Exchanges
                 TryPublishWithBrokerAcknowledgement(publisher, bindingValue, JsonConvert.SerializeObject(encapsuledMessage));
             }
         }
-        
+
         internal void PublishOnErrorExchange(Channel channel, T message, MessageTechnicalInformations technicalInformations)
         {
             string errorChanel = $"{channel.Value}.error";
@@ -79,10 +85,34 @@ namespace MerQure.Tools.Exchanges
         internal void TryPublishWithBrokerAcknowledgement(IPublisher publisher, string channelName, string message)
         {
             bool published = publisher.PublishWithAcknowledgement(channelName, message);
-            if(published == false)
+            if (published == false)
             {
                 throw new MerqureToolsException($"unable to send message to the broker. {Environment.NewLine}Channel : {channelName}{Environment.NewLine}Message : {message}");
             }
+        }
+
+        internal void PublishWithTransaction(IPublisher publisher, string channelName, IEnumerable<string> messages)
+        {
+            try
+            {
+                publisher.PublishWithTransaction(channelName, messages);
+            }
+            catch (Exception e)
+            {
+                throw new MerqureToolsException($"unable to send messages to the broker. {Environment.NewLine}Channel : {channelName}{Environment.NewLine}Messages : {string.Join(" | ", messages.ToArray())}", e);
+            }
+        }
+
+        private EncapsuledMessage<T> EncapsulateMessage(T message)
+        {
+            return new EncapsuledMessage<T>
+            {
+                TechnicalInformation = new MessageTechnicalInformations
+                {
+                    NumberOfRetry = 0
+                },
+                OriginalMessage = message
+            };
         }
     }
 }

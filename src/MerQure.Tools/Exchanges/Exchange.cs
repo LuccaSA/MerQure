@@ -27,9 +27,14 @@ namespace MerQure.Tools.Exchanges
             Consumer.Consume(channel, callback);
         }
 
-        public void Publish(Channel channel, T message)
+        public void Publish(Channel binding, T message)
         {
-            Producer.Publish(channel, message);
+            Producer.Publish(binding, message);
+        }
+
+        public void PublishWithTransaction(Channel binding, IEnumerable<T> messages)
+        {
+            Producer.PublishWithTransaction(binding, messages);
         }
 
         public void RejectDeliveredMessage(Channel channel, T delivredMessage)
@@ -46,5 +51,7 @@ namespace MerQure.Tools.Exchanges
         {
             Consumer.SendToErrorExchange(channel, delivredMessage);
         }
+
+
     }
 }
