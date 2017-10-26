@@ -4,6 +4,7 @@
 - Publisher acknowledgement support
 - Ack and Nack support with delivery tag
 - Publishing without IMessage support
+- Publishing many messages with transaction support
 
 ## 0.3.0 - 2017-03-08
 ### Changed
