@@ -1,8 +1,10 @@
-## 0.4.0 - 2017-10-12
+## 0.4.0 - 2017-10-23
 ### Added
 - Prefetch count support
 - Publisher acknowledgement support
 - Ack and Nack support with delivery tag
+- Publishing without IMessage support
+- Publishing many messages with transaction support
 
 ## 0.3.0 - 2017-03-08
 ### Changed

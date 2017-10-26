@@ -39,7 +39,7 @@ namespace MerQure.RbMQ
             this.PublisherAcknowledgementsTimeoutInMilliseconds = rabbitMqConfig.PublisherAcknowledgementsTimeoutInMilliseconds;
             this.ExchangeType = RabbitMQ.Client.ExchangeType.Topic;
         }
-        
+
         public void DeclareExchange(string exchangeName)
         {
             DeclareExchange(exchangeName, this.ExchangeType);
@@ -133,14 +133,15 @@ namespace MerQure.RbMQ
             if (string.IsNullOrWhiteSpace(exchangeName)) throw new ArgumentNullException(nameof(exchangeName));
 
             var channel = CurrentConnection.CreateModel();
-            channel.ConfirmSelect();
+            if (enablePublisherAcknowledgements)
+                channel.ConfirmSelect();
 
             return new Publisher(channel, exchangeName, PublisherAcknowledgementsTimeoutInMilliseconds);
         }
 
         public IConsumer GetConsumer(string queueName)
         {
-           return GetConsumer(queueName, DefaultPrefetchCount);
+            return GetConsumer(queueName, DefaultPrefetchCount);
         }
 
         public IConsumer GetConsumer(string queueName, ushort prefetchCount)
