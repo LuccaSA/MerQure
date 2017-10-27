@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MerQure.RbMQ.Config
 {
-    public class RabbitMqConfigurationSection : ConfigurationSection
+    public class RabbitMqConfigurationSection 
     {
         private const string DurablePropertyName = "durable";
         private const string AutoDeleteQueuePropertyName = "autoDeleteQueue";
@@ -16,64 +11,15 @@ namespace MerQure.RbMQ.Config
 
         private const long PublisherAcknowledgementsTimeoutInMillisecondsDefaultValue = 10000;
         private const ushort DefaultPrefetchCountDefaultValue = 1;
-
-        [ConfigurationProperty(DurablePropertyName, DefaultValue = true, IsRequired = false)]
-        public Boolean Durable
-        {
-            get
-            {
-                return (Boolean)this[DurablePropertyName];
-            }
-            set
-            {
-                this[DurablePropertyName] = value;
-            }
-        }
-
-        [ConfigurationProperty(AutoDeleteQueuePropertyName, DefaultValue = false, IsRequired = false)]
-        public Boolean AutoDeleteQueue
-        {
-            get
-            {
-                return (Boolean)this[AutoDeleteQueuePropertyName];
-            }
-            set
-            {
-                this[AutoDeleteQueuePropertyName] = value;
-            }
-        }
-
-        [ConfigurationProperty(DefaultPrefetchCountPropertyName, DefaultValue = DefaultPrefetchCountDefaultValue, IsRequired = false)]
-        public ushort DefaultPrefetchCount
-        {
-            get
-            {
-                return (ushort)this[DefaultPrefetchCountPropertyName];
-            }
-            set
-            {
-                this[DefaultPrefetchCountPropertyName] = value;
-            }
-        }
-
-        [ConfigurationProperty(PublisherAcknowledgementsTimeoutPropertyName, DefaultValue = PublisherAcknowledgementsTimeoutInMillisecondsDefaultValue, IsRequired = false)]
-        public long PublisherAcknowledgementsTimeoutInMilliseconds
-        {
-            get
-            {
-                return (long)this[PublisherAcknowledgementsTimeoutPropertyName];
-            }
-            set
-            {
-                this[PublisherAcknowledgementsTimeoutPropertyName] = value;
-            }
-        }
-
-        [ConfigurationProperty("connection")]
-        public RabbitMqConnectionConfigurationElement Connection
-        {
-            get { return (RabbitMqConnectionConfigurationElement)this["connection"]; }
-            set { this["connection"] = value; }
-        }
+         
+        public Boolean Durable { get; set; } = true;
+         
+        public Boolean AutoDeleteQueue { get; set; } = false;
+         
+        public ushort DefaultPrefetchCount { get; set; } = DefaultPrefetchCountDefaultValue;
+         
+        public long PublisherAcknowledgementsTimeoutInMilliseconds { get; set; } = PublisherAcknowledgementsTimeoutInMillisecondsDefaultValue;
+         
+        public RabbitMqConnectionConfigurationElement Connection { get; set; }
     }
 }

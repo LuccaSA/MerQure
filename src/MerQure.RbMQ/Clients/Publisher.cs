@@ -1,7 +1,5 @@
 ﻿using RabbitMQ.Client;
 using System;
-using System.Linq;
-using System.Text;
 using MerQure.RbMQ.Helpers;
 using MerQure.RbMQ.Content;
 using System.Collections.Generic;

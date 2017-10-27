@@ -3,13 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure", "src\MerQure\MerQure.csproj", "{E38F2572-D955-475B-A79A-DE4E9A607A87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MerQure", "src\MerQure\MerQure.csproj", "{E38F2572-D955-475B-A79A-DE4E9A607A87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.Samples", "samples\MerQure.Samples\MerQure.Samples.csproj", "{8CF78FAA-B2A3-436D-B466-3F5A0558C88F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MerQure.Samples", "samples\MerQure.Samples\MerQure.Samples.csproj", "{8CF78FAA-B2A3-436D-B466-3F5A0558C88F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.RbMQ", "src\MerQure.RbMQ\MerQure.RbMQ.csproj", "{13D74416-5AD3-473E-8A99-19D3A713A1DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MerQure.RbMQ", "src\MerQure.RbMQ\MerQure.RbMQ.csproj", "{13D74416-5AD3-473E-8A99-19D3A713A1DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.RbMQ.Tests", "tests\MerQure.RbMQ.Tests\MerQure.RbMQ.Tests.csproj", "{2DD39235-C182-4E94-B9BD-6BEAF38808C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MerQure.RbMQ.Tests", "tests\MerQure.RbMQ.Tests\MerQure.RbMQ.Tests.csproj", "{2DD39235-C182-4E94-B9BD-6BEAF38808C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6E10C224-EE90-469E-BE32-E6A1F7035765}"
+	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+		build_local.ps1 = build_local.ps1
+		build\ComputeVersion.ps1 = build\ComputeVersion.ps1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

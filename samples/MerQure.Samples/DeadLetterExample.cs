@@ -9,7 +9,7 @@ namespace MerQure.Samples
     {
         public static void Run()
         {
-            var messagingService = new MessagingService();
+            var messagingService = new MessagingService(null, null);
 
             // RabbitMQ init
             messagingService.DeclareExchange("deadletter.exchange", Constants.ExchangeTypeFanout);

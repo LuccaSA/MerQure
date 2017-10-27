@@ -1,7 +1,6 @@
 ﻿using MerQure.RbMQ;
 using MerQure.RbMQ.Content;
 using System;
-using System.Collections.Generic;
 
 namespace MerQure.Samples
 {
@@ -9,7 +8,7 @@ namespace MerQure.Samples
     {
         public static void Run()
         {
-            var messagingService = new MessagingService();
+            var messagingService = new MessagingService(null, null);
 
             // RabbitMQ init
             messagingService.DeclareExchange("simple.exchange");

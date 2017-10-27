@@ -1,5 +1,4 @@
-﻿using System;
-using MerQure.Content;
+﻿using MerQure.Content;
 
 namespace MerQure.RbMQ.Content
 {

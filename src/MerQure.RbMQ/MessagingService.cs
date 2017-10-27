@@ -1,4 +1,6 @@
 ﻿using MerQure.RbMQ.Clients;
+using MerQure.RbMQ.Config;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
@@ -7,37 +9,22 @@ namespace MerQure.RbMQ
 {
     public class MessagingService : IMessagingService
     {
-        private static IConnection GetRabbitMqConnection()
+        public bool Durable => Config.Durable;
+        public bool AutoDeleteQueue => Config.AutoDeleteQueue;
+        public string ExchangeType { get; set; } = RabbitMQ.Client.ExchangeType.Topic;
+        public ushort DefaultPrefetchCount => Config.DefaultPrefetchCount;
+        public long PublisherAcknowledgementsTimeoutInMilliseconds => Config.PublisherAcknowledgementsTimeoutInMilliseconds;
+
+        protected RabbitMqConfigurationSection Config => _rabbitMqConfig.Value;
+        protected IConnection CurrentConnection => _sharedConnection.CurrentConnection;
+
+        private readonly SharedConnection _sharedConnection;
+        private readonly IOptions<RabbitMqConfigurationSection> _rabbitMqConfig;
+
+        public MessagingService(IOptions<RabbitMqConfigurationSection> rabbitMqConfig, SharedConnection sharedConnection)
         {
-            var rabbitMqConnection = Config.RabbitMqConfiguration.GetConfig().Connection;
-
-            ConnectionFactory connectionFactory = new ConnectionFactory
-            {
-                Uri = new Uri(rabbitMqConnection.ConnectionString),
-                AutomaticRecoveryEnabled = rabbitMqConnection.AutomaticRecoveryEnabled,
-                TopologyRecoveryEnabled = rabbitMqConnection.TopologyRecoveryEnabled
-            };
-
-            return connectionFactory.CreateConnection();
-        }
-        private static readonly Lazy<IConnection> currentConnection = new Lazy<IConnection>(GetRabbitMqConnection);
-        public static IConnection CurrentConnection => currentConnection.Value;
-
-        public bool Durable { get; private set; }
-        public bool AutoDeleteQueue { get; private set; }
-        public string ExchangeType { get; private set; }
-        public ushort DefaultPrefetchCount { get; set; }
-        public long PublisherAcknowledgementsTimeoutInMilliseconds { get; set; }
-
-        public MessagingService()
-        {
-            var rabbitMqConfig = Config.RabbitMqConfiguration.GetConfig();
-
-            this.Durable = rabbitMqConfig.Durable;
-            this.AutoDeleteQueue = rabbitMqConfig.AutoDeleteQueue;
-            this.DefaultPrefetchCount = rabbitMqConfig.DefaultPrefetchCount;
-            this.PublisherAcknowledgementsTimeoutInMilliseconds = rabbitMqConfig.PublisherAcknowledgementsTimeoutInMilliseconds;
-            this.ExchangeType = RabbitMQ.Client.ExchangeType.Topic;
+            _rabbitMqConfig = rabbitMqConfig;
+            _sharedConnection = sharedConnection;
         }
 
         public void DeclareExchange(string exchangeName)
