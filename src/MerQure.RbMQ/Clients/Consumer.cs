@@ -1,4 +1,5 @@
-﻿using MerQure.RbMQ.Content;
+﻿using MerQure.Messages;
+using MerQure.RbMQ.Content;
 using MerQure.RbMQ.Events;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -96,24 +97,15 @@ namespace MerQure.RbMQ.Clients
             }
         }
 
-        public void AcknowlegdeDeliveredMessage(IMessagingEvent args)
+        public void AcknowlegdeDeliveredMessage(IDelivered deliveredMessage)
         {
-            AcknowlegdeDeliveredMessage(args.DeliveryTag);
+            this.Channel.BasicAck(ulong.Parse(deliveredMessage.DeliveryTag), false);
         }
+        
 
-        public void AcknowlegdeDeliveredMessage(string deliveryTag)
+        public void RejectDeliveredMessage(IDelivered deliveredMessage)
         {
-            this.Channel.BasicAck(ulong.Parse(deliveryTag), false);
-        }
-
-        public void RejectDeliveredMessage(IMessagingEvent args)
-        {
-            RejectDeliveredMessage(args.DeliveryTag);
-        }
-
-        public void RejectDeliveredMessage(string deliveryTag)
-        {
-            this.Channel.BasicNack(ulong.Parse(deliveryTag), false, true);
+            this.Channel.BasicNack(ulong.Parse(deliveredMessage.DeliveryTag), false, true);
         }
 
     }

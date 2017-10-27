@@ -1,12 +1,9 @@
-﻿namespace MerQure
+﻿using MerQure.Messages;
+
+namespace MerQure
 {
-    public interface IMessagingEvent
+    public interface IMessagingEvent : IDelivered
     {
         IMessage Message { get; set; }
-
-        /// <summary>
-        /// Identify the message delivered by the queue
-        /// </summary>
-        string DeliveryTag { get; set; }
     }
 }
