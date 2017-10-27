@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Clients\IConsumer.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Content\IDelivered.cs" />
     <Compile Include="Content\IHeader.cs" />
     <Compile Include="Content\IMessage.cs" />
     <Compile Include="Events\IMessagingEvent.cs" />

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MerQure.Messages;
+using System;
 
 namespace MerQure
 {
@@ -28,27 +29,17 @@ namespace MerQure
         /// </summary>
         /// <param name="onConsumerStopped">Handler called when queu has unregistered the consumer</param>
         void StopConsuming(EventHandler onConsumerStopped);
-
+        
         /// <summary>
         /// Acknowledge a delivered message.
         /// </summary>
-        void AcknowlegdeDeliveredMessage(IMessagingEvent args);
-
-        /// <summary>
-        /// Acknowledge a delivered message.
-        /// </summary>
-        /// <param name="deliveryTag">delivery tag</param>
-        void AcknowlegdeDeliveredMessage(string deliveryTag);
-
+        /// <param name="deliveredMessage">delivered message</param>
+        void AcknowlegdeDeliveredMessage(IDelivered deliveredMessage);
+        
         /// <summary>
         /// Reject a delivered message.
         /// </summary>
-        void RejectDeliveredMessage(IMessagingEvent args);
-
-        /// <summary>
-        /// Reject a delivered message.
-        /// </summary>
-        /// <param name="deliveryTag">delivery tag</param>
-        void RejectDeliveredMessage(string deliveryTag);
+        /// <param name="deliveredMessage">delivered message</param>
+        void RejectDeliveredMessage(IDelivered deliveredMessage);
     }
 }

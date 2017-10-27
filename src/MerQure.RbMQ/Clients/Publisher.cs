@@ -3,6 +3,9 @@ using System;
 using System.Linq;
 using System.Text;
 using MerQure.RbMQ.Helpers;
+using MerQure.RbMQ.Content;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace MerQure.RbMQ.Clients
 {
@@ -29,11 +32,33 @@ namespace MerQure.RbMQ.Clients
             this.ExchangeName = exchangeName.ToLowerInvariant();
         }
 
+        public void PublishWithTransaction(string queueName, IEnumerable<string> messages)
+        {
+            Channel.TxSelect();
+            try
+            {
+                foreach (string message in messages)
+                {
+                    Publish(new Message(queueName, message));
+                }
+            }
+            catch (Exception e)
+            {
+                Channel.TxRollback();
+                throw;
+            }
+            Channel.TxCommit();
+        }
 
         public bool PublishWithAcknowledgement(IMessage message)
         {
             Publish(message);
             return this.Channel.WaitForConfirms(new TimeSpan(TimeoutInMilliseconds * TimeSpan.TicksPerMillisecond));
+        }
+
+        public bool PublishWithAcknowledgement(string queueName, string message)
+        {
+            return PublishWithAcknowledgement(new Message(queueName, message));
         }
 
         public void Publish(IMessage message)
