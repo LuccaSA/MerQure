@@ -13,7 +13,7 @@ namespace MerQure.RbMQ
 
             ConnectionFactory connectionFactory = new ConnectionFactory
             {
-                Uri = rabbitMqConnection.ConnectionString,
+                Uri = new Uri(rabbitMqConnection.ConnectionString),
                 AutomaticRecoveryEnabled = rabbitMqConnection.AutomaticRecoveryEnabled,
                 TopologyRecoveryEnabled = rabbitMqConnection.TopologyRecoveryEnabled
             };

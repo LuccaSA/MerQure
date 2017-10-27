@@ -1,21 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure", "MerQure\MerQure.csproj", "{E38F2572-D955-475B-A79A-DE4E9A607A87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure", "src\MerQure\MerQure.csproj", "{E38F2572-D955-475B-A79A-DE4E9A607A87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.Samples", "MerQure.Samples\MerQure.Samples.csproj", "{8CF78FAA-B2A3-436D-B466-3F5A0558C88F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.Samples", "samples\MerQure.Samples\MerQure.Samples.csproj", "{8CF78FAA-B2A3-436D-B466-3F5A0558C88F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.RbMQ", "MerQure.RbMQ\MerQure.RbMQ.csproj", "{13D74416-5AD3-473E-8A99-19D3A713A1DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.RbMQ", "src\MerQure.RbMQ\MerQure.RbMQ.csproj", "{13D74416-5AD3-473E-8A99-19D3A713A1DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.RbMQ.Tests", "MerQure.RbMQ.Tests\MerQure.RbMQ.Tests.csproj", "{2DD39235-C182-4E94-B9BD-6BEAF38808C6}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SonarQube", "SonarQube", "{C6E07FC0-AD11-4FE0-8281-D001373EE9F8}"
-	ProjectSection(SolutionItems) = preProject
-		SonarQube\MerQureCSharp.ruleset = SonarQube\MerQureCSharp.ruleset
-		SonarQube\SolutionBinding.sqconfig = SonarQube\SolutionBinding.sqconfig
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.RbMQ.Tests", "tests\MerQure.RbMQ.Tests\MerQure.RbMQ.Tests.csproj", "{2DD39235-C182-4E94-B9BD-6BEAF38808C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,5 +36,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {44C371BD-53FB-4CE6-9473-4E95917F1351}
 	EndGlobalSection
 EndGlobal
