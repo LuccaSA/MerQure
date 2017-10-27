@@ -10,10 +10,10 @@ namespace MerQure.RbMQ
     /// </summary>
     public class SharedConnection
     {
-        private readonly RabbitMqConnectionConfigurationElement _config;
+        private readonly MerQureConnection _config;
         private readonly Lazy<IConnection> _currentConnection;
 
-        public SharedConnection(IOptions<RabbitMqConnectionConfigurationElement> options)
+        public SharedConnection(IOptions<MerQureConnection> options)
         {
             _config = options.Value;
             _currentConnection = new Lazy<IConnection>(() => GetRabbitMqConnection(_config));
@@ -21,7 +21,7 @@ namespace MerQure.RbMQ
 
         public IConnection CurrentConnection => _currentConnection.Value;
 
-        private static IConnection GetRabbitMqConnection(RabbitMqConnectionConfigurationElement rabbitMqConnection)
+        private static IConnection GetRabbitMqConnection(MerQureConnection rabbitMqConnection)
         {
             ConnectionFactory connectionFactory = new ConnectionFactory
             {

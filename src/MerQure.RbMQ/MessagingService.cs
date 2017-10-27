@@ -9,22 +9,30 @@ namespace MerQure.RbMQ
 {
     public class MessagingService : IMessagingService
     {
-        public bool Durable => Config.Durable;
-        public bool AutoDeleteQueue => Config.AutoDeleteQueue;
         public string ExchangeType { get; set; } = RabbitMQ.Client.ExchangeType.Topic;
-        public ushort DefaultPrefetchCount => Config.DefaultPrefetchCount;
-        public long PublisherAcknowledgementsTimeoutInMilliseconds => Config.PublisherAcknowledgementsTimeoutInMilliseconds;
+        public bool Durable { get; set; }
+        public bool AutoDeleteQueue { get; set; }
+        public ushort DefaultPrefetchCount { get; set; }
+        public long PublisherAcknowledgementsTimeoutInMilliseconds { get; set; }
 
-        protected RabbitMqConfigurationSection Config => _rabbitMqConfig.Value;
         protected IConnection CurrentConnection => _sharedConnection.CurrentConnection;
 
         private readonly SharedConnection _sharedConnection;
-        private readonly IOptions<RabbitMqConfigurationSection> _rabbitMqConfig;
+        private readonly IOptions<MerQureConfiguration> _merQureConfiguration;
 
-        public MessagingService(IOptions<RabbitMqConfigurationSection> rabbitMqConfig, SharedConnection sharedConnection)
+        public MessagingService(IOptions<MerQureConfiguration> merQureConfiguration, SharedConnection sharedConnection)
         {
-            _rabbitMqConfig = rabbitMqConfig;
+            _merQureConfiguration = merQureConfiguration;
             _sharedConnection = sharedConnection;
+
+            if (_merQureConfiguration == null)
+            {
+                return;
+            }
+            Durable = _merQureConfiguration.Value.Durable;
+            AutoDeleteQueue = _merQureConfiguration.Value.AutoDeleteQueue;
+            DefaultPrefetchCount = _merQureConfiguration.Value.DefaultPrefetchCount;
+            PublisherAcknowledgementsTimeoutInMilliseconds = _merQureConfiguration.Value.PublisherAcknowledgementsTimeoutInMilliseconds;
         }
 
         public void DeclareExchange(string exchangeName)

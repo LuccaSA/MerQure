@@ -2,10 +2,8 @@
 
 namespace MerQure.RbMQ.Config
 {
-    public class RabbitMqConfigurationSection 
+    public class MerQureConfiguration
     {
-        private const string DurablePropertyName = "durable";
-        private const string AutoDeleteQueuePropertyName = "autoDeleteQueue";
         private const string DefaultPrefetchCountPropertyName = "defaultPrefetchCount";
         private const string PublisherAcknowledgementsTimeoutPropertyName = "publisherAcknowledgementsTimeoutInMilliseconds";
 
@@ -20,6 +18,6 @@ namespace MerQure.RbMQ.Config
          
         public long PublisherAcknowledgementsTimeoutInMilliseconds { get; set; } = PublisherAcknowledgementsTimeoutInMillisecondsDefaultValue;
          
-        public RabbitMqConnectionConfigurationElement Connection { get; set; }
+        public MerQureConnection Connection { get; set; }
     }
 }
