@@ -4,7 +4,7 @@ version: 1.0.{build}
        
 environment:
   SONAR_TOKEN:
-    secure: 3C7nrbCN46GDdmFMcV07geuLteSIHj2uMWUaqrTKq9MmzgpAMHRENtI0bJVMWwxP
+    secure: c6IKYB2JPnRQUNahHFnh8vAmkorjL8rrQ69EhkHkrgC3qsg2xyd7kGSM6kHzoMqZ
   GITHUB_ACCESS_TOKEN:
     secure: 0N79FChOALIaVLqCj5aJn6LnTfS05SZpEXFGCLap73GzFqbAA0BGh2OHPH2sqFWg
 
@@ -28,7 +28,7 @@ notifications:
 install:
   # compute version
   - ps: . .\build\ComputeVersion.ps1
-  - ps: $version = Compute "MerQure\MerQure.csproj" $env:APPVEYOR_BUILD_NUMBER $env:APPVEYOR_REPO_TAG $env:APPVEYOR_PULL_REQUEST_NUMBER
+  - ps: $version = Compute "src\MerQure\MerQure.csproj" $env:APPVEYOR_BUILD_NUMBER $env:APPVEYOR_REPO_TAG $env:APPVEYOR_PULL_REQUEST_NUMBER
   - ps: Update-AppveyorBuild -Version $version.Semver
   - choco install "msbuild-sonarqube-runner" -y
   - choco install opencover.portable
@@ -46,11 +46,11 @@ before_build:
     IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" (
     C:\ProgramData\chocolatey\lib\msbuild-sonarqube-runner\tools\MSBuild.SonarQube.Runner.exe begin /k:"MerQure" /d:"sonar.analysis.mode=publish" /d:"sonar.host.url=https://sonarcloud.io" /d:"sonar.organization=luccaintegration-github" /d:"sonar.login=%SONAR_TOKEN%"
     ) ELSE (
-    C:\ProgramData\chocolatey\lib\msbuild-sonarqube-runner\tools\MSBuild.SonarQube.Runner.exe begin /k:"MerQure" /d:"sonar.analysis.mode=preview" /d:"sonar.host.url=https://sonarcloud.io" /d:"sonar.organization=luccaintegration-github" /d:"sonar.login=%SONAR_TOKEN%" /d:"sonar.github.pullRequest=%APPVEYOR_PULL_REQUEST_NUMBER%" /d:"sonar.github.repository=luccaintegration/MerQure" /d:"sonar.github.oauth=%GITHUB_ACCESS_TOKEN%"
+    C:\ProgramData\chocolatey\lib\msbuild-sonarqube-runner\tools\MSBuild.SonarQube.Runner.exe begin /k:"MerQure" /d:"sonar.analysis.mode=preview" /d:"sonar.host.url=https://sonarcloud.io" /d:"sonar.organization=luccaintegration-github" /d:"sonar.login=%SONAR_TOKEN%" /d:"sonar.github.pullRequest=%APPVEYOR_PULL_REQUEST_NUMBER%" /d:"sonar.github.repository=LuccaSA/MerQure" /d:"sonar.github.oauth=%GITHUB_ACCESS_TOKEN%"
     )
 
 build_script:
-- ps: msbuild "C:\projects\MerQure\MerQure.sln" /m /verbosity:minimal /property:$("VersionPrefix="+$version.Prefix+";VersionSuffix="+$version.Suffix) /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+- ps: msbuild "MerQure.sln" /m /verbosity:minimal /property:$("VersionPrefix="+$version.Prefix+";VersionSuffix="+$version.Suffix) /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 after_build:
 - cmd: >-
