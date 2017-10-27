@@ -1,4 +1,6 @@
 ﻿using MerQure.RbMQ.Clients;
+using MerQure.RbMQ.Config;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
@@ -7,37 +9,30 @@ namespace MerQure.RbMQ
 {
     public class MessagingService : IMessagingService
     {
-        private static IConnection GetRabbitMqConnection()
-        {
-            var rabbitMqConnection = Config.RabbitMqConfiguration.GetConfig().Connection;
-
-            ConnectionFactory connectionFactory = new ConnectionFactory
-            {
-                Uri = rabbitMqConnection.ConnectionString,
-                AutomaticRecoveryEnabled = rabbitMqConnection.AutomaticRecoveryEnabled,
-                TopologyRecoveryEnabled = rabbitMqConnection.TopologyRecoveryEnabled
-            };
-
-            return connectionFactory.CreateConnection();
-        }
-        private static readonly Lazy<IConnection> currentConnection = new Lazy<IConnection>(GetRabbitMqConnection);
-        public static IConnection CurrentConnection => currentConnection.Value;
-
-        public bool Durable { get; private set; }
-        public bool AutoDeleteQueue { get; private set; }
-        public string ExchangeType { get; private set; }
+        public string ExchangeType { get; set; } = RabbitMQ.Client.ExchangeType.Topic;
+        public bool Durable { get; set; }
+        public bool AutoDeleteQueue { get; set; }
         public ushort DefaultPrefetchCount { get; set; }
         public long PublisherAcknowledgementsTimeoutInMilliseconds { get; set; }
 
-        public MessagingService()
-        {
-            var rabbitMqConfig = Config.RabbitMqConfiguration.GetConfig();
+        protected IConnection CurrentConnection => _sharedConnection.CurrentConnection;
 
-            this.Durable = rabbitMqConfig.Durable;
-            this.AutoDeleteQueue = rabbitMqConfig.AutoDeleteQueue;
-            this.DefaultPrefetchCount = rabbitMqConfig.DefaultPrefetchCount;
-            this.PublisherAcknowledgementsTimeoutInMilliseconds = rabbitMqConfig.PublisherAcknowledgementsTimeoutInMilliseconds;
-            this.ExchangeType = RabbitMQ.Client.ExchangeType.Topic;
+        private readonly SharedConnection _sharedConnection;
+        private readonly IOptions<MerQureConfiguration> _merQureConfiguration;
+
+        public MessagingService(IOptions<MerQureConfiguration> merQureConfiguration, SharedConnection sharedConnection)
+        {
+            _merQureConfiguration = merQureConfiguration;
+            _sharedConnection = sharedConnection;
+
+            if (_merQureConfiguration == null)
+            {
+                return;
+            }
+            Durable = _merQureConfiguration.Value.Durable;
+            AutoDeleteQueue = _merQureConfiguration.Value.AutoDeleteQueue;
+            DefaultPrefetchCount = _merQureConfiguration.Value.DefaultPrefetchCount;
+            PublisherAcknowledgementsTimeoutInMilliseconds = _merQureConfiguration.Value.PublisherAcknowledgementsTimeoutInMilliseconds;
         }
 
         public void DeclareExchange(string exchangeName)

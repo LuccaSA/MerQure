@@ -1,5 +1,6 @@
 ﻿using System;
 using Xunit;
+using MerQure.RbMQ;
 
 namespace MerQure.RbMQ.Tests
 {
@@ -8,7 +9,7 @@ namespace MerQure.RbMQ.Tests
         [Fact]
         public void DeclareExchangeFailWithEmptyName()
         {
-            var messagingService = new MessagingService();
+            var messagingService = new MessagingService(null,null);
 
             Assert.Throws<ArgumentNullException>(() => messagingService.DeclareExchange(null));
             Assert.Throws<ArgumentNullException>(() => messagingService.DeclareExchange("    "));
@@ -17,7 +18,7 @@ namespace MerQure.RbMQ.Tests
         [Fact]
         public void DeclareQueueFailWithEmptyName()
         {
-            var messagingService = new MessagingService();
+            var messagingService = new MessagingService(null, null);
 
             Assert.Throws<ArgumentNullException>(() => messagingService.DeclareQueue(null));
             Assert.Throws<ArgumentNullException>(() => messagingService.DeclareQueue("    "));
@@ -26,7 +27,7 @@ namespace MerQure.RbMQ.Tests
         [Fact]
         public void DeclareBindingFailWithEmptyParameters()
         {
-            var messagingService = new MessagingService();
+            var messagingService = new MessagingService(null, null);
 
             Assert.Throws<ArgumentNullException>(() => messagingService.DeclareBinding(null, "queue", "routing"));
             Assert.Throws<ArgumentNullException>(() => messagingService.DeclareBinding("exhange", null, "routing"));
@@ -36,7 +37,7 @@ namespace MerQure.RbMQ.Tests
         [Fact]
         public void CancelBindingFailWithEmptyParameters()
         {
-            var messagingService = new MessagingService();
+            var messagingService = new MessagingService(null, null);
 
             Assert.Throws<ArgumentNullException>(() => messagingService.CancelBinding(null, "queue", "routing"));
             Assert.Throws<ArgumentNullException>(() => messagingService.CancelBinding("exhange", null, "routing"));
