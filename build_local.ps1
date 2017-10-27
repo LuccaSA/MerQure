@@ -3,7 +3,8 @@ param(
     [string]$nuget_path= $("C:\nuget")
     )
     
-    . .\build\ComputeVersion.ps1 
+	wget "https://raw.githubusercontent.com/rducom/ALM/master/build/ComputeVersion.ps1" -outfile "ComputeVersion.ps1"
+    . .\ComputeVersion.ps1 
     
     $version = Compute .\src\MerQure\MerQure.csproj
     $props = "/p:Configuration=Debug,VersionPrefix="+($version.Prefix)+",VersionSuffix="+($version.Suffix)
