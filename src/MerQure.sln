@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure", "MerQure\MerQure.csproj", "{E38F2572-D955-475B-A79A-DE4E9A607A87}"
 EndProject
@@ -16,6 +16,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SonarQube", "SonarQube", "{
 		SonarQube\MerQureCSharp.ruleset = SonarQube\MerQureCSharp.ruleset
 		SonarQube\SolutionBinding.sqconfig = SonarQube\SolutionBinding.sqconfig
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.Tools.Samples", "MerQure.Tools.Samples\MerQure.Tools.Samples.csproj", "{A3CBDD3F-4AA1-474A-944B-14BFFFA02A59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.Tools.Tests", "MerQure.Tools.Tests\MerQure.Tools.Tests.csproj", "{56BC7FDC-8631-4A15-BFD2-D0C369AE48BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.Tools", "MerQure.Tools\MerQure.Tools.csproj", "{0369706F-A6BD-4D5C-98C4-E8C5A816A066}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,8 +45,23 @@ Global
 		{2DD39235-C182-4E94-B9BD-6BEAF38808C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DD39235-C182-4E94-B9BD-6BEAF38808C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DD39235-C182-4E94-B9BD-6BEAF38808C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3CBDD3F-4AA1-474A-944B-14BFFFA02A59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3CBDD3F-4AA1-474A-944B-14BFFFA02A59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3CBDD3F-4AA1-474A-944B-14BFFFA02A59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3CBDD3F-4AA1-474A-944B-14BFFFA02A59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56BC7FDC-8631-4A15-BFD2-D0C369AE48BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56BC7FDC-8631-4A15-BFD2-D0C369AE48BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56BC7FDC-8631-4A15-BFD2-D0C369AE48BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56BC7FDC-8631-4A15-BFD2-D0C369AE48BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0369706F-A6BD-4D5C-98C4-E8C5A816A066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0369706F-A6BD-4D5C-98C4-E8C5A816A066}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0369706F-A6BD-4D5C-98C4-E8C5A816A066}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0369706F-A6BD-4D5C-98C4-E8C5A816A066}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7B8E8CFA-A2E0-489A-891F-1BEFC07FD335}
 	EndGlobalSection
 EndGlobal
