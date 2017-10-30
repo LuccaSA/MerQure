@@ -1,17 +1,18 @@
-﻿using MerQure.Tools.Configurations;
+﻿using MerQure.Messages;
+using MerQure.Tools.Configurations;
 using MerQure.Tools.Messages;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MerQure.Tools.Exchanges
+namespace MerQure.Tools.Buses
 {
-    internal class Exchange<T> : IExchange<T> where T : IDelivered
+    internal class Bus<T> : IBus<T> where T : IDelivered
     {
         internal Publisher<T> Producer { get; set; }
         internal RetryConsumer<T> Consumer { get; set; }
 
-        public Exchange(Publisher<T> producer, RetryConsumer<T> consumer)
+        public Bus(Publisher<T> producer, RetryConsumer<T> consumer)
         {
             Producer = producer;
             Consumer = consumer;
@@ -27,14 +28,14 @@ namespace MerQure.Tools.Exchanges
             Consumer.Consume(channel, callback);
         }
 
-        public void Publish(Channel binding, T message)
+        public void Publish(Channel channel, T message)
         {
-            Producer.Publish(binding, message);
+            Producer.Publish(channel, message);
         }
 
-        public void PublishWithTransaction(Channel binding, IEnumerable<T> messages)
+        public void PublishWithTransaction(Channel channel, IEnumerable<T> messages)
         {
-            Producer.PublishWithTransaction(binding, messages);
+            Producer.PublishWithTransaction(channel, messages);
         }
 
         public void RejectDeliveredMessage(Channel channel, T delivredMessage)
@@ -42,16 +43,14 @@ namespace MerQure.Tools.Exchanges
             Consumer.RejectDeliveredMessage(channel, delivredMessage);
         }
 
-        public void ApplyRetryStrategy(Channel channel, T delivred)
+        public void ApplyRetryStrategy(Channel channel, T delivredMessage)
         {
-            Consumer.ApplyRetryStrategy(channel, delivred);
+            Consumer.ApplyRetryStrategy(channel, delivredMessage);
         }
 
-        public void SendDelivredMessageToErrorExchange(Channel channel, T delivredMessage)
+        public void SendDelivredMessageToErrorBus(Channel channel, T delivredMessage)
         {
             Consumer.SendToErrorExchange(channel, delivredMessage);
         }
-
-
     }
 }

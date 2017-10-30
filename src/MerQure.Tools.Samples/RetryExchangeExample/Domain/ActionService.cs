@@ -37,7 +37,7 @@ namespace MerQure.Tools.Samples.RetryExchangeExample.Domain
             {
                 await ManageNewSomething(something);
             }
-            catch(SomethingException)
+            catch (SomethingException)
             {
                 _somethingService.RetryLater(something);
             }
@@ -58,7 +58,7 @@ namespace MerQure.Tools.Samples.RetryExchangeExample.Domain
             {
                 throw new Exception("This is an unmanageable exception, like NPE");
             }
-            else if(_fakeError % 5 == 0)
+            else if (_fakeError % 5 == 0)
             {
                 throw new SomethingException("This is an \"retry later\" exception");
             }

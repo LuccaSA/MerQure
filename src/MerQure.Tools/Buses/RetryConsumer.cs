@@ -4,19 +4,19 @@ using System.Linq;
 using MerQure;
 using MerQure.Tools.Messages;
 using MerQure.Tools.Configurations;
-using MerQure.Exceptions;
 using Newtonsoft.Json;
+using MerQure.Messages;
+using MerQure.Tools.Exceptions;
 
-namespace MerQure.Tools.Exchanges
+namespace MerQure.Tools.Buses
 {
-    internal class RetryConsumer<T> : Consumer<T> where T : IDelivered 
+    internal class RetryConsumer<T> : Consumer<T> where T : IDelivered
     {
-        private readonly ConsumerProvider _consumerProvider;
         private readonly Publisher<T> _producer;
 
-        private RetryExchangeConfiguration _retryConfiguration;
+        private RetryStrategyConfiguration _retryConfiguration;
 
-        public RetryConsumer(IMessagingService messagingService, RetryExchangeConfiguration retryConfiguration, Publisher<T> producer) : base(messagingService)
+        public RetryConsumer(IMessagingService messagingService, RetryStrategyConfiguration retryConfiguration, Publisher<T> producer) : base(messagingService)
         {
             _retryConfiguration = retryConfiguration;
             _producer = producer;
@@ -26,24 +26,24 @@ namespace MerQure.Tools.Exchanges
         {
             if (String.IsNullOrEmpty(delivredMessage.DeliveryTag))
                 throw new ArgumentNullException(nameof(delivredMessage.DeliveryTag));
-            if (!TechnicalInformations.ContainsKey(delivredMessage.DeliveryTag))
+            if (!RetryInformations.ContainsKey(delivredMessage.DeliveryTag))
                 throw new MerqureToolsException($"unknown delivery tag {delivredMessage.DeliveryTag}");
 
-            MessageTechnicalInformations technicalInformations = TechnicalInformations[delivredMessage.DeliveryTag];
+            RetryInformations retryInformations = RetryInformations[delivredMessage.DeliveryTag];
 
-            _producer.PublishOnErrorExchange(channel, delivredMessage, technicalInformations);
-             AcknowlegdeDelivredMessage(channel, delivredMessage);
-            TechnicalInformations.Remove(delivredMessage.DeliveryTag);
+            _producer.PublishOnErrorExchange(channel, delivredMessage, retryInformations);
+            AcknowlegdeDelivredMessage(channel, delivredMessage);
+            RetryInformations.Remove(delivredMessage.DeliveryTag);
         }
 
         public void ApplyRetryStrategy(Channel channel, T delivredMessage)
         {
             if (String.IsNullOrEmpty(delivredMessage.DeliveryTag))
                 throw new ArgumentNullException(nameof(delivredMessage.DeliveryTag));
-            if (!TechnicalInformations.ContainsKey(delivredMessage.DeliveryTag))
+            if (!RetryInformations.ContainsKey(delivredMessage.DeliveryTag))
                 throw new MerqureToolsException($"unknown delivery tag {delivredMessage.DeliveryTag}");
 
-            MessageTechnicalInformations technicalInformations = TechnicalInformations[delivredMessage.DeliveryTag];
+            RetryInformations technicalInformations = RetryInformations[delivredMessage.DeliveryTag];
 
             if (IsGoingToErrorExchange(technicalInformations))
             {
@@ -54,17 +54,17 @@ namespace MerQure.Tools.Exchanges
                 _producer.PublishOnRetryExchange(channel, delivredMessage, technicalInformations);
             }
             AcknowlegdeDelivredMessage(channel, delivredMessage);
-            TechnicalInformations.Remove(delivredMessage.DeliveryTag);
+            RetryInformations.Remove(delivredMessage.DeliveryTag);
         }
 
 
-        private bool IsGoingToErrorExchange(MessageTechnicalInformations technicalInformations)
+        private bool IsGoingToErrorExchange(RetryInformations technicalInformations)
         {
             if (!_retryConfiguration.DelaysInMsBetweenEachRetry.Any())
             {
                 return true;
             }
-            if (_retryConfiguration.EndOnErrorExchange
+            if (_retryConfiguration.MessageIsGoingIntoErrorBusAfterAllRepeat
                    && technicalInformations.NumberOfRetry == _retryConfiguration.DelaysInMsBetweenEachRetry.Count())
             {
                 return true;

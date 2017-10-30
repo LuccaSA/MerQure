@@ -1,20 +1,22 @@
 ﻿using MerQure;
-using MerQure.Exceptions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using MerQure.Tools.Messages;
 using MerQure.Tools.Configurations;
+using MerQure.Tools.Exceptions;
+using MerQure.Messages;
 
-namespace MerQure.Tools.Exchanges
+namespace MerQure.Tools.Buses
 {
     internal class Publisher<T> where T : IDelivered
     {
-        private readonly RetryExchangeConfiguration _messageBrokerConfiguration;
+        private readonly RetryStrategyConfiguration _messageBrokerConfiguration;
         private readonly IMessagingService _messagingService;
 
-        public Publisher(IMessagingService messagingService, RetryExchangeConfiguration retryConfiguration)
+
+        public Publisher(IMessagingService messagingService, RetryStrategyConfiguration retryConfiguration)
         {
             _messagingService = messagingService;
             _messageBrokerConfiguration = retryConfiguration;
@@ -25,9 +27,9 @@ namespace MerQure.Tools.Exchanges
             var serializedMessages = new List<string>();
             foreach (T message in messages)
             {
-                serializedMessages.Add(JsonConvert.SerializeObject(EncapsulateMessage(message)));
+                serializedMessages.Add(JsonConvert.SerializeObject(CreateRetryMessage(message)));
             }
-            using (var publisher = _messagingService.GetPublisher(_messageBrokerConfiguration.ExchangeName, false))
+            using (var publisher = _messagingService.GetPublisher(_messageBrokerConfiguration.BusName, false))
             {
                 PublishWithTransaction(publisher, channel.Value, serializedMessages);
             }
@@ -35,20 +37,20 @@ namespace MerQure.Tools.Exchanges
 
         public void Publish(Channel channel, T message)
         {
-            using (var publisher = _messagingService.GetPublisher(_messageBrokerConfiguration.ExchangeName, true))
+            using (var publisher = _messagingService.GetPublisher(_messageBrokerConfiguration.BusName, true))
             {
-                var encapsuledMessage = EncapsulateMessage(message);
+                var encapsuledMessage = CreateRetryMessage(message);
                 TryPublishWithBrokerAcknowledgement(publisher, channel.Value, JsonConvert.SerializeObject(encapsuledMessage));
             }
         }
 
-        internal void PublishOnRetryExchange(Channel channel, T message, MessageTechnicalInformations technicalInformations)
+        internal void PublishOnRetryExchange(Channel channel, T message, RetryInformations technicalInformations)
         {
             technicalInformations.NumberOfRetry++;
-            EncapsuledMessage<T> encapsuledMessage = new EncapsuledMessage<T>
+            RetryMessage<T> retryMessage = new RetryMessage<T>
             {
                 OriginalMessage = message,
-                TechnicalInformation = technicalInformations
+                RetryInformations = technicalInformations
             };
             List<int> delays = _messageBrokerConfiguration.DelaysInMsBetweenEachRetry;
             int delay = 0;
@@ -62,23 +64,23 @@ namespace MerQure.Tools.Exchanges
             }
 
             string bindingValue = $"{channel.Value}.{delay}";
-            using (var publisher = _messagingService.GetPublisher($"{_messageBrokerConfiguration.ExchangeName}.retry", true))
+            using (var publisher = _messagingService.GetPublisher($"{_messageBrokerConfiguration.BusName}.{RetryStrategyConfiguration.RetryExchangeSuffix}", true))
             {
-                TryPublishWithBrokerAcknowledgement(publisher, bindingValue, JsonConvert.SerializeObject(encapsuledMessage));
+                TryPublishWithBrokerAcknowledgement(publisher, bindingValue, JsonConvert.SerializeObject(retryMessage));
             }
         }
 
-        internal void PublishOnErrorExchange(Channel channel, T message, MessageTechnicalInformations technicalInformations)
+        internal void PublishOnErrorExchange(Channel channel, T message, RetryInformations technicalInformations)
         {
             string errorChanel = $"{channel.Value}.error";
-            EncapsuledMessage<T> encapsuledMessage = new EncapsuledMessage<T>
+            RetryMessage<T> retryMessage = new RetryMessage<T>
             {
                 OriginalMessage = message,
-                TechnicalInformation = technicalInformations
+                RetryInformations = technicalInformations
             };
-            using (var publisher = _messagingService.GetPublisher($"{_messageBrokerConfiguration.ExchangeName}.error", true))
+            using (var publisher = _messagingService.GetPublisher($"{_messageBrokerConfiguration.BusName}.{RetryStrategyConfiguration.ErrorExchangeSuffix}", true))
             {
-                TryPublishWithBrokerAcknowledgement(publisher, errorChanel, JsonConvert.SerializeObject(encapsuledMessage));
+                TryPublishWithBrokerAcknowledgement(publisher, errorChanel, JsonConvert.SerializeObject(retryMessage));
             }
         }
 
@@ -103,11 +105,11 @@ namespace MerQure.Tools.Exchanges
             }
         }
 
-        private EncapsuledMessage<T> EncapsulateMessage(T message)
+        private RetryMessage<T> CreateRetryMessage(T message)
         {
-            return new EncapsuledMessage<T>
+            return new RetryMessage<T>
             {
-                TechnicalInformation = new MessageTechnicalInformations
+                RetryInformations = new RetryInformations
                 {
                     NumberOfRetry = 0
                 },

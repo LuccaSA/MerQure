@@ -16,13 +16,13 @@ namespace MerQure.Tools.Samples
             //Retry exchange sample
 
             IMessagingService messagingService = new MessagingService();
-            var retryExchangeService = new RetryExchangeService(messagingService);
-            ISomethingService somethingService = new SomethingService(retryExchangeService);
+            var retryBusService = new RetryBusService(messagingService);
+            ISomethingService somethingService = new SomethingService(retryBusService);
 
             ActionService actionService = new ActionService(somethingService);
             actionService.Consume();
 
-            for (int i = 0; i < 150; i++)
+            for (int i = 0; i < 50; i++)
             {
                 actionService.SendNewSomething();
             }

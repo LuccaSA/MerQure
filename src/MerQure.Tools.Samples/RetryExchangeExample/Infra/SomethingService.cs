@@ -1,6 +1,6 @@
 ﻿using MerQure.Tools;
 using MerQure.Tools.Configurations;
-using MerQure.Tools.Exchanges;
+using MerQure.Tools.Buses;
 using MerQure.Tools.Samples.RetryExchangeExample.Domain;
 using MerQure.Tools.Samples.RetryExchangeExample.Infra;
 using System;
@@ -11,38 +11,38 @@ namespace MerQure.Tools.Samples.RetryExchangeExample.RetryExchangeExample.Infra
 {
     public class SomethingService : ISomethingService
     {
-        public const string ExchangeName = "something";
-        private readonly RetryExchangeService _retryExchangeService;
+        public const string BusName = "something";
+        private readonly RetryBusService _retryBusService;
 
-        public IExchange<Something> SomethingExchange { get; set; }
+        public IBus<Something> SomethingBus { get; set; }
 
-        public SomethingService(RetryExchangeService retryExchangeService)
+        public SomethingService(RetryBusService retryBusService)
         {
-            _retryExchangeService = retryExchangeService;
-            RetryExchangeConfiguration somethingConfiguration = new RetryExchangeConfiguration
+            _retryBusService = retryBusService;
+            RetryStrategyConfiguration somethingConfiguration = new RetryStrategyConfiguration
             {
                 Channels = SomethingChannels.GetAllChannels(),
-                ExchangeName = ExchangeName,
+                BusName = BusName,
                 DelaysInMsBetweenEachRetry = new List<int>
                     {
                         {5000 },
                         {6000 },
                         {10000 }
                     },
-                EndOnErrorExchange = true
+                MessageIsGoingIntoErrorBusAfterAllRepeat = true
             };
 
-            SomethingExchange = _retryExchangeService.CreateNewExchange<Something>(somethingConfiguration);
+            SomethingBus = _retryBusService.CreateNewBus<Something>(somethingConfiguration);
         }
 
         public void Send(Something something)
         {
-            SomethingExchange.Publish(SomethingChannels.MessageSended, something);
+            SomethingBus.Publish(SomethingChannels.MessageSended, something);
         }
 
         public void Consume(EventHandler<Something> callback)
         {
-            SomethingExchange.Consume(SomethingChannels.MessageSended, (object sender, Something something) =>
+            SomethingBus.Consume(SomethingChannels.MessageSended, (object sender, Something something) =>
             {
                 callback(this, something);
             });
@@ -50,17 +50,17 @@ namespace MerQure.Tools.Samples.RetryExchangeExample.RetryExchangeExample.Infra
 
         public void RetryLater(Something something)
         {
-            SomethingExchange.ApplyRetryStrategy(SomethingChannels.MessageSended, something);
+            SomethingBus.ApplyRetryStrategy(SomethingChannels.MessageSended, something);
         }
 
         public void Acknowlegde(Something something)
         {
-            SomethingExchange.AcknowlegdeDelivredMessage(SomethingChannels.MessageSended, something);
+            SomethingBus.AcknowlegdeDelivredMessage(SomethingChannels.MessageSended, something);
         }
 
         public void SendOnError(Something something)
         {
-            SomethingExchange.SendDelivredMessageToErrorExchange(SomethingChannels.MessageSended, something);
+            SomethingBus.SendDelivredMessageToErrorBus(SomethingChannels.MessageSended, something);
         }
     }
 }
