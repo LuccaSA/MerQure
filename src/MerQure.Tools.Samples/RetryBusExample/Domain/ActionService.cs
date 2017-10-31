@@ -5,22 +5,22 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MerQure.Tools.Samples.RetryExchangeExample.Domain
+namespace MerQure.Tools.Samples.RetryBusExample.Domain
 {
     public class ActionService
     {
         private static int _fakeError;
 
-        private readonly ISomethingService _somethingService;
+        private readonly ISampleService _sampleService;
 
-        public ActionService(ISomethingService somethingService)
+        public ActionService(ISampleService sampleService)
         {
-            _somethingService = somethingService;
+            _sampleService = sampleService;
         }
 
-        public void SendNewSomething()
+        public void SendNewSample()
         {
-            _somethingService.Send(new Something()
+            _sampleService.Send(new Sample()
             {
                 Name = "MerQure Tools"
             });
@@ -28,27 +28,27 @@ namespace MerQure.Tools.Samples.RetryExchangeExample.Domain
 
         public void Consume()
         {
-            _somethingService.Consume(async (object sender, Something something) => await OnSomethingReceived(sender, something));
+            _sampleService.Consume(async (object sender, Sample sample) => await OnSampleReceived(sender, sample));
         }
 
-        public async Task OnSomethingReceived(object sender, Something something)
+        public async Task OnSampleReceived(object sender, Sample sample)
         {
             try
             {
-                await ManageNewSomething(something);
+                await ManageNewSample(sample);
             }
-            catch (SomethingException)
+            catch (SampleException)
             {
-                _somethingService.RetryLater(something);
+                _sampleService.RetryLater(sample);
             }
             catch (Exception e)
             {
-                _somethingService.SendOnError(something);
+                _sampleService.SendOnError(sample);
                 //...
             }
         }
 
-        private async Task ManageNewSomething(Something something)
+        private async Task ManageNewSample(Sample sample)
         {
             _fakeError++;
 
@@ -60,12 +60,12 @@ namespace MerQure.Tools.Samples.RetryExchangeExample.Domain
             }
             else if (_fakeError % 5 == 0)
             {
-                throw new SomethingException("This is an \"retry later\" exception");
+                throw new SampleException("This is an \"retry later\" exception");
             }
             else
             {
                 //everything ok
-                _somethingService.Acknowlegde(something);
+                _sampleService.Acknowlegde(sample);
             }
         }
     }

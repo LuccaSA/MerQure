@@ -2,9 +2,9 @@
 using MerQure.Messages;
 using MerQure.Tools.Messages;
 
-namespace MerQure.Tools.Samples.RetryExchangeExample.Domain
+namespace MerQure.Tools.Samples.RetryBusExample.Domain
 {
-    public class Something : IDelivered
+    public class Sample : IDelivered
     {
         public string DeliveryTag { get; set; }
         public string Name { get; set; }
