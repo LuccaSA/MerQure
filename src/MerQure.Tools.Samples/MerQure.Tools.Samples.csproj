@@ -42,12 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RetryExchangeExample\Domain\ActionService.cs" />
-    <Compile Include="RetryExchangeExample\Domain\ISomethingService.cs" />
-    <Compile Include="RetryExchangeExample\Domain\Something.cs" />
-    <Compile Include="RetryExchangeExample\Domain\SomethingException.cs" />
-    <Compile Include="RetryExchangeExample\Infra\SomethingChannels.cs" />
-    <Compile Include="RetryExchangeExample\Infra\SomethingService.cs" />
+    <Compile Include="RetryBusExample\Domain\ActionService.cs" />
+    <Compile Include="RetryBusExample\Domain\ISampleService.cs" />
+    <Compile Include="RetryBusExample\Domain\Sample.cs" />
+    <Compile Include="RetryBusExample\Domain\SampleException.cs" />
+    <Compile Include="RetryBusExample\Infra\SampleChannels.cs" />
+    <Compile Include="RetryBusExample\Infra\SampleService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
