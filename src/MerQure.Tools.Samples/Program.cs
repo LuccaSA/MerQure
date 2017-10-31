@@ -1,6 +1,6 @@
 ﻿using MerQure.RbMQ;
-using MerQure.Tools.Samples.RetryExchangeExample.Domain;
-using MerQure.Tools.Samples.RetryExchangeExample.RetryExchangeExample.Infra;
+using MerQure.Tools.Samples.RetryBusExample.Domain;
+using MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,15 +16,15 @@ namespace MerQure.Tools.Samples
             //Retry exchange sample
 
             IMessagingService messagingService = new MessagingService();
-            var retryExchangeService = new RetryExchangeService(messagingService);
-            ISomethingService somethingService = new SomethingService(retryExchangeService);
+            var retryBusService = new RetryBusService(messagingService);
+            ISampleService sampleService = new SampleService(retryBusService);
 
-            ActionService actionService = new ActionService(somethingService);
+            ActionService actionService = new ActionService(sampleService);
             actionService.Consume();
 
-            for (int i = 0; i < 150; i++)
+            for (int i = 0; i < 50; i++)
             {
-                actionService.SendNewSomething();
+                actionService.SendNewSample();
             }
 
             Console.ReadLine();

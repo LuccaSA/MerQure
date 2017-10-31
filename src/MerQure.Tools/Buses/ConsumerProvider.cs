@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MerQure.Tools.Exchanges
+namespace MerQure.Tools.Buses
 {
     internal class ConsumerProvider
     {
@@ -20,19 +20,19 @@ namespace MerQure.Tools.Exchanges
             _messagingService = messagingService;
         }
 
-        public IConsumer Get(Channel binding)
+        public IConsumer Get(Channel channel)
         {
             IConsumer consumer;
             lock (_syncRoot)
             {
-                if (_consumers.ContainsKey(binding))
+                if (_consumers.ContainsKey(channel))
                 {
-                    consumer = _consumers[binding];
+                    consumer = _consumers[channel];
                 }
                 else
                 {
-                    consumer = _messagingService.GetConsumer(binding.Value);
-                    _consumers.Add(binding, consumer);
+                    consumer = _messagingService.GetConsumer(channel.Value);
+                    _consumers.Add(channel, consumer);
                 }
             }
             return consumer;

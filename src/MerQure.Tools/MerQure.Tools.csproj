@@ -46,19 +46,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configurations\Channel.cs" />
-    <Compile Include="Configurations\RetryExchangeConfiguration.cs" />
+    <Compile Include="Configurations\RetryStrategyConfiguration.cs" />
     <Compile Include="Exceptions\MerqureToolsException.cs" />
-    <Compile Include="Exchanges\Consumer.cs" />
-    <Compile Include="Exchanges\ConsumerProvider.cs" />
-    <Compile Include="Exchanges\Exchange.cs" />
-    <Compile Include="Exchanges\IExchange.cs" />
-    <Compile Include="Exchanges\Publisher.cs" />
-    <Compile Include="Exchanges\RetryConsumer.cs" />
-    <Compile Include="Messages\EncapsuledMessage.cs" />
-    <Compile Include="Messages\IDelivered.cs" />
-    <Compile Include="Messages\MessageTechnicalInformations.cs" />
+    <Compile Include="Buses\Consumer.cs" />
+    <Compile Include="Buses\ConsumerProvider.cs" />
+    <Compile Include="Buses\Bus.cs" />
+    <Compile Include="Buses\IBus.cs" />
+    <Compile Include="Buses\Publisher.cs" />
+    <Compile Include="Buses\RetryConsumer.cs" />
+    <Compile Include="Messages\RetryInformations.cs" />
+    <Compile Include="Messages\RetryMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RetryExchangeService.cs" />
+    <Compile Include="RetryBusService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MerQure\MerQure.csproj">

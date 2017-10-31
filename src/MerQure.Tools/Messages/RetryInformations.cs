@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MerQure.Tools.Messages
 {
-    internal class MessageTechnicalInformations
+    internal class RetryInformations
     {
         public int NumberOfRetry { get; set; }
     }

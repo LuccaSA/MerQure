@@ -1,4 +1,5 @@
-﻿using MerQure.Tools.Configurations;
+﻿using MerQure.Messages;
+using MerQure.Tools.Configurations;
 using MerQure.Tools.Messages;
 using Newtonsoft.Json;
 using System;
@@ -7,12 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MerQure.Tools.Exchanges
+namespace MerQure.Tools.Buses
 {
     internal class Consumer<T> where T : IDelivered
     {
         private readonly ConsumerProvider _consumerProvider;
-        internal Dictionary<string, MessageTechnicalInformations> TechnicalInformations { get; } = new Dictionary<string, MessageTechnicalInformations>();
+        internal Dictionary<string, RetryInformations> RetryInformations { get; } = new Dictionary<string, RetryInformations>();
 
         public Consumer(IMessagingService messagingService)
         {
@@ -23,22 +24,22 @@ namespace MerQure.Tools.Exchanges
         {
             _consumerProvider.Get(channel).Consume((object sender, IMessagingEvent messagingEvent) =>
             {
-                EncapsuledMessage<T> deserializedMessage = JsonConvert.DeserializeObject<EncapsuledMessage<T>>(messagingEvent.Message.GetBody());
-                deserializedMessage.OriginalMessage.DeliveryTag = messagingEvent.DeliveryTag;
-                TechnicalInformations.Add(messagingEvent.DeliveryTag, deserializedMessage.TechnicalInformation);
+                RetryMessage<T> retryMessage = JsonConvert.DeserializeObject<RetryMessage<T>>(messagingEvent.Message.GetBody());
+                retryMessage.OriginalMessage.DeliveryTag = messagingEvent.DeliveryTag;
+                RetryInformations.Add(messagingEvent.DeliveryTag, retryMessage.RetryInformations);
 
-                callback(this, deserializedMessage.OriginalMessage);
+                callback(this, retryMessage.OriginalMessage);
             });
         }
 
         public void AcknowlegdeDelivredMessage(Channel channel, IDelivered delivredMessage)
         {
-            _consumerProvider.Get(channel).AcknowlegdeDeliveredMessage(delivredMessage.DeliveryTag);
+            _consumerProvider.Get(channel).AcknowlegdeDeliveredMessage(delivredMessage);
         }
 
         public void RejectDeliveredMessage(Channel channel, IDelivered delivredMessage)
         {
-            _consumerProvider.Get(channel).RejectDeliveredMessage(delivredMessage.DeliveryTag);
+            _consumerProvider.Get(channel).RejectDeliveredMessage(delivredMessage);
         }
     }
 }
