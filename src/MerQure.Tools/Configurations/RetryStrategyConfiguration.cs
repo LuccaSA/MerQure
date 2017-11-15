@@ -19,11 +19,11 @@ namespace MerQure.Tools.Configurations
         /// Empty list = 0 retry 
         /// </summary>
         public List<int> DelaysInMsBetweenEachRetry { get; set; }
+
         /// <summary>
         /// If true, the message go into error bus after all delayed retry. 
         /// Otherwise, the message will loop with last delays value 
         /// </summary>
         public bool MessageIsGoingIntoErrorBusAfterAllRepeat { get; set; }
-
     }
 }

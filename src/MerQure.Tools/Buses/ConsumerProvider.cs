@@ -12,7 +12,7 @@ namespace MerQure.Tools.Buses
     {
         private static object _syncRoot = new Object();
 
-        private Dictionary<Channel, IConsumer> _consumers = new Dictionary<Channel, IConsumer>();
+        private Dictionary<string, IConsumer> _consumers = new Dictionary<string, IConsumer>();
         private readonly IMessagingService _messagingService;
 
         public ConsumerProvider(IMessagingService messagingService)
@@ -25,14 +25,14 @@ namespace MerQure.Tools.Buses
             IConsumer consumer;
             lock (_syncRoot)
             {
-                if (_consumers.ContainsKey(channel))
+                if (_consumers.ContainsKey(channel.Value))
                 {
-                    consumer = _consumers[channel];
+                    consumer = _consumers[channel.Value];
                 }
                 else
                 {
                     consumer = _messagingService.GetConsumer(channel.Value);
-                    _consumers.Add(channel, consumer);
+                    _consumers.Add(channel.Value, consumer);
                 }
             }
             return consumer;

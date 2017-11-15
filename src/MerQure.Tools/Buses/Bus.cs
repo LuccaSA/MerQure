@@ -23,7 +23,7 @@ namespace MerQure.Tools.Buses
             Consumer.AcknowlegdeDelivredMessage(channel, delivredMessage);
         }
 
-        public void Consume(Channel channel, EventHandler<T> callback)
+        public void OnMessageReceived(Channel channel, EventHandler<T> callback)
         {
             Consumer.Consume(channel, callback);
         }
@@ -51,6 +51,11 @@ namespace MerQure.Tools.Buses
         public void SendDelivredMessageToErrorBus(Channel channel, T delivredMessage)
         {
             Consumer.SendToErrorExchange(channel, delivredMessage);
+        }
+
+        public void PublishForceRetryAttemptNumber(Channel channel, T message, int attemptNumber)
+        {
+            Consumer.ForceRetryStrategy(channel, message, attemptNumber);
         }
     }
 }

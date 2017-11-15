@@ -42,7 +42,7 @@ namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
 
         public void Consume(EventHandler<Sample> callback)
         {
-            SampleBus.Consume(SampleChannels.MessageSended, (object sender, Sample sample) =>
+            SampleBus.OnMessageReceived(SampleChannels.MessageSended, (object sender, Sample sample) =>
             {
                 callback(this, sample);
             });

@@ -43,7 +43,7 @@ namespace MerQure.Tools.Buses
                 TryPublishWithBrokerAcknowledgement(publisher, channel.Value, JsonConvert.SerializeObject(encapsuledMessage));
             }
         }
-
+        
         internal void PublishOnRetryExchange(Channel channel, T message, RetryInformations technicalInformations)
         {
             technicalInformations.NumberOfRetry++;
