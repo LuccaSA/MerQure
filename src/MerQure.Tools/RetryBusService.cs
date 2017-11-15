@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MerQure.Tools
 {
-    public class RetryBusService
+    public class RetryBusService : IRetryBusService
     {        
         private readonly IMessagingService _messagingService;
         
