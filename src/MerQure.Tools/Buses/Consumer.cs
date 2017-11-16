@@ -32,14 +32,14 @@ namespace MerQure.Tools.Buses
             });
         }
 
-        public void AcknowlegdeDelivredMessage(Channel channel, IDelivered delivredMessage)
+        public void AcknowlegdeDeliveredMessage(Channel channel, IDelivered deliveredMessage)
         {
-            _consumerProvider.Get(channel).AcknowlegdeDeliveredMessage(delivredMessage);
+            _consumerProvider.Get(channel).AcknowlegdeDeliveredMessage(deliveredMessage);
         }
 
-        public void RejectDeliveredMessage(Channel channel, IDelivered delivredMessage)
+        public void RejectDeliveredMessage(Channel channel, IDelivered deliveredMessage)
         {
-            _consumerProvider.Get(channel).RejectDeliveredMessage(delivredMessage);
+            _consumerProvider.Get(channel).RejectDeliveredMessage(deliveredMessage);
         }
     }
 }

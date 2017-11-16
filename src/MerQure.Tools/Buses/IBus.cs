@@ -13,9 +13,9 @@ namespace MerQure.Tools.Buses
         void PublishForceRetryAttemptNumber(Channel channel, T message, int attemptNumber);
         void PublishWithTransaction(Channel channel, IEnumerable<T> message);
         void OnMessageReceived(Channel channel, EventHandler<T> callback);
-        void ApplyRetryStrategy(Channel channel, T delivredMessage);
-        void AcknowlegdeDelivredMessage(Channel channel, T delivredMessage);
-        void RejectDeliveredMessage(Channel channel, T delivredMessage);
-        void SendDelivredMessageToErrorBus(Channel channel, T delivredMessage);
+        void ApplyRetryStrategy(Channel channel, T deliveredMessage);
+        void AcknowlegdeDeliveredMessage(Channel channel, T deliveredMessage);
+        void RejectDeliveredMessage(Channel channel, T deliveredMessage);
+        void SendDeliveredMessageToErrorBus(Channel channel, T deliveredMessage);
     }
 }

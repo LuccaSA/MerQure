@@ -22,18 +22,18 @@ namespace MerQure.Tools.Buses
             _producer = producer;
         }
 
-        internal void SendToErrorExchange(Channel channel, T delivredMessage)
+        internal void SendToErrorExchange(Channel channel, T deliveredMessage)
         {
-            if (String.IsNullOrEmpty(delivredMessage.DeliveryTag))
-                throw new ArgumentNullException(nameof(delivredMessage.DeliveryTag));
-            if (!RetryInformations.ContainsKey(delivredMessage.DeliveryTag))
-                throw new MerqureToolsException($"unknown delivery tag {delivredMessage.DeliveryTag}");
+            if (String.IsNullOrEmpty(deliveredMessage.DeliveryTag))
+                throw new ArgumentNullException(nameof(deliveredMessage.DeliveryTag));
+            if (!RetryInformations.ContainsKey(deliveredMessage.DeliveryTag))
+                throw new MerqureToolsException($"unknown delivery tag {deliveredMessage.DeliveryTag}");
 
-            RetryInformations retryInformations = RetryInformations[delivredMessage.DeliveryTag];
+            RetryInformations retryInformations = RetryInformations[deliveredMessage.DeliveryTag];
 
-            _producer.PublishOnErrorExchange(channel, delivredMessage, retryInformations);
-            AcknowlegdeDelivredMessage(channel, delivredMessage);
-            RetryInformations.Remove(delivredMessage.DeliveryTag);
+            _producer.PublishOnErrorExchange(channel, deliveredMessage, retryInformations);
+            AcknowlegdeDeliveredMessage(channel, deliveredMessage);
+            RetryInformations.Remove(deliveredMessage.DeliveryTag);
         }
 
         public void ForceRetryStrategy(Channel channel, T message, int attemptNumber)
@@ -52,25 +52,25 @@ namespace MerQure.Tools.Buses
             }
         }
         
-        public void ApplyRetryStrategy(Channel channel, T delivredMessage)
+        public void ApplyRetryStrategy(Channel channel, T deliveredMessage)
         {
-            if (String.IsNullOrEmpty(delivredMessage.DeliveryTag))
-                throw new ArgumentNullException(nameof(delivredMessage.DeliveryTag));
-            if (!RetryInformations.ContainsKey(delivredMessage.DeliveryTag))
-                throw new MerqureToolsException($"unknown delivery tag {delivredMessage.DeliveryTag}"); 
+            if (String.IsNullOrEmpty(deliveredMessage.DeliveryTag))
+                throw new ArgumentNullException(nameof(deliveredMessage.DeliveryTag));
+            if (!RetryInformations.ContainsKey(deliveredMessage.DeliveryTag))
+                throw new MerqureToolsException($"unknown delivery tag {deliveredMessage.DeliveryTag}"); 
 
-            RetryInformations retryInformations = RetryInformations[delivredMessage.DeliveryTag];
+            RetryInformations retryInformations = RetryInformations[deliveredMessage.DeliveryTag];
 
             if (IsGoingToErrorExchange(retryInformations))
             {
-                _producer.PublishOnErrorExchange(channel, delivredMessage, retryInformations);
+                _producer.PublishOnErrorExchange(channel, deliveredMessage, retryInformations);
             }
             else
             {
-                _producer.PublishOnRetryExchange(channel, delivredMessage, retryInformations);
+                _producer.PublishOnRetryExchange(channel, deliveredMessage, retryInformations);
             }
-            AcknowlegdeDelivredMessage(channel, delivredMessage);
-            RetryInformations.Remove(delivredMessage.DeliveryTag);
+            AcknowlegdeDeliveredMessage(channel, deliveredMessage);
+            RetryInformations.Remove(deliveredMessage.DeliveryTag);
         }
 
 

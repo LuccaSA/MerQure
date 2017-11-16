@@ -18,9 +18,9 @@ namespace MerQure.Tools.Buses
             Consumer = consumer;
         }
 
-        public void AcknowlegdeDelivredMessage(Channel channel, T delivredMessage)
+        public void AcknowlegdeDeliveredMessage(Channel channel, T deliveredMessage)
         {
-            Consumer.AcknowlegdeDelivredMessage(channel, delivredMessage);
+            Consumer.AcknowlegdeDeliveredMessage(channel, deliveredMessage);
         }
 
         public void OnMessageReceived(Channel channel, EventHandler<T> callback)
@@ -38,19 +38,19 @@ namespace MerQure.Tools.Buses
             Producer.PublishWithTransaction(channel, messages);
         }
 
-        public void RejectDeliveredMessage(Channel channel, T delivredMessage)
+        public void RejectDeliveredMessage(Channel channel, T deliveredMessage)
         {
-            Consumer.RejectDeliveredMessage(channel, delivredMessage);
+            Consumer.RejectDeliveredMessage(channel, deliveredMessage);
         }
 
-        public void ApplyRetryStrategy(Channel channel, T delivredMessage)
+        public void ApplyRetryStrategy(Channel channel, T deliveredMessage)
         {
-            Consumer.ApplyRetryStrategy(channel, delivredMessage);
+            Consumer.ApplyRetryStrategy(channel, deliveredMessage);
         }
 
-        public void SendDelivredMessageToErrorBus(Channel channel, T delivredMessage)
+        public void SendDeliveredMessageToErrorBus(Channel channel, T deliveredMessage)
         {
-            Consumer.SendToErrorExchange(channel, delivredMessage);
+            Consumer.SendToErrorExchange(channel, deliveredMessage);
         }
 
         public void PublishForceRetryAttemptNumber(Channel channel, T message, int attemptNumber)

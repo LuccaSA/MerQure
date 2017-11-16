@@ -55,12 +55,12 @@ namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
 
         public void Acknowlegde(Sample sample)
         {
-            SampleBus.AcknowlegdeDelivredMessage(SampleChannels.MessageSended, sample);
+            SampleBus.AcknowlegdeDeliveredMessage(SampleChannels.MessageSended, sample);
         }
 
         public void SendOnError(Sample sample)
         {
-            SampleBus.SendDelivredMessageToErrorBus(SampleChannels.MessageSended, sample);
+            SampleBus.SendDeliveredMessageToErrorBus(SampleChannels.MessageSended, sample);
         }
     }
 }
