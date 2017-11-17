@@ -66,7 +66,7 @@ namespace MerQure.Tools
                     CreateRetryChannelsForOneDelay(configuration, retryExchangeName, delay);
                 }
 
-                if (!configuration.DelaysInMsBetweenEachRetry.Contains(configuration.DeliveryDelayInMilliseconds))
+                if (!configuration.DelaysInMsBetweenEachRetry.Contains(configuration.DeliveryDelayInMilliseconds) && configuration.DeliveryDelayInMilliseconds != 0)
                 {
                     CreateRetryChannelsForOneDelay(configuration, retryExchangeName, configuration.DeliveryDelayInMilliseconds);
                 }

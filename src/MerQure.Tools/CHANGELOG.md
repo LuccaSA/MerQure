@@ -1,3 +1,8 @@
+## 0.0.4 - 2017-11-17
+### /!\ It's an Alpha, do not use in production
+### Added
+- bug fix
+
 ## 0.0.3 - 2017-11-17
 ### /!\ It's an Alpha, do not use in production
 ### Added
