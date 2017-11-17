@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Buses\MessageInformations.cs" />
     <Compile Include="Configurations\Channel.cs" />
     <Compile Include="Configurations\RetryStrategyConfiguration.cs" />
     <Compile Include="Exceptions\MerqureToolsException.cs" />

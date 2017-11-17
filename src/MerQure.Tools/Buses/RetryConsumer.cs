@@ -36,23 +36,27 @@ namespace MerQure.Tools.Buses
             RetryInformations.Remove(deliveredMessage.DeliveryTag);
         }
 
-        public void ForceRetryStrategy(Channel channel, T message, int attemptNumber)
+        public MessageInformations ForceRetryStrategy(Channel channel, T message, int attemptNumber)
         {
             var retryInformations = new RetryInformations()
             {
                 NumberOfRetry = attemptNumber - 1
             };
+            var messageInformations = new MessageInformations();
+
             if (IsGoingToErrorExchange(retryInformations))
             {
                 _producer.PublishOnErrorExchange(channel, message, retryInformations);
+                messageInformations.IsOnErrorBus = true;
             }
             else
             {
                 _producer.PublishOnRetryExchange(channel, message, retryInformations);
             }
+            return messageInformations;
         }
         
-        public void ApplyRetryStrategy(Channel channel, T deliveredMessage)
+        public MessageInformations ApplyRetryStrategy(Channel channel, T deliveredMessage)
         {
             if (String.IsNullOrEmpty(deliveredMessage.DeliveryTag))
                 throw new ArgumentNullException(nameof(deliveredMessage.DeliveryTag));
@@ -60,17 +64,20 @@ namespace MerQure.Tools.Buses
                 throw new MerqureToolsException($"unknown delivery tag {deliveredMessage.DeliveryTag}"); 
 
             RetryInformations retryInformations = RetryInformations[deliveredMessage.DeliveryTag];
-
+            var messageInformations = new MessageInformations();
             if (IsGoingToErrorExchange(retryInformations))
             {
                 _producer.PublishOnErrorExchange(channel, deliveredMessage, retryInformations);
+                messageInformations.IsOnErrorBus = true;
             }
             else
             {
                 _producer.PublishOnRetryExchange(channel, deliveredMessage, retryInformations);
             }
+
             AcknowlegdeDeliveredMessage(channel, deliveredMessage);
             RetryInformations.Remove(deliveredMessage.DeliveryTag);
+            return messageInformations;
         }
 
 

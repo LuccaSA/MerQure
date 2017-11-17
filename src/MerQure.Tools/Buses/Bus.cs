@@ -43,9 +43,9 @@ namespace MerQure.Tools.Buses
             Consumer.RejectDeliveredMessage(channel, deliveredMessage);
         }
 
-        public void ApplyRetryStrategy(Channel channel, T deliveredMessage)
+        public MessageInformations ApplyRetryStrategy(Channel channel, T deliveredMessage)
         {
-            Consumer.ApplyRetryStrategy(channel, deliveredMessage);
+            return Consumer.ApplyRetryStrategy(channel, deliveredMessage);
         }
 
         public void SendDeliveredMessageToErrorBus(Channel channel, T deliveredMessage)
@@ -53,9 +53,9 @@ namespace MerQure.Tools.Buses
             Consumer.SendToErrorExchange(channel, deliveredMessage);
         }
 
-        public void PublishForceRetryAttemptNumber(Channel channel, T message, int attemptNumber)
+        public MessageInformations PublishForceRetryAttemptNumber(Channel channel, T message, int attemptNumber)
         {
-            Consumer.ForceRetryStrategy(channel, message, attemptNumber);
+            return Consumer.ForceRetryStrategy(channel, message, attemptNumber);
         }
     }
 }

@@ -9,8 +9,8 @@ namespace MerQure.Tools.Configurations
 {
     public class RetryStrategyConfiguration
     {
-        public const string RetryExchangeSuffix = "retry";
-        public const string ErrorExchangeSuffix = "error";
+        internal const string RetryExchangeSuffix = "retry";
+        internal const string ErrorExchangeSuffix = "error";
 
         public string BusName { get; set; }
         public List<Channel> Channels { get; set; } = new List<Channel>();
