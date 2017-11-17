@@ -30,7 +30,7 @@ namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
                         {10000 }
                     },
                 MessageIsGoingIntoErrorBusAfterAllRepeat = true,
-                DeliveryDelayInMilliseconds = 1000
+                DeliveryDelayInMilliseconds = 0
             };
 
             SampleBus = _retryBusService.CreateNewBus<Sample>(sampleConfiguration);

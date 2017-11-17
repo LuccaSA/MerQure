@@ -31,7 +31,7 @@ namespace MerQure.Tools.Buses
             }
             string bindingValue = channel.Value;
             string busName = _messageBrokerConfiguration.BusName;
-            if (applyDeliveryDeplay)
+            if (applyDeliveryDeplay && _messageBrokerConfiguration.DeliveryDelayInMilliseconds > 0)
             {
                 bindingValue = $"{bindingValue}.{_messageBrokerConfiguration.DeliveryDelayInMilliseconds}";
                 busName = $"{busName}.{ RetryStrategyConfiguration.RetryExchangeSuffix}";
@@ -47,7 +47,7 @@ namespace MerQure.Tools.Buses
             var encapsuledMessage = CreateRetryMessage(message);
             string bindingValue = channel.Value;
             string busName = _messageBrokerConfiguration.BusName;
-            if (applyDeliveryDeplay)
+            if (applyDeliveryDeplay && _messageBrokerConfiguration.DeliveryDelayInMilliseconds > 0)
             {
                 bindingValue = $"{bindingValue}.{_messageBrokerConfiguration.DeliveryDelayInMilliseconds}";
                 busName = $"{busName}.{ RetryStrategyConfiguration.RetryExchangeSuffix}";
