@@ -29,7 +29,8 @@ namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
                         {6000 },
                         {10000 }
                     },
-                MessageIsGoingIntoErrorBusAfterAllRepeat = true
+                MessageIsGoingIntoErrorBusAfterAllRepeat = true,
+                DeliveryDelayInMilliseconds = 1000
             };
 
             SampleBus = _retryBusService.CreateNewBus<Sample>(sampleConfiguration);
@@ -37,7 +38,7 @@ namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
 
         public void Send(Sample sample)
         {
-            SampleBus.Publish(SampleChannels.MessageSended, sample);
+            SampleBus.Publish(SampleChannels.MessageSended, sample, true);
         }
 
         public void Consume(EventHandler<Sample> callback)

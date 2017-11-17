@@ -22,25 +22,39 @@ namespace MerQure.Tools.Buses
             _messageBrokerConfiguration = retryConfiguration;
         }
 
-        public void PublishWithTransaction(Channel channel, IEnumerable<T> messages)
+        public void PublishWithTransaction(Channel channel, IEnumerable<T> messages, bool applyDeliveryDeplay)
         {
             var serializedMessages = new List<string>();
             foreach (T message in messages)
             {
                 serializedMessages.Add(JsonConvert.SerializeObject(CreateRetryMessage(message)));
             }
-            using (var publisher = _messagingService.GetPublisher(_messageBrokerConfiguration.BusName, false))
+            string bindingValue = channel.Value;
+            string busName = _messageBrokerConfiguration.BusName;
+            if (applyDeliveryDeplay)
             {
-                PublishWithTransaction(publisher, channel.Value, serializedMessages);
+                bindingValue = $"{bindingValue}.{_messageBrokerConfiguration.DeliveryDelayInMilliseconds}";
+                busName = $"{busName}.{ RetryStrategyConfiguration.RetryExchangeSuffix}";
+            }
+            using (var publisher = _messagingService.GetPublisher(busName, false))
+            {
+                PublishWithTransaction(publisher, bindingValue, serializedMessages);
             }
         }
 
-        public void Publish(Channel channel, T message)
+        public void Publish(Channel channel, T message, bool applyDeliveryDeplay)
         {
-            using (var publisher = _messagingService.GetPublisher(_messageBrokerConfiguration.BusName, true))
+            var encapsuledMessage = CreateRetryMessage(message);
+            string bindingValue = channel.Value;
+            string busName = _messageBrokerConfiguration.BusName;
+            if (applyDeliveryDeplay)
             {
-                var encapsuledMessage = CreateRetryMessage(message);
-                TryPublishWithBrokerAcknowledgement(publisher, channel.Value, JsonConvert.SerializeObject(encapsuledMessage));
+                bindingValue = $"{bindingValue}.{_messageBrokerConfiguration.DeliveryDelayInMilliseconds}";
+                busName = $"{busName}.{ RetryStrategyConfiguration.RetryExchangeSuffix}";
+            }
+            using (var publisher = _messagingService.GetPublisher(busName, true))
+            {
+                TryPublishWithBrokerAcknowledgement(publisher, bindingValue, JsonConvert.SerializeObject(encapsuledMessage));
             }
         }
         

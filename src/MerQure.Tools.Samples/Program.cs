@@ -22,7 +22,7 @@ namespace MerQure.Tools.Samples
             ActionService actionService = new ActionService(sampleService);
             actionService.Consume();
 
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 1; i++)
             {
                 actionService.SendNewSample();
             }

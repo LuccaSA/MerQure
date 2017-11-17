@@ -9,9 +9,9 @@ namespace MerQure.Tools.Buses
 {
     public interface IBus<T> where T : IDelivered
     {
-        void Publish(Channel channel, T message);
+        void Publish(Channel channel, T message, bool applyDeliveryDeplay = false);
+        void PublishWithTransaction(Channel channel, IEnumerable<T> message, bool applyDeliveryDeplay = false);
         MessageInformations PublishForceRetryAttemptNumber(Channel channel, T message, int attemptNumber);
-        void PublishWithTransaction(Channel channel, IEnumerable<T> message);
         void OnMessageReceived(Channel channel, EventHandler<T> callback);
         MessageInformations ApplyRetryStrategy(Channel channel, T deliveredMessage);
         void AcknowlegdeDeliveredMessage(Channel channel, T deliveredMessage);

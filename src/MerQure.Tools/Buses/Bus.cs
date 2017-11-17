@@ -28,14 +28,14 @@ namespace MerQure.Tools.Buses
             Consumer.Consume(channel, callback);
         }
 
-        public void Publish(Channel channel, T message)
+        public void Publish(Channel channel, T message, bool applyDeliveryDeplay = false)
         {
-            Producer.Publish(channel, message);
+            Producer.Publish(channel, message, applyDeliveryDeplay);
         }
 
-        public void PublishWithTransaction(Channel channel, IEnumerable<T> messages)
+        public void PublishWithTransaction(Channel channel, IEnumerable<T> messages, bool applyDeliveryDeplay = false)
         {
-            Producer.PublishWithTransaction(channel, messages);
+            Producer.PublishWithTransaction(channel, messages, applyDeliveryDeplay);
         }
 
         public void RejectDeliveredMessage(Channel channel, T deliveredMessage)

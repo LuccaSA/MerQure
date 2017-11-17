@@ -25,5 +25,7 @@ namespace MerQure.Tools.Configurations
         /// Otherwise, the message will loop with last delays value 
         /// </summary>
         public bool MessageIsGoingIntoErrorBusAfterAllRepeat { get; set; }
+
+        public int DeliveryDelayInMilliseconds { get; set; }
     }
 }
