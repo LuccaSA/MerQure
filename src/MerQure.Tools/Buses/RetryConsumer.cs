@@ -40,7 +40,7 @@ namespace MerQure.Tools.Buses
         {
             var retryInformations = new RetryInformations()
             {
-                NumberOfRetry = attemptNumber - 1
+                NumberOfRetry = attemptNumber > 0 ? attemptNumber - 1 : 0   
             };
             var messageInformations = new MessageInformations();
 

@@ -60,22 +60,22 @@ namespace MerQure.Tools.Buses
         
         internal void PublishOnRetryExchange(Channel channel, T message, RetryInformations technicalInformations)
         {
+            List<int> delays = _messageBrokerConfiguration.DelaysInMsBetweenEachRetry;
+            int delay = 0;
+            if (delays.Count() >= technicalInformations.NumberOfRetry)
+            {
+                delay = delays[technicalInformations.NumberOfRetry];
+            }
+            else
+            {
+                delay = delays.Last();
+            }
             technicalInformations.NumberOfRetry++;
             RetryMessage<T> retryMessage = new RetryMessage<T>
             {
                 OriginalMessage = message,
                 RetryInformations = technicalInformations
             };
-            List<int> delays = _messageBrokerConfiguration.DelaysInMsBetweenEachRetry;
-            int delay = 0;
-            if (delays.Count() >= technicalInformations.NumberOfRetry)
-            {
-                delay = delays[technicalInformations.NumberOfRetry - 1];
-            }
-            else
-            {
-                delay = delays.Last();
-            }
 
             string bindingValue = $"{channel.Value}.{delay}";
             using (var publisher = _messagingService.GetPublisher($"{_messageBrokerConfiguration.BusName}.{RetryStrategyConfiguration.RetryExchangeSuffix}", true))
