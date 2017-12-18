@@ -1,3 +1,8 @@
+## 0.0.6 - 2017-12-18
+### /!\ It's an Alpha, do not use in production
+### Added
+- consumer bug fix (memory leak)
+
 ## 0.0.5 - 2017-11-21
 ### /!\ It's an Alpha, do not use in production
 ### Added
