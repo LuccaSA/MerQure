@@ -33,7 +33,14 @@ namespace MerQure.Tools
         private void ApplyNewConfiguration(RetryStrategyConfiguration configuration)
         {
             if (configuration.Channels == null || !configuration.Channels.Any())
+            {
                 throw new ArgumentNullException(nameof(configuration.Channels));
+            }
+
+            if(configuration.DelaysInMsBetweenEachRetry == null)
+            {
+                throw new ArgumentNullException(nameof(configuration.Channels));
+            }
 
             CreateMainExchange(configuration);
             CreateRetryExchangeIfNecessary(configuration);
