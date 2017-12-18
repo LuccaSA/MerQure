@@ -32,12 +32,14 @@ namespace MerQure.Tools.Buses
         {
             deliveredMessage.DeliveryTag = DecodeDeliveryTag(deliveredMessage.DeliveryTag);
             _consumerProvider.Get(channel).AcknowlegdeDeliveredMessage(deliveredMessage);
+            RetryInformations.Remove(deliveredMessage.DeliveryTag);
         }
 
         public void RejectDeliveredMessage(Channel channel, IDelivered deliveredMessage)
         {
             deliveredMessage.DeliveryTag = DecodeDeliveryTag(deliveredMessage.DeliveryTag);
             _consumerProvider.Get(channel).RejectDeliveredMessage(deliveredMessage);
+            RetryInformations.Remove(deliveredMessage.DeliveryTag);
         }
 
         internal void OnMessageReceived(EventHandler<T> callback, IMessagingEvent messagingEvent)
