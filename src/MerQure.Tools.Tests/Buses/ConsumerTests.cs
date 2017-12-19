@@ -28,8 +28,10 @@ namespace MerQure.Tools.Tests.Buses
             });
 
             _mockMessagingService = new Mock<IMessagingService>();
+            _mockMessagingService.Setup(m => m.GetConsumer(It.IsAny<string>())).Returns(_mockMerQureConsumer.Object);
             
             _consumer = new Consumer<TestMessage>(_mockMessagingService.Object);
+
         }
 
         public void Dispose()
