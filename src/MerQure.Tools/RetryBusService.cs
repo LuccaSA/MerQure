@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace MerQure.Tools
 {
-    public class RetryBusService
-    {        
+    public class RetryBusService : IRetryBusService
+    {
         private readonly IMessagingService _messagingService;
-        
+
         public RetryBusService(IMessagingService messagingService)
         {
             _messagingService = messagingService;
@@ -52,21 +52,34 @@ namespace MerQure.Tools
             }
         }
 
+        /// <summary>
+        /// Retry exchange is also used to delivery message with delay
+        /// </summary>
         private void CreateRetryExchangeIfNecessary(RetryStrategyConfiguration configuration)
         {
-            if (configuration.DelaysInMsBetweenEachRetry.Any())
+            if (configuration.DelaysInMsBetweenEachRetry.Any() || configuration.DeliveryDelayInMilliseconds != 0)
             {
                 string retryExchangeName = $"{configuration.BusName}.{RetryStrategyConfiguration.RetryExchangeSuffix}";
                 _messagingService.DeclareExchange(retryExchangeName, Constants.ExchangeTypeDirect);
                 foreach (int delay in configuration.DelaysInMsBetweenEachRetry)
                 {
-                    foreach (Channel channel in configuration.Channels)
-                    {
-                        string retryQueueName = $"{channel.Value}.{delay}";
-                        _messagingService.DeclareQueueWithDeadLetterPolicy(retryQueueName, configuration.BusName, delay, null);
-                        _messagingService.DeclareBinding(retryExchangeName, retryQueueName, $"{channel.Value}.{delay}", null);
-                    }
+                    CreateRetryChannelsForOneDelay(configuration, retryExchangeName, delay);
                 }
+
+                if (!configuration.DelaysInMsBetweenEachRetry.Contains(configuration.DeliveryDelayInMilliseconds) && configuration.DeliveryDelayInMilliseconds != 0)
+                {
+                    CreateRetryChannelsForOneDelay(configuration, retryExchangeName, configuration.DeliveryDelayInMilliseconds);
+                }
+            }
+        }
+
+        private void CreateRetryChannelsForOneDelay(RetryStrategyConfiguration configuration, string retryExchangeName, int delay)
+        {
+            foreach (Channel channel in configuration.Channels)
+            {
+                string retryQueueName = $"{channel.Value}.{delay}";
+                _messagingService.DeclareQueueWithDeadLetterPolicy(retryQueueName, configuration.BusName, delay, null);
+                _messagingService.DeclareBinding(retryExchangeName, retryQueueName, $"{channel.Value}.{delay}", null);
             }
         }
 

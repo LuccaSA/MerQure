@@ -22,39 +22,62 @@ namespace MerQure.Tools.Buses
             _producer = producer;
         }
 
-        internal void SendToErrorExchange(Channel channel, T delivredMessage)
+        internal void SendToErrorExchange(Channel channel, T deliveredMessage)
         {
-            if (String.IsNullOrEmpty(delivredMessage.DeliveryTag))
-                throw new ArgumentNullException(nameof(delivredMessage.DeliveryTag));
-            if (!RetryInformations.ContainsKey(delivredMessage.DeliveryTag))
-                throw new MerqureToolsException($"unknown delivery tag {delivredMessage.DeliveryTag}");
+            if (String.IsNullOrEmpty(deliveredMessage.DeliveryTag))
+                throw new ArgumentNullException(nameof(deliveredMessage.DeliveryTag));
+            if (!RetryInformations.ContainsKey(deliveredMessage.DeliveryTag))
+                throw new MerqureToolsException($"unknown delivery tag {deliveredMessage.DeliveryTag}");
 
-            RetryInformations retryInformations = RetryInformations[delivredMessage.DeliveryTag];
+            RetryInformations retryInformations = RetryInformations[deliveredMessage.DeliveryTag];
 
-            _producer.PublishOnErrorExchange(channel, delivredMessage, retryInformations);
-            AcknowlegdeDelivredMessage(channel, delivredMessage);
-            RetryInformations.Remove(delivredMessage.DeliveryTag);
+            _producer.PublishOnErrorExchange(channel, deliveredMessage, retryInformations);
+            AcknowlegdeDeliveredMessage(channel, deliveredMessage);
+            RetryInformations.Remove(deliveredMessage.DeliveryTag);
         }
 
-        public void ApplyRetryStrategy(Channel channel, T delivredMessage)
+        public MessageInformations ForceRetryStrategy(Channel channel, T message, int attemptNumber)
         {
-            if (String.IsNullOrEmpty(delivredMessage.DeliveryTag))
-                throw new ArgumentNullException(nameof(delivredMessage.DeliveryTag));
-            if (!RetryInformations.ContainsKey(delivredMessage.DeliveryTag))
-                throw new MerqureToolsException($"unknown delivery tag {delivredMessage.DeliveryTag}");
-
-            RetryInformations technicalInformations = RetryInformations[delivredMessage.DeliveryTag];
-
-            if (IsGoingToErrorExchange(technicalInformations))
+            var retryInformations = new RetryInformations()
             {
-                _producer.PublishOnErrorExchange(channel, delivredMessage, technicalInformations);
+                NumberOfRetry = attemptNumber > 0 ? attemptNumber - 1 : 0   
+            };
+            var messageInformations = new MessageInformations();
+
+            if (IsGoingToErrorExchange(retryInformations))
+            {
+                _producer.PublishOnErrorExchange(channel, message, retryInformations);
+                messageInformations.IsOnErrorBus = true;
             }
             else
             {
-                _producer.PublishOnRetryExchange(channel, delivredMessage, technicalInformations);
+                _producer.PublishOnRetryExchange(channel, message, retryInformations);
             }
-            AcknowlegdeDelivredMessage(channel, delivredMessage);
-            RetryInformations.Remove(delivredMessage.DeliveryTag);
+            return messageInformations;
+        }
+        
+        public MessageInformations ApplyRetryStrategy(Channel channel, T deliveredMessage)
+        {
+            if (String.IsNullOrEmpty(deliveredMessage.DeliveryTag))
+                throw new ArgumentNullException(nameof(deliveredMessage.DeliveryTag));
+            if (!RetryInformations.ContainsKey(deliveredMessage.DeliveryTag))
+                throw new MerqureToolsException($"unknown delivery tag {deliveredMessage.DeliveryTag}"); 
+
+            RetryInformations retryInformations = RetryInformations[deliveredMessage.DeliveryTag];
+            var messageInformations = new MessageInformations();
+            if (IsGoingToErrorExchange(retryInformations))
+            {
+                _producer.PublishOnErrorExchange(channel, deliveredMessage, retryInformations);
+                messageInformations.IsOnErrorBus = true;
+            }
+            else
+            {
+                _producer.PublishOnRetryExchange(channel, deliveredMessage, retryInformations);
+            }
+
+            AcknowlegdeDeliveredMessage(channel, deliveredMessage);
+            RetryInformations.Remove(deliveredMessage.DeliveryTag);
+            return messageInformations;
         }
 
 

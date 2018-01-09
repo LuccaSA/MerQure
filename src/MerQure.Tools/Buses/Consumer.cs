@@ -25,21 +25,33 @@ namespace MerQure.Tools.Buses
             _consumerProvider.Get(channel).Consume((object sender, IMessagingEvent messagingEvent) =>
             {
                 RetryMessage<T> retryMessage = JsonConvert.DeserializeObject<RetryMessage<T>>(messagingEvent.Message.GetBody());
-                retryMessage.OriginalMessage.DeliveryTag = messagingEvent.DeliveryTag;
-                RetryInformations.Add(messagingEvent.DeliveryTag, retryMessage.RetryInformations);
+                retryMessage.OriginalMessage.DeliveryTag = EncodeDeliveryTag(messagingEvent.DeliveryTag);
+                RetryInformations.Add(retryMessage.OriginalMessage.DeliveryTag, retryMessage.RetryInformations);
 
                 callback(this, retryMessage.OriginalMessage);
             });
         }
 
-        public void AcknowlegdeDelivredMessage(Channel channel, IDelivered delivredMessage)
+        public void AcknowlegdeDeliveredMessage(Channel channel, IDelivered deliveredMessage)
         {
-            _consumerProvider.Get(channel).AcknowlegdeDeliveredMessage(delivredMessage);
+            deliveredMessage.DeliveryTag = DecodeDeliveryTag(deliveredMessage.DeliveryTag);
+            _consumerProvider.Get(channel).AcknowlegdeDeliveredMessage(deliveredMessage);
         }
 
-        public void RejectDeliveredMessage(Channel channel, IDelivered delivredMessage)
+        public void RejectDeliveredMessage(Channel channel, IDelivered deliveredMessage)
         {
-            _consumerProvider.Get(channel).RejectDeliveredMessage(delivredMessage);
+            deliveredMessage.DeliveryTag = DecodeDeliveryTag(deliveredMessage.DeliveryTag);
+            _consumerProvider.Get(channel).RejectDeliveredMessage(deliveredMessage);
+        }
+
+        private static string EncodeDeliveryTag(string deliveryTag) //TODO CLEAN !! this is just a fast fix ...
+        {
+            return $"{deliveryTag}_{Guid.NewGuid().ToString()}";
+        }
+
+        private static string DecodeDeliveryTag(string deliveryTag) //TODO CLEAN !! this is just a fast fix
+        {
+            return deliveryTag.Split('_')[0]; 
         }
     }
 }

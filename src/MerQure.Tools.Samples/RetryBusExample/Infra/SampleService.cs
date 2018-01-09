@@ -29,7 +29,8 @@ namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
                         {6000 },
                         {10000 }
                     },
-                MessageIsGoingIntoErrorBusAfterAllRepeat = true
+                MessageIsGoingIntoErrorBusAfterAllRepeat = true,
+                DeliveryDelayInMilliseconds = 1000
             };
 
             SampleBus = _retryBusService.CreateNewBus<Sample>(sampleConfiguration);
@@ -37,12 +38,12 @@ namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
 
         public void Send(Sample sample)
         {
-            SampleBus.Publish(SampleChannels.MessageSended, sample);
+            SampleBus.Publish(SampleChannels.MessageSended, sample, true);
         }
 
         public void Consume(EventHandler<Sample> callback)
         {
-            SampleBus.Consume(SampleChannels.MessageSended, (object sender, Sample sample) =>
+            SampleBus.OnMessageReceived(SampleChannels.MessageSended, (object sender, Sample sample) =>
             {
                 callback(this, sample);
             });
@@ -55,12 +56,12 @@ namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
 
         public void Acknowlegde(Sample sample)
         {
-            SampleBus.AcknowlegdeDelivredMessage(SampleChannels.MessageSended, sample);
+            SampleBus.AcknowlegdeDeliveredMessage(SampleChannels.MessageSended, sample);
         }
 
         public void SendOnError(Sample sample)
         {
-            SampleBus.SendDelivredMessageToErrorBus(SampleChannels.MessageSended, sample);
+            SampleBus.SendDeliveredMessageToErrorBus(SampleChannels.MessageSended, sample);
         }
     }
 }

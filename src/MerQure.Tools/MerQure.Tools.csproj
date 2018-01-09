@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Buses\MessageInformations.cs" />
     <Compile Include="Configurations\Channel.cs" />
     <Compile Include="Configurations\RetryStrategyConfiguration.cs" />
     <Compile Include="Exceptions\MerqureToolsException.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Buses\IBus.cs" />
     <Compile Include="Buses\Publisher.cs" />
     <Compile Include="Buses\RetryConsumer.cs" />
+    <Compile Include="IRetryBusService.cs" />
     <Compile Include="Messages\RetryInformations.cs" />
     <Compile Include="Messages\RetryMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

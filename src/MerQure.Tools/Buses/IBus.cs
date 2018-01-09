@@ -9,12 +9,13 @@ namespace MerQure.Tools.Buses
 {
     public interface IBus<T> where T : IDelivered
     {
-        void Publish(Channel channel, T message);
-        void PublishWithTransaction(Channel channel, IEnumerable<T> message);
-        void Consume(Channel channel, EventHandler<T> callback);
-        void ApplyRetryStrategy(Channel channel, T message);
-        void AcknowlegdeDelivredMessage(Channel channel, T delivredMessage);
-        void RejectDeliveredMessage(Channel channel, T delivredMessage);
-        void SendDelivredMessageToErrorBus(Channel channel, T delivredMessage);
+        void Publish(Channel channel, T message, bool applyDeliveryDeplay = false);
+        void PublishWithTransaction(Channel channel, IEnumerable<T> message, bool applyDeliveryDeplay = false);
+        MessageInformations PublishForceRetryAttemptNumber(Channel channel, T message, int attemptNumber);
+        void OnMessageReceived(Channel channel, EventHandler<T> callback);
+        MessageInformations ApplyRetryStrategy(Channel channel, T deliveredMessage);
+        void AcknowlegdeDeliveredMessage(Channel channel, T deliveredMessage);
+        void RejectDeliveredMessage(Channel channel, T deliveredMessage);
+        void SendDeliveredMessageToErrorBus(Channel channel, T deliveredMessage);
     }
 }
