@@ -24,11 +24,7 @@ namespace MerQure.Tools.Buses
         {
             _consumerProvider.Get(channel).Consume((object sender, IMessagingEvent messagingEvent) =>
             {
-                RetryMessage<T> retryMessage = JsonConvert.DeserializeObject<RetryMessage<T>>(messagingEvent.Message.GetBody());
-                retryMessage.OriginalMessage.DeliveryTag = EncodeDeliveryTag(messagingEvent.DeliveryTag);
-                RetryInformations.Add(retryMessage.OriginalMessage.DeliveryTag, retryMessage.RetryInformations);
-
-                callback(this, retryMessage.OriginalMessage);
+                OnMessageReceived(callback, messagingEvent);
             });
         }
 
@@ -36,12 +32,23 @@ namespace MerQure.Tools.Buses
         {
             deliveredMessage.DeliveryTag = DecodeDeliveryTag(deliveredMessage.DeliveryTag);
             _consumerProvider.Get(channel).AcknowlegdeDeliveredMessage(deliveredMessage);
+            RetryInformations.Remove(deliveredMessage.DeliveryTag);
         }
 
         public void RejectDeliveredMessage(Channel channel, IDelivered deliveredMessage)
         {
             deliveredMessage.DeliveryTag = DecodeDeliveryTag(deliveredMessage.DeliveryTag);
             _consumerProvider.Get(channel).RejectDeliveredMessage(deliveredMessage);
+            RetryInformations.Remove(deliveredMessage.DeliveryTag);
+        }
+
+        internal void OnMessageReceived(EventHandler<T> callback, IMessagingEvent messagingEvent)
+        {
+            RetryMessage<T> retryMessage = JsonConvert.DeserializeObject<RetryMessage<T>>(messagingEvent.Message.GetBody());
+            retryMessage.OriginalMessage.DeliveryTag = EncodeDeliveryTag(messagingEvent.DeliveryTag);
+            RetryInformations.Add(retryMessage.OriginalMessage.DeliveryTag, retryMessage.RetryInformations);
+
+            callback(this, retryMessage.OriginalMessage);
         }
 
         private static string EncodeDeliveryTag(string deliveryTag) //TODO CLEAN !! this is just a fast fix ...

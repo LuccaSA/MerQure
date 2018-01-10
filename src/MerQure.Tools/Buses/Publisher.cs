@@ -58,23 +58,23 @@ namespace MerQure.Tools.Buses
             }
         }
         
-        internal void PublishOnRetryExchange(Channel channel, T message, RetryInformations technicalInformations)
+        internal void PublishOnRetryExchange(Channel channel, T message, RetryInformations retryInformations)
         {
             List<int> delays = _messageBrokerConfiguration.DelaysInMsBetweenEachRetry;
             int delay = 0;
-            if (delays.Count() >= technicalInformations.NumberOfRetry)
+            if (delays.Count() >= retryInformations.NumberOfRetry)
             {
-                delay = delays[technicalInformations.NumberOfRetry];
+                delay = delays[retryInformations.NumberOfRetry];
             }
             else
             {
                 delay = delays.Last();
             }
-            technicalInformations.NumberOfRetry++;
+            retryInformations.NumberOfRetry++;
             RetryMessage<T> retryMessage = new RetryMessage<T>
             {
                 OriginalMessage = message,
-                RetryInformations = technicalInformations
+                RetryInformations = retryInformations
             };
 
             string bindingValue = $"{channel.Value}.{delay}";
