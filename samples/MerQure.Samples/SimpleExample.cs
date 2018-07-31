@@ -1,22 +1,26 @@
-﻿using MerQure.RbMQ;
-using MerQure.RbMQ.Content;
+﻿using MerQure.RbMQ.Content;
 using System;
 
 namespace MerQure.Samples
 {
-    public static class SimpleExample
+    public class SimpleExample
     {
-        public static void Run()
-        {
-            var messagingService = new MessagingService(null, null);
+        private readonly IMessagingService _messagingService;
 
+        public SimpleExample(IMessagingService messagingService)
+        {
+            _messagingService = messagingService;
+        }
+
+        public void Run()
+        {
             // RabbitMQ init
-            messagingService.DeclareExchange("simple.exchange");
-            messagingService.DeclareQueue("simple.queue");
-            messagingService.DeclareBinding("simple.exchange", "simple.queue", "simple.message.*");
+            _messagingService.DeclareExchange("simple.exchange");
+            _messagingService.DeclareQueue("simple.queue");
+            _messagingService.DeclareBinding("simple.exchange", "simple.queue", "simple.message.*");
 
             // Get the publisher and declare Exhange where publish messages
-            using (var publisher = messagingService.GetPublisher("simple.exchange"))
+            using (var publisher = _messagingService.GetPublisher("simple.exchange"))
             {
                 // publish messages
                 for (int i = 0; i <= 10; i++)
@@ -27,7 +31,7 @@ namespace MerQure.Samples
 
 
             // Get the consumer on the existing queue and consume its messages
-            var consumer = messagingService.GetConsumer("simple.queue");
+            var consumer = _messagingService.GetConsumer("simple.queue");
             var random = new Random();
             consumer.Consume((object sender, IMessagingEvent args) =>
             {

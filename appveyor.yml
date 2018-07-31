@@ -31,9 +31,9 @@ install:
   - ps: . .\ComputeVersion.ps1
   - ps: $version = Compute "src\MerQure\MerQure.csproj" $env:APPVEYOR_BUILD_NUMBER $env:APPVEYOR_REPO_TAG $env:APPVEYOR_PULL_REQUEST_NUMBER
   - ps: Update-AppveyorBuild -Version $version.Semver
-  - choco install "msbuild-sonarqube-runner" -y
-  - choco install opencover.portable
-  - choco install codecov
+  - dotnet tool install --global dotnet-sonarscanner
+  - nuget install OpenCover -Version 4.6.519
+  - nuget install Codecov -Version 1.0.5
 
 dotnet_csproj:
   patch: true
@@ -45,26 +45,25 @@ before_build:
 - dotnet restore
 - cmd: >-
     IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" (
-    C:\ProgramData\chocolatey\lib\msbuild-sonarqube-runner\tools\MSBuild.SonarQube.Runner.exe begin /k:"MerQure" /d:"sonar.analysis.mode=publish" /d:"sonar.host.url=https://sonarcloud.io" /d:"sonar.organization=luccaintegration-github" /d:"sonar.login=%SONAR_TOKEN%"
+    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.analysis.mode=publish" /d:"sonar.host.url=https://sonarcloud.io" /d:"sonar.organization=luccaintegration-github" /d:"sonar.login=%SONAR_TOKEN%"
     ) ELSE (
-    C:\ProgramData\chocolatey\lib\msbuild-sonarqube-runner\tools\MSBuild.SonarQube.Runner.exe begin /k:"MerQure" /d:"sonar.analysis.mode=preview" /d:"sonar.host.url=https://sonarcloud.io" /d:"sonar.organization=luccaintegration-github" /d:"sonar.login=%SONAR_TOKEN%" /d:"sonar.github.pullRequest=%APPVEYOR_PULL_REQUEST_NUMBER%" /d:"sonar.github.repository=LuccaSA/MerQure" /d:"sonar.github.oauth=%GITHUB_ACCESS_TOKEN%"
+    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.analysis.mode=preview" /d:"sonar.host.url=https://sonarcloud.io" /d:"sonar.organization=luccaintegration-github" /d:"sonar.login=%SONAR_TOKEN%" /d:"sonar.github.pullRequest=%APPVEYOR_PULL_REQUEST_NUMBER%" /d:"sonar.github.repository=LuccaSA/MerQure" /d:"sonar.github.oauth=%GITHUB_ACCESS_TOKEN%"
     )
 
 build_script:
 - ps: msbuild "MerQure.sln" /m /verbosity:minimal /property:$("VersionPrefix="+$version.Prefix+";VersionSuffix="+$version.Suffix) /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 after_build:
-- cmd: >-
-    "C:\ProgramData\chocolatey\lib\msbuild-sonarqube-runner\tools\MSBuild.SonarQube.Runner.exe" end /d:"sonar.login=%SONAR_TOKEN%"
-- ps: dotnet pack src\MerQure\MerQure.csproj --configuration Release /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o artifacts
-- ps: dotnet pack src\MerQure.RbMQ\MerQure.RbMQ.csproj --configuration Release /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o artifacts
+- dotnet sonarscanner end /d:"sonar.login=%SONAR_TOKEN%"
+- ps: dotnet pack src\MerQure\MerQure.csproj --configuration Release /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o ..\..\artifacts
+- ps: dotnet pack src\MerQure.RbMQ\MerQure.RbMQ.csproj --configuration Release /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o ..\..\artifacts
 
 test_script:
-- OpenCover.Console.exe -returntargetcode -oldstyle -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test /p:DebugType=full -c Debug .\tests\MerQure.RbMQ.Tests\MerQure.RbMQ.Tests.csproj" -filter:"+[MerQure*]* -[MerQure.RbMQ.Tests*]*" -excludebyattribute:"*.ExcludeFromCodeCoverage*" -output:coverage-opencover.xml
-- codecov -f coverage-opencover.xml
+- OpenCover.4.6.519\tools\OpenCover.Console.exe -returntargetcode -oldstyle -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test /p:DebugType=full -c Debug .\tests\MerQure.RbMQ.Tests\MerQure.RbMQ.Tests.csproj" -filter:"+[MerQure*]* -[MerQure.RbMQ.Tests*]*" -excludebyattribute:"*.ExcludeFromCodeCoverage*" -output:coverage-opencover.xml
+- Codecov.1.0.5\tools\codecov -f coverage-opencover.xml
 
 artifacts:
-  - path: MerQure\artifacts\*.nupkg
+  - path: .\artifacts\**\*.nupkg
     name: lib
 
 deploy:

@@ -13,9 +13,9 @@ namespace MerQure.RbMQ
         private readonly MerQureConnection _config;
         private readonly Lazy<IConnection> _currentConnection;
 
-        public SharedConnection(IOptions<MerQureConnection> options)
+        public SharedConnection(IOptions<MerQureConfiguration> options)
         {
-            _config = options.Value;
+            _config = options.Value.Connection;
             _currentConnection = new Lazy<IConnection>(() => GetRabbitMqConnection(_config));
         }
 
