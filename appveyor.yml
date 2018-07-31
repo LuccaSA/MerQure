@@ -55,8 +55,8 @@ build_script:
 
 after_build:
 - dotnet sonarscanner end /d:"sonar.login=%SONAR_TOKEN%"
-- ps: dotnet pack src\MerQure\MerQure.csproj --configuration Release /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o artifacts
-- ps: dotnet pack src\MerQure.RbMQ\MerQure.RbMQ.csproj --configuration Release /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o artifacts
+- ps: dotnet pack src\MerQure\MerQure.csproj --configuration Release /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o ..\..\artifacts
+- ps: dotnet pack src\MerQure.RbMQ\MerQure.RbMQ.csproj --configuration Release /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o ..\..\artifacts
 
 test_script:
 - OpenCover.4.6.519\tools\OpenCover.Console.exe -returntargetcode -oldstyle -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test /p:DebugType=full -c Debug .\tests\MerQure.RbMQ.Tests\MerQure.RbMQ.Tests.csproj" -filter:"+[MerQure*]* -[MerQure.RbMQ.Tests*]*" -excludebyattribute:"*.ExcludeFromCodeCoverage*" -output:coverage-opencover.xml
