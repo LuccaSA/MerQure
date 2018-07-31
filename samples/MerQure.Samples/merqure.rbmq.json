@@ -1,0 +1,11 @@
+﻿{
+    "durable": false,
+    "autoDeleteQueue": true,
+    "defaultPrefetchCount": 1,
+    "publisherAcknowledgementsTimeoutInMilliseconds": 10000,
+    "connection": {
+        "connectionString": "amqp://guest:guest@localhost:5672/",
+        "automaticRecoveryEnabled": false,
+        "topologyRecoveryEnabled": false
+    }
+}

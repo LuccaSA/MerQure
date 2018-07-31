@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace MerQure.Samples
 {
@@ -6,16 +7,26 @@ namespace MerQure.Samples
     {
         static void Main()
         {
+            IServiceCollection services = new ServiceCollection();
+
+            var startup = new Startup();
+            startup.ConfigureServices(services);
+
+            var serviceProvider = services.BuildServiceProvider();
+
             Console.WriteLine("Running sample 1: simple");
-            SimpleExample.Run();
+            var simpleExample = serviceProvider.GetService<SimpleExample>();
+            simpleExample.Run();
 
             System.Threading.Thread.Sleep(500);
             Console.WriteLine("Running sample 2: stop");
-            StopExample.Run();
+            var stopExample = serviceProvider.GetService<StopExample>();
+            stopExample.Run();
 
             System.Threading.Thread.Sleep(500);
             Console.WriteLine("Running sample 3: deadletter");
-            DeadLetterExample.Run();
+            var deadLetterExample = serviceProvider.GetService<DeadLetterExample>();
+            deadLetterExample.Run();
         }
     }
 }

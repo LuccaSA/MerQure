@@ -5,28 +5,33 @@ using System.Collections.Generic;
 
 namespace MerQure.Samples
 {
-    public static class DeadLetterExample
+    public class DeadLetterExample
     {
-        public static void Run()
+        private readonly IMessagingService _messagingService;
+
+        public DeadLetterExample(IMessagingService messagingService)
         {
-            var messagingService = new MessagingService(null, null);
+            _messagingService = messagingService;
+        }
 
+        public void Run()
+        {
             // RabbitMQ init
-            messagingService.DeclareExchange("deadletter.exchange", Constants.ExchangeTypeFanout);
-            messagingService.DeclareQueue("deadletter.queue");
-            messagingService.DeclareBinding("deadletter.exchange", "deadletter.queue", "#");
+            _messagingService.DeclareExchange("deadletter.exchange", Constants.ExchangeTypeFanout);
+            _messagingService.DeclareQueue("deadletter.queue");
+            _messagingService.DeclareBinding("deadletter.exchange", "deadletter.queue", "#");
 
-            messagingService.DeclareExchange("delay.exchange", Constants.ExchangeTypeHeaders);
-            messagingService.DeclareQueueWithDeadLetterPolicy("deadletter.queue.5", "deadletter.exchange", 5000, null);
-            messagingService.DeclareQueueWithDeadLetterPolicy("deadletter.queue.30", "deadletter.exchange", 30000, null);
+            _messagingService.DeclareExchange("delay.exchange", Constants.ExchangeTypeHeaders);
+            _messagingService.DeclareQueueWithDeadLetterPolicy("deadletter.queue.5", "deadletter.exchange", 5000, null);
+            _messagingService.DeclareQueueWithDeadLetterPolicy("deadletter.queue.30", "deadletter.exchange", 30000, null);
 
-            messagingService.DeclareBinding("delay.exchange", "deadletter.queue.5", "#", new Dictionary<string, object> { { "delay", 5 } });
-            messagingService.DeclareBinding("delay.exchange", "deadletter.queue.30", "#", new Dictionary<string, object> { { "delay", 30 } });
+            _messagingService.DeclareBinding("delay.exchange", "deadletter.queue.5", "#", new Dictionary<string, object> { { "delay", 5 } });
+            _messagingService.DeclareBinding("delay.exchange", "deadletter.queue.30", "#", new Dictionary<string, object> { { "delay", 30 } });
 
             var dateStart = DateTime.Now;
 
             // Get the publisher and publish messages
-            using (var publisher = messagingService.GetPublisher("delay.exchange"))
+            using (var publisher = _messagingService.GetPublisher("delay.exchange"))
             {
                 // publish messages waiting 5s
                 for (int i = 0; i <= 10; i++)
@@ -45,7 +50,7 @@ namespace MerQure.Samples
             }
 
             // Get the consumer on the existing queue and consume its messages
-            var consumer = messagingService.GetConsumer("deadletter.queue");
+            var consumer = _messagingService.GetConsumer("deadletter.queue");
             consumer.Consume((object sender, IMessagingEvent args) =>
             {
                 var realDelay = DateTime.Now.Subtract(dateStart).TotalSeconds;
