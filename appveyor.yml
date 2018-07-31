@@ -63,7 +63,7 @@ test_script:
 - Codecov.1.0.5\tools\codecov -f coverage-opencover.xml
 
 artifacts:
-  - path: MerQure\artifacts\*.nupkg
+  - path: .\artifacts\**\*.nupkg
     name: lib
 
 deploy:
