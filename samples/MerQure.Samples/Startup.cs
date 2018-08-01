@@ -2,7 +2,6 @@
 using MerQure.RbMQ.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using System.IO;
 
 namespace MerQure.Samples
@@ -13,15 +12,12 @@ namespace MerQure.Samples
 
         public Startup()
         {
-            var dir = Directory.GetCurrentDirectory();
-
             var configBuilder = new ConfigurationBuilder()
-                .SetBasePath(dir)
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("merqure.rbmq.json", optional: true)
                 .AddXmlFile("rabbitMQ.config", optional: true);
               
             Configuration = configBuilder.Build();
-            configBuilder.AddConfiguration(Configuration);
         }
 
         public void ConfigureServices(IServiceCollection services)
