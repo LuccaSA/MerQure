@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Authors>Benoit Belz, Brice Francois</Authors>
+    <Authors>Benoit Belz, Brice Francois, Raphael Ducom, Thibaut Rappet</Authors>
     <Company>Lucca SA</Company>
     <PackageLicenseUrl>https://github.com/LuccaSA/MerQure/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl></PackageProjectUrl>
