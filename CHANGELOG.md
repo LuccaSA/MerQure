@@ -1,4 +1,16 @@
-## 0.4.0 - 2017-10-23
+## 0.4.1 - 2018-08-01
+### Changed
+- Samples.Startup
+
+## 0.4.0 - 2018-07-31
+### Changed
+- .Net standard 2.0
+### Added
+- MerQureConfiguration
+### Deleted
+- RabbitMqConfigurationSection
+
+## 0.3.1 - 2017-10-23
 ### Added
 - Prefetch count support
 - Publisher acknowledgement support
