@@ -15,13 +15,14 @@ namespace MerQure.RbMQ.Clients
         
         private EventingBasicConsumer _consumer;
         private readonly ushort _prefetchCount;
-        private static readonly object _consumingLock = new object();
+        private readonly object _consumingLock;
 
         public Consumer(IModel channel, string queueName, ushort prefetchCount)
             : base(channel)
         {
             this.QueueName = queueName.ToLowerInvariant();
-            _prefetchCount = prefetchCount; 
+            _prefetchCount = prefetchCount;
+            _consumingLock = new object();
         }
 
         public void Consume(EventHandler<IMessagingEvent> onMessageReceived)
