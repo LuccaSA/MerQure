@@ -1,3 +1,7 @@
+## 0.4.2 - 2018-08-08
+### Fixed
+- RabbitMQ Consumer : consumer lock was static
+
 ## 0.4.1 - 2018-08-01
 ### Changed
 - Samples.Startup
