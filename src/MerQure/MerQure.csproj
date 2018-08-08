@@ -12,10 +12,10 @@
     <Copyright>Copyright 2017</Copyright>
     <PackageTags>MessageBroker AMQP RabbitMQ</PackageTags>
 
-    <VersionPrefix>0.4.1</VersionPrefix>
+    <VersionPrefix>0.4.2</VersionPrefix>
     <VersionSuffix></VersionSuffix>
-    <PackageVersion>0.4.1</PackageVersion>
-    <Version>0.4.1</Version>
+    <PackageVersion>0.4.2</PackageVersion>
+    <Version>0.4.2</Version>
   </PropertyGroup>
 
 </Project>
