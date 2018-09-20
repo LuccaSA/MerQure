@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace MerQure.RbMQ.Clients
 {
-    class Publisher : RabbitMqClient, IPublisher
+    public class Publisher : RabbitMqClient, IPublisher
     {
         internal enum DeliveryMode : byte
         {
