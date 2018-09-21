@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MerQure.Tools.Samples.RetryBusExample.Domain
 {
-    public class ActionService
+	public class ActionService
     {
-        private static int _fakeError;
+        private int _fakeError;
 
         private readonly ISampleService _sampleService;
 
@@ -56,7 +52,7 @@ namespace MerQure.Tools.Samples.RetryBusExample.Domain
             await Task.Delay(value);
             if (_fakeError % 15 == 0)
             {
-                throw new Exception("This is an unmanageable exception, like NPE");
+                throw new SampleException("This is an unmanageable exception, like NPE");
             }
             else if (_fakeError % 5 == 0)
             {

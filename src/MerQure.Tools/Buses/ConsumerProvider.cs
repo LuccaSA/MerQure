@@ -1,18 +1,14 @@
-﻿using MerQure;
-using MerQure.Tools.Configurations;
+﻿using MerQure.Tools.Configurations;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MerQure.Tools.Buses
 {
-    public class ConsumerProvider
+	public class ConsumerProvider
     {
         private static object _syncRoot = new Object();
 
-        private Dictionary<string, IConsumer> _consumers = new Dictionary<string, IConsumer>();
+        private readonly Dictionary<string, IConsumer> _consumers = new Dictionary<string, IConsumer>();
         private readonly IMessagingService _messagingService;
 
         public ConsumerProvider(IMessagingService messagingService)

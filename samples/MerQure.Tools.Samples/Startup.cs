@@ -14,8 +14,6 @@ namespace MerQure.Tools.Samples
 
         public Startup()
         {
-			var p = Directory.GetCurrentDirectory();
-
 			var configBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("rabbitMQ.json");

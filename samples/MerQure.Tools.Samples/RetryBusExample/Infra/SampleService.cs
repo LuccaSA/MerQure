@@ -1,6 +1,5 @@
-﻿using MerQure.Tools;
+﻿using MerQure.Tools.Buses;
 using MerQure.Tools.Configurations;
-using MerQure.Tools.Buses;
 using MerQure.Tools.Samples.RetryBusExample.Domain;
 using MerQure.Tools.Samples.RetryBusExample.Infra;
 using System;
@@ -9,7 +8,7 @@ using System.Collections.Generic;
 
 namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
 {
-    public class SampleService : ISampleService
+	public class SampleService : ISampleService
     {
         public const string BusName = "sample";
         private readonly IRetryBusService _retryBusService;
@@ -42,11 +41,11 @@ namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
             SampleBus.Publish(SampleChannels.MessageSended, sample, true);
         }
 
-        public void Consume(EventHandler<Sample> callback)
+        public void Consume(EventHandler<Sample> onSampleReceived)
         {
             SampleBus.OnMessageReceived(SampleChannels.MessageSended, (object sender, Sample sample) =>
             {
-                callback(this, sample);
+                onSampleReceived(this, sample);
             });
         }
 

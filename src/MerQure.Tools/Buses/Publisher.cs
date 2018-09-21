@@ -1,16 +1,15 @@
-﻿using MerQure;
+﻿using MerQure.Messages;
+using MerQure.Tools.Configurations;
+using MerQure.Tools.Exceptions;
+using MerQure.Tools.Messages;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MerQure.Tools.Messages;
-using MerQure.Tools.Configurations;
-using MerQure.Tools.Exceptions;
-using MerQure.Messages;
 
 namespace MerQure.Tools.Buses
 {
-    public class Publisher<T> where T : IDelivered
+	public class Publisher<T> where T : IDelivered
     {
         private readonly RetryStrategyConfiguration _messageBrokerConfiguration;
         private readonly IMessagingService _messagingService;
@@ -62,7 +61,7 @@ namespace MerQure.Tools.Buses
         {
             List<int> delays = _messageBrokerConfiguration.DelaysInMsBetweenEachRetry;
             int delay = 0;
-            if (delays.Count() >= retryInformations.NumberOfRetry)
+            if (delays.Count >= retryInformations.NumberOfRetry)
             {
                 delay = delays[retryInformations.NumberOfRetry];
             }
@@ -101,7 +100,7 @@ namespace MerQure.Tools.Buses
         internal void TryPublishWithBrokerAcknowledgement(IPublisher publisher, string channelName, string message)
         {
             bool published = publisher.PublishWithAcknowledgement(channelName, message);
-            if (published == false)
+            if (!published)
             {
                 throw new MerqureToolsException($"unable to send message to the broker. {Environment.NewLine}Channel : {channelName}{Environment.NewLine}Message : {message}");
             }

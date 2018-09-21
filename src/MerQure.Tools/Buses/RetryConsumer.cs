@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MerQure;
-using MerQure.Tools.Messages;
+﻿using MerQure.Messages;
 using MerQure.Tools.Configurations;
-using Newtonsoft.Json;
-using MerQure.Messages;
 using MerQure.Tools.Exceptions;
+using MerQure.Tools.Messages;
+using System;
+using System.Linq;
 
 namespace MerQure.Tools.Buses
 {
-    internal class RetryConsumer<T> : Consumer<T> where T : IDelivered
+	internal class RetryConsumer<T> : Consumer<T> where T : IDelivered
     {
         private readonly Publisher<T> _producer;
 
-        private RetryStrategyConfiguration _retryConfiguration;
+        private readonly RetryStrategyConfiguration _retryConfiguration;
 
         public RetryConsumer(IMessagingService messagingService, RetryStrategyConfiguration retryConfiguration, Publisher<T> producer) : base(messagingService)
         {
@@ -88,7 +85,7 @@ namespace MerQure.Tools.Buses
                 return true;
             }
             if (_retryConfiguration.MessageIsGoingIntoErrorBusAfterAllRepeat
-                   && technicalInformations.NumberOfRetry == _retryConfiguration.DelaysInMsBetweenEachRetry.Count())
+                   && technicalInformations.NumberOfRetry == _retryConfiguration.DelaysInMsBetweenEachRetry.Count)
             {
                 return true;
             }
