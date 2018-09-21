@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MerQure.Tools", "src\MerQur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.Tools.Samples", "samples\MerQure.Tools.Samples\MerQure.Tools.Samples.csproj", "{CDEECD7A-653A-4228-BAF2-9D81E0B460C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.Tools.Tests", "tests\MerQure.Tools.Tests\MerQure.Tools.Tests.csproj", "{025671C3-0FBB-42F6-AADB-B71266113D3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MerQure.Tools.Tests", "tests\MerQure.Tools.Tests\MerQure.Tools.Tests.csproj", "{674CDE24-45F9-4F60-8E9B-037C4513D71C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +53,10 @@ Global
 		{CDEECD7A-653A-4228-BAF2-9D81E0B460C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDEECD7A-653A-4228-BAF2-9D81E0B460C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDEECD7A-653A-4228-BAF2-9D81E0B460C2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{025671C3-0FBB-42F6-AADB-B71266113D3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{025671C3-0FBB-42F6-AADB-B71266113D3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{025671C3-0FBB-42F6-AADB-B71266113D3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{025671C3-0FBB-42F6-AADB-B71266113D3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{674CDE24-45F9-4F60-8E9B-037C4513D71C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{674CDE24-45F9-4F60-8E9B-037C4513D71C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{674CDE24-45F9-4F60-8E9B-037C4513D71C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{674CDE24-45F9-4F60-8E9B-037C4513D71C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -19,16 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Startup.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="rabbitMQ.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="tesJson.json">
+    <None Update="*.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
