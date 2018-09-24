@@ -17,7 +17,7 @@ namespace MerQure.RbMQ.Config
         public ushort DefaultPrefetchCount { get; set; } = DefaultPrefetchCountDefaultValue;
          
         public long PublisherAcknowledgementsTimeoutInMilliseconds { get; set; } = PublisherAcknowledgementsTimeoutInMillisecondsDefaultValue;
-         
-        public MerQureConnection Connection { get; set; }
+
+		public MerQureConnection Connection { get; set; }
     }
 }

@@ -3,7 +3,7 @@ using RabbitMQ.Client;
 
 namespace MerQure.RbMQ.Clients
 {
-    internal abstract class RabbitMqClient : IDisposable
+    public abstract class RabbitMqClient : IDisposable
     {
         /// <summary>
         /// rabbitmq-dotnet-client key objet

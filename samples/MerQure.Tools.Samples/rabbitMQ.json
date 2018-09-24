@@ -1,0 +1,13 @@
+﻿{
+    "rabbitMQ": {
+        "durable": true,
+        "autoDeleteQueue": false,
+        "defaultPrefetchCount": 10,
+        "publisherAcknowledgementsTimeoutInMilliseconds": 100000,
+        "connection": {
+            "connectionString": "amqp://guest:guest@localhost:5672/",
+            "automaticRecoveryEnabled": true,
+            "topologyRecoveryEnabled": true
+        }
+    }
+}
