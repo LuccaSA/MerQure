@@ -18,6 +18,6 @@ namespace MerQure.RbMQ.Config
          
         public long PublisherAcknowledgementsTimeoutInMilliseconds { get; set; } = PublisherAcknowledgementsTimeoutInMillisecondsDefaultValue;
 
-		public MerQureConnection Connection { get; set; }
+        public MerQureConnection Connection { get; set; }
     }
 }
