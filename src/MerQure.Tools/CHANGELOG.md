@@ -1,3 +1,8 @@
+## 0.0.7 - 2017-12-18
+### /!\ It's an Alpha, do not use in production
+### Added
+- .Net standard 2.0
+
 ## 0.0.6 - 2017-12-18
 ### /!\ It's an Alpha, do not use in production
 ### Added
