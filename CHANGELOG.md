@@ -1,3 +1,7 @@
+## 0.5.1 - 2018-09-25
+### Fixed
+- SharedConnection is disposable to properly close rabbitMq connection
+
 ## 0.4.2 - 2018-08-08
 ### Fixed
 - RabbitMQ Consumer : consumer lock was static
