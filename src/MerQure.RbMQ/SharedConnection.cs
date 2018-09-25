@@ -8,7 +8,7 @@ namespace MerQure.RbMQ
     /// <summary>
     /// Must be registered as a singleton
     /// </summary>
-    public class SharedConnection
+    public class SharedConnection : IDisposable
     {
         private readonly MerQureConnection _config;
         private readonly Lazy<IConnection> _currentConnection;
@@ -30,6 +30,19 @@ namespace MerQure.RbMQ
                 TopologyRecoveryEnabled = rabbitMqConnection.TopologyRecoveryEnabled
             };
             return connectionFactory.CreateConnection();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool dispose)
+        {
+            if (_currentConnection.IsValueCreated)
+            {
+                _currentConnection.Value.Dispose();
+            }
         }
     }
 }
