@@ -16,5 +16,4 @@ param(
     dotnet build .\MerQure.sln $props
     dotnet pack .\src\MerQure\MerQure.csproj --configuration Debug $propack -o $nuget_path
     dotnet pack .\src\MerQure.RbMQ\MerQure.RbMQ.csproj --configuration Debug $propack -o $nuget_path
- 
-    
+    dotnet pack .\src\MerQure.RbMQ\MerQure.Tools.csproj --configuration Debug $propack -o $nuget_path
