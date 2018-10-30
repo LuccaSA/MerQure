@@ -35,12 +35,6 @@ install:
   - nuget install OpenCover -Version 4.6.519 
   - nuget install Codecov -Version 1.0.5 
 
-dotnet_csproj:
-  patch: true
-  file: '**\*.csproj'
-  version: '{version}'
-  package_version: '{version}'
-
 before_build:
 - dotnet restore
 - cmd: >-
