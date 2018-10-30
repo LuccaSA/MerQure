@@ -68,16 +68,14 @@ artifacts:
     name: lib
 
 deploy:
-
 - provider: NuGet
   api_key:
-    secure: p49LDqD5XQe1az8XpKr+VpDFMcv7qvA+fSMdExpfEhKSjYUKAoZ6GutUiT5bWgLc
+    secure: UEuJPMHE7Wh7Sk2xUDH+vUL2NTDFgwKDMfSS1MztitwhNUUZfUYJGYvlFPcJSx9m
   skip_symbols: true
   artifact: /.*\.nupkg/
   on:
     branch: master
     deploy_public: true
-     
 - provider: NuGet
   server: https://ci.appveyor.com/nuget/raph-r95r21ggl8dg
   api_key:
