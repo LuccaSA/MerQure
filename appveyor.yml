@@ -79,9 +79,9 @@ deploy:
     deploy_public: true
 
 - provider: NuGet
-  server: https://ci.appveyor.com/nuget/merqure
+  server: https://ci.appveyor.com/nuget/luccaintegration-uvk5yq2c460b
   api_key:
-    secure: CzIzweIMuAS0KihXn7nQdBJxbfSr1hd+27SZil1MYQs=
+    secure: shmMXUHQLw1te1msoPnFzFFxFEo2lLWF4wriUUAwOaY=
   skip_symbols: false
   artifact: /.*\.nupkg/
   on:
