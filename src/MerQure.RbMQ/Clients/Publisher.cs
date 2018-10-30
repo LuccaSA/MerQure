@@ -40,7 +40,7 @@ namespace MerQure.RbMQ.Clients
                     Publish(new Message(queueName, message));
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Channel.TxRollback();
                 throw;

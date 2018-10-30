@@ -15,11 +15,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
 		build_local.ps1 = build_local.ps1
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MerQure.Tools", "src\MerQure.Tools\MerQure.Tools.csproj", "{46469C09-4E46-4C96-8588-49D121B4E4C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerQure.Tools.Samples", "samples\MerQure.Tools.Samples\MerQure.Tools.Samples.csproj", "{CDEECD7A-653A-4228-BAF2-9D81E0B460C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MerQure.Tools.Samples", "samples\MerQure.Tools.Samples\MerQure.Tools.Samples.csproj", "{CDEECD7A-653A-4228-BAF2-9D81E0B460C2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MerQure.Tools.Tests", "tests\MerQure.Tools.Tests\MerQure.Tools.Tests.csproj", "{674CDE24-45F9-4F60-8E9B-037C4513D71C}"
 EndProject

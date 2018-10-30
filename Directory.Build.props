@@ -1,0 +1,45 @@
+<Project>
+
+  <PropertyGroup>
+    <treatwarningsaserrors>true</treatwarningsaserrors>
+    <warninglevel>4</warninglevel>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DefaultItemExcludes>$(DefaultItemExcludes);*.DotSettings;*.ncrunchproject</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <VersionPrefix>0.0.7</VersionPrefix>
+    <VersionSuffix></VersionSuffix>
+    <PackageVersion>0.0.7</PackageVersion>
+
+    <Company>Lucca SA</Company>
+    <PackageLicenseUrl>https://github.com/LuccaSA/MerQure/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl></PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/LuccaSA/MerQure/master/MerQure-logo.png</PackageIconUrl>
+    <PackageTags>MessageBroker AMQP RabbitMQ</PackageTags>
+    <RepositoryUrl>https://github.com/LuccaSA/MerQure</RepositoryUrl>
+
+    <Authors>Lucca team</Authors>
+    <Description>A simple .Net Message Broker. It provides a KISS abstraction of the Advanced Message Queuing Protocol (AMQP) such as used by RabbitMQ.</Description>
+    <Copyright>Copyright Lucca 2018</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SourceLinkEnabled Condition="'$(SourceLinkEnabled)' == ''">false</SourceLinkEnabled>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(SourceLinkEnabled)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <Deterministic>true</Deterministic>
+    <DeterministicSourcePaths>false</DeterministicSourcePaths>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(SourceLinkEnabled)' == 'true'">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
+  </ItemGroup>
+
+</Project>

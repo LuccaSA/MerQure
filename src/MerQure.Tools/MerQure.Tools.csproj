@@ -2,19 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-
-    <Company>Lucca SA</Company>
-    <PackageLicenseUrl>https://github.com/LuccaSA/MerQure/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl></PackageProjectUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/LuccaSA/MerQure/master/MerQure-logo.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/LuccaSA/MerQure</RepositoryUrl>
-    <Copyright>Copyright 2017</Copyright>
-    <PackageTags>MessageBroker AMQP RabbitMQ</PackageTags>
-
-    <VersionPrefix>0.0.7</VersionPrefix>
-    <VersionSuffix></VersionSuffix>
-    <PackageVersion>0.0.7</PackageVersion>
-    <Version>0.0.7</Version>
   </PropertyGroup>
 
   <ItemGroup>
