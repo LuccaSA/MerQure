@@ -37,7 +37,7 @@ namespace MerQure.Tools.Samples.RetryBusExample.Domain
             {
                 _sampleService.RetryLater(sample);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 _sampleService.SendOnError(sample);
                 //...
