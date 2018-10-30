@@ -73,7 +73,7 @@ deploy:
     deploy_public: true
 
 - provider: NuGet
-  server: https://ci.appveyor.com/nuget/luccaintegration-uvk5yq2c460b
+  server: https://ci.appveyor.com/nuget/luccaintegration-uvk5yq2c460b/api/v2/package
   api_key:
     secure: shmMXUHQLw1te1msoPnFzFFxFEo2lLWF4wriUUAwOaY=
   skip_symbols: false
