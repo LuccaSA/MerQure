@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MerQure.RbMQ.Config
+﻿namespace MerQure.RbMQ.Config
 {
     public class MerQureConnection
     {
@@ -11,7 +9,7 @@ namespace MerQure.RbMQ.Config
         /// <summary>
         /// ConnectionString Uri to rabbitMQ server
         /// </summary>
-        public String ConnectionString { get; set; } = DefaultConnectionString;
+        public string ConnectionString { get; set; } = DefaultConnectionString;
 
         public bool AutomaticRecoveryEnabled { get; set; } = true;
         public bool TopologyRecoveryEnabled { get; set; } = true;

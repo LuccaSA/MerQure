@@ -17,9 +17,9 @@ namespace MerQure.RbMQ.Content
         /// <param name="body"></param>
         public Message(string routingKey, IHeader header, string body)
         {
-            this.RoutingKey = routingKey;
-            this.Header = header;
-            this.Body = body;
+            RoutingKey = routingKey;
+            Header = header;
+            Body = body;
         }
         /// <summary>
         /// Create a RabbitMQ Message
@@ -31,24 +31,12 @@ namespace MerQure.RbMQ.Content
         {
         }
 
-        public string GetRoutingKey()
-        {
-            return RoutingKey;
-        }
+        public string GetRoutingKey() => RoutingKey;
 
-        public IHeader GetHeader()
-        {
-            return Header;
-        }
+        public IHeader GetHeader() => Header;
 
-        public string GetBody()
-        {
-            return Body;
-        }
+        public string GetBody() => Body;
 
-        public byte? GetPriority()
-        {
-            return Priority;
-        }
+        public byte? GetPriority() => Priority;
     }
 }

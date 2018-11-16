@@ -1,12 +1,11 @@
 ﻿using MerQure.Tools.Configurations;
-using System;
 using System.Collections.Generic;
 
 namespace MerQure.Tools.Buses
 {
-	public class ConsumerProvider
+    public class ConsumerProvider
     {
-        private static object _syncRoot = new Object();
+        private static object _syncRoot = new object();
 
         private readonly Dictionary<string, IConsumer> _consumers = new Dictionary<string, IConsumer>();
         private readonly IMessagingService _messagingService;

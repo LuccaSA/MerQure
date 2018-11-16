@@ -5,7 +5,6 @@ using MerQure.Tools.Samples.RetryBusExample.Infra;
 using System;
 using System.Collections.Generic;
 
-
 namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
 {
 	public class SampleService : ISampleService
@@ -38,30 +37,32 @@ namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
 
         public void Send(Sample sample)
         {
-            SampleBus.Publish(SampleChannels.MessageSended, sample, true);
+            SampleBus.Publish(SampleChannels.MessageSent, sample, true);
+            Console.WriteLine($"Send: {sample.DeliveryTag}");
         }
 
         public void Consume(EventHandler<Sample> onSampleReceived)
         {
-            SampleBus.OnMessageReceived(SampleChannels.MessageSended, (object sender, Sample sample) =>
+            SampleBus.OnMessageReceived(SampleChannels.MessageSent, (object sender, Sample sample) =>
             {
                 onSampleReceived(this, sample);
+                Console.WriteLine($"Received: {sample.DeliveryTag}");
             });
         }
 
         public void RetryLater(Sample sample)
         {
-            SampleBus.ApplyRetryStrategy(SampleChannels.MessageSended, sample);
+            SampleBus.ApplyRetryStrategy(SampleChannels.MessageSent, sample);
         }
 
         public void Acknowlegde(Sample sample)
         {
-            SampleBus.AcknowlegdeDeliveredMessage(SampleChannels.MessageSended, sample);
+            SampleBus.AcknowlegdeDeliveredMessage(SampleChannels.MessageSent, sample);
         }
 
         public void SendOnError(Sample sample)
         {
-            SampleBus.SendDeliveredMessageToErrorBus(SampleChannels.MessageSended, sample);
+            SampleBus.SendDeliveredMessageToErrorBus(SampleChannels.MessageSent, sample);
         }
     }
 }

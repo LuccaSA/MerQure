@@ -11,6 +11,7 @@ namespace MerQure.RbMQ.Content
         {
             HeaderProperties = new Dictionary<string, object>();
         }
+
         internal Header(IDictionary<string, object> headerProperties)
             : this()
         {
@@ -19,6 +20,7 @@ namespace MerQure.RbMQ.Content
                 Add(headerProperty.Key, headerProperty.Value);
             }
         }
+
         public Header(IHeader header)
             : this(header.GetProperties())
         {
@@ -29,9 +31,6 @@ namespace MerQure.RbMQ.Content
             HeaderProperties.Add(propertyName, value);
         }
 
-        public IDictionary<string, object> GetProperties()
-        {
-            return HeaderProperties;
-        }
+        public IDictionary<string, object> GetProperties() => HeaderProperties;
     }
 }

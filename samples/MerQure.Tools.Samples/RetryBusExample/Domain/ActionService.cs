@@ -16,7 +16,7 @@ namespace MerQure.Tools.Samples.RetryBusExample.Domain
 
         public void SendNewSample()
         {
-            _sampleService.Send(new Sample()
+            _sampleService.Send(new Sample
             {
                 Name = "MerQure Tools"
             });
@@ -35,12 +35,13 @@ namespace MerQure.Tools.Samples.RetryBusExample.Domain
             }
             catch (SampleException)
             {
+                Console.WriteLine($"FAIL - retry later: {sample.DeliveryTag}");
                 _sampleService.RetryLater(sample);
             }
-            catch (Exception)
+            catch
             {
+                Console.WriteLine($"FAIL - Error: {sample.DeliveryTag}");
                 _sampleService.SendOnError(sample);
-                //...
             }
         }
 
@@ -52,7 +53,7 @@ namespace MerQure.Tools.Samples.RetryBusExample.Domain
             await Task.Delay(value);
             if (_fakeError % 15 == 0)
             {
-                throw new SampleException("This is an unmanageable exception, like NPE");
+                throw new Exception("This is an unmanageable exception, like NPE");
             }
             else if (_fakeError % 5 == 0)
             {
@@ -60,7 +61,6 @@ namespace MerQure.Tools.Samples.RetryBusExample.Domain
             }
             else
             {
-                //everything ok
                 _sampleService.Acknowlegde(sample);
             }
         }

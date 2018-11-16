@@ -3,7 +3,7 @@
 namespace MerQure
 {
     /// <summary>
-    /// This service expose all clients necessary to used basic functionnalities of a Message Broker 
+    /// This service exposes all clients necessary to used basic functionalities of a Message Broker 
     /// </summary>
     public interface IMessagingService
     {
@@ -23,7 +23,7 @@ namespace MerQure
         void DeclareQueue(string queueName, byte maxPriority);
 
         /// <summary>
-        /// Declare a queue iwth dead letter policy
+        /// Declare a queue with dead letter policy
         /// </summary>
         /// <param name="queueName"></param>
         /// <param name="deadLetterExchange"></param>
@@ -53,9 +53,10 @@ namespace MerQure
         /// <param name="queueName"></param>
         /// <param name="routingKey"></param>
         void DeclareBinding(string exchangeName, string queueName, string routingKey);
+
         /// <summary>
         /// Declare an Binding (if it doesn't exists)
-        /// A Binding is the link between an Exchange and a Queue
+        /// A Binding is the link between an Exchange and a Queue via a RoutingKey
         /// </summary>
         /// <param name="exchangeName"></param>
         /// <param name="queueName"></param>
@@ -64,7 +65,7 @@ namespace MerQure
         void DeclareBinding(string exchangeName, string queueName, string routingKey, Dictionary<string, object> headerBindings);
 
         /// <summary>
-        /// Cancel an Binding
+        /// Cancel a Binding
         /// </summary>
         /// <param name="exchangeName"></param>
         /// <param name="queueName"></param>
@@ -72,26 +73,30 @@ namespace MerQure
         void CancelBinding(string exchangeName, string queueName, string routingKey);
 
         /// <summary>
-        /// Get the publisher, used to declare exchanges et publish messages on it.
+        /// Get a publisher.
+        /// Used to declare exchanges et publish messages on it.
         /// </summary>
         /// <param name="exchangeName"></param>
         IPublisher GetPublisher(string exchangeName);
 
         /// <summary>
-        /// Get the publisher, used to declare exchanges et publish messages on it.
+        /// Get a publisher.
+        /// Used to declare exchanges et publish messages on it.
         /// </summary>
         /// <param name="exchangeName"></param>
         /// <param name"enablePublisherAcknowledgements">required to use publish with acknowledgements</param>
         IPublisher GetPublisher(string exchangeName, bool enablePublisherAcknowledgements);
 
         /// <summary>
-        /// Get the consumer, used to receive messages of a queue
+        /// Get the consumer.
+        /// Used to receive messages of a queue
         /// </summary>
         /// <param name="queueName"></param>
         IConsumer GetConsumer(string queueName);
 
         /// <summary>
-        /// Get the consumer, used to receive messages of a queue
+        /// Get the consumer.
+        /// Used to receive messages of a queue
         /// </summary>
         /// <param name="queueName"></param>
         /// <param name="prefetchCount">maximum number of messages that the server will deliver, 0 if unlimited</param>

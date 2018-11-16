@@ -1,9 +1,8 @@
-﻿using RabbitMQ.Client;
-using System;
+﻿using MerQure.RbMQ.Content;
 using MerQure.RbMQ.Helpers;
-using MerQure.RbMQ.Content;
+using RabbitMQ.Client;
+using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace MerQure.RbMQ.Clients
 {
@@ -18,16 +17,16 @@ namespace MerQure.RbMQ.Clients
         public string ExchangeName { get; private set; }
         public string ExchangeType { get; private set; }
         public bool Durable { get; private set; }
-        public long TimeoutInMilliseconds { get; set; }
+        public TimeSpan Timeout { get; set; }
 
         public Publisher(IModel channel, string exchangeName, long acknowledgementsTimeoutInMilliseconds) : base(channel)
         {
-            if (String.IsNullOrWhiteSpace(exchangeName))
+            if (string.IsNullOrWhiteSpace(exchangeName))
             {
                 throw new ArgumentException("exchangeName cannot be null or empty", nameof(exchangeName));
             }
-            this.TimeoutInMilliseconds = acknowledgementsTimeoutInMilliseconds;
-            this.ExchangeName = exchangeName.ToLowerInvariant();
+            Timeout = new TimeSpan(acknowledgementsTimeoutInMilliseconds * TimeSpan.TicksPerMillisecond);
+            ExchangeName = exchangeName.ToLowerInvariant();
         }
 
         public void PublishWithTransaction(string queueName, IEnumerable<string> messages)
@@ -40,7 +39,7 @@ namespace MerQure.RbMQ.Clients
                     Publish(new Message(queueName, message));
                 }
             }
-            catch (Exception)
+            catch
             {
                 Channel.TxRollback();
                 throw;
@@ -51,7 +50,7 @@ namespace MerQure.RbMQ.Clients
         public bool PublishWithAcknowledgement(IMessage message)
         {
             Publish(message);
-            return this.Channel.WaitForConfirms(new TimeSpan(TimeoutInMilliseconds * TimeSpan.TicksPerMillisecond));
+            return Channel.WaitForConfirms(Timeout);
         }
 
         public bool PublishWithAcknowledgement(string queueName, string message)
@@ -62,23 +61,23 @@ namespace MerQure.RbMQ.Clients
         public void Publish(IMessage message)
         {
             IBasicProperties basicProperties = CreateBasicProperties(message);
-            this.Channel.BasicPublish(ExchangeName, message.GetRoutingKey(), basicProperties, message.GetBody().ToByte());
+            Channel.BasicPublish(ExchangeName, message.GetRoutingKey(), basicProperties, message.GetBody().ToByte());
         }
 
         private IBasicProperties CreateBasicProperties(IMessage message)
         {
-            IBasicProperties basicProperties = this.Channel.CreateBasicProperties();
+            IBasicProperties basicProperties = Channel.CreateBasicProperties();
             basicProperties.DeliveryMode = (byte)DeliveryMode.Persistent;
             basicProperties.CorrelationId = Guid.NewGuid().ToString();
             basicProperties.Headers = message.GetHeader().GetProperties();
-            if (message.GetPriority() != null)
+
+            var priority = message.GetPriority();
+            if (priority != null)
             {
-                basicProperties.Priority = message.GetPriority().Value;
+                basicProperties.Priority = priority.Value;
             }
 
             return basicProperties;
         }
-
-
     }
 }

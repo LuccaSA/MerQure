@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace MerQure.Tools.Buses
 {
-	internal class RetryConsumer<T> : Consumer<T> where T : IDelivered
+    internal class RetryConsumer<T> : Consumer<T> where T : IDelivered
     {
         private readonly Publisher<T> _producer;
 
@@ -21,8 +21,9 @@ namespace MerQure.Tools.Buses
 
         internal void SendToErrorExchange(Channel channel, T deliveredMessage)
         {
-            if (String.IsNullOrEmpty(deliveredMessage.DeliveryTag))
+            if (string.IsNullOrEmpty(deliveredMessage.DeliveryTag))
                 throw new ArgumentNullException(nameof(deliveredMessage.DeliveryTag));
+
             if (!RetryInformations.ContainsKey(deliveredMessage.DeliveryTag))
                 throw new MerqureToolsException($"unknown delivery tag {deliveredMessage.DeliveryTag}");
 
@@ -37,7 +38,7 @@ namespace MerQure.Tools.Buses
         {
             var retryInformations = new RetryInformations()
             {
-                NumberOfRetry = attemptNumber > 0 ? attemptNumber - 1 : 0   
+                NumberOfRetry = attemptNumber > 0 ? attemptNumber - 1 : 0
             };
             var messageInformations = new MessageInformations();
 
@@ -52,13 +53,14 @@ namespace MerQure.Tools.Buses
             }
             return messageInformations;
         }
-        
+
         public MessageInformations ApplyRetryStrategy(Channel channel, T deliveredMessage)
         {
-            if (String.IsNullOrEmpty(deliveredMessage.DeliveryTag))
+            if (string.IsNullOrEmpty(deliveredMessage.DeliveryTag))
                 throw new ArgumentNullException(nameof(deliveredMessage.DeliveryTag));
+
             if (!RetryInformations.ContainsKey(deliveredMessage.DeliveryTag))
-                throw new MerqureToolsException($"unknown delivery tag {deliveredMessage.DeliveryTag}"); 
+                throw new MerqureToolsException($"unknown delivery tag {deliveredMessage.DeliveryTag}");
 
             RetryInformations retryInformations = RetryInformations[deliveredMessage.DeliveryTag];
             var messageInformations = new MessageInformations();
@@ -80,16 +82,9 @@ namespace MerQure.Tools.Buses
 
         private bool IsGoingToErrorExchange(RetryInformations technicalInformations)
         {
-            if (!_retryConfiguration.DelaysInMsBetweenEachRetry.Any())
-            {
-                return true;
-            }
-            if (_retryConfiguration.MessageIsGoingIntoErrorBusAfterAllRepeat
-                   && technicalInformations.NumberOfRetry == _retryConfiguration.DelaysInMsBetweenEachRetry.Count)
-            {
-                return true;
-            }
-            return false;
+            return _retryConfiguration.DelaysInMsBetweenEachRetry.Count == 0
+                || (_retryConfiguration.MessageIsGoingIntoErrorBusAfterAllRepeat
+                    && technicalInformations.NumberOfRetry == _retryConfiguration.DelaysInMsBetweenEachRetry.Count);
         }
     }
 }

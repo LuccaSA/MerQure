@@ -1,6 +1,7 @@
 ﻿using MerQure.Messages;
 using MerQure.RbMQ.Content;
 using MerQure.RbMQ.Events;
+using MerQure.RbMQ.Helpers;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
@@ -9,10 +10,10 @@ using System.Text;
 
 namespace MerQure.RbMQ.Clients
 {
-    class Consumer : RabbitMqClient, IConsumer
+    internal class Consumer : RabbitMqClient, IConsumer
     {
         public string QueueName { get; }
-        
+
         private EventingBasicConsumer _consumer;
         private readonly ushort _prefetchCount;
         private readonly object _consumingLock;
@@ -20,17 +21,17 @@ namespace MerQure.RbMQ.Clients
         public Consumer(IModel channel, string queueName, ushort prefetchCount)
             : base(channel)
         {
-            this.QueueName = queueName.ToLowerInvariant();
+            QueueName = queueName.ToLowerInvariant();
             _prefetchCount = prefetchCount;
             _consumingLock = new object();
         }
 
         public void Consume(EventHandler<IMessagingEvent> onMessageReceived)
         {
-            this.Channel.BasicQos(0, _prefetchCount, false);
+            Channel.BasicQos(0, _prefetchCount, false);
 
             _consumer = new EventingBasicConsumer(Channel);
-            _consumer.Received += ((object sender, BasicDeliverEventArgs args) =>
+            _consumer.Received += (object sender, BasicDeliverEventArgs args) =>
             {
                 if (onMessageReceived != null)
                 {
@@ -41,9 +42,9 @@ namespace MerQure.RbMQ.Clients
                         onMessageReceived(sender, messageEventArgs);
                     }
                 }
-            });
+            };
 
-            Channel.BasicConsume(this.QueueName, false, _consumer);
+            Channel.BasicConsume(QueueName, false, _consumer);
         }
 
         private IMessage ParseDeliveredMessage(BasicDeliverEventArgs args)
@@ -51,7 +52,7 @@ namespace MerQure.RbMQ.Clients
             return new Message(
                 args.RoutingKey,
                 ParseHeader(args),
-                Encoding.UTF8.GetString(args.Body)
+                EncodingHelper.ToString(args.Body)
             );
         }
 
@@ -59,6 +60,7 @@ namespace MerQure.RbMQ.Clients
         {
             return new Header(args.BasicProperties.Headers.ToDictionary(kvp => kvp.Key, kvp => ParseHeaderProperty(kvp.Value)));
         }
+
         /// <summary>
         /// Parse header properties, ignoring complex type as "Nested Table"
         /// </summary>
@@ -67,9 +69,9 @@ namespace MerQure.RbMQ.Clients
         /// <see cref="https://www.rabbitmq.com/amqp-0-9-1-errata.html"/>
         private object ParseHeaderProperty(object propertyValue)
         {
-            if (propertyValue is byte[])
+            if (propertyValue is byte[] bytes)
             {
-                return Encoding.UTF8.GetString((byte[])propertyValue);
+                return EncodingHelper.ToString(bytes);
             }
             return propertyValue;
         }
@@ -87,26 +89,24 @@ namespace MerQure.RbMQ.Clients
                 {
                     if (onConsumerStopped != null)
                     {
-                        _consumer.ConsumerCancelled += ((object sender, ConsumerEventArgs e) => 
+                        _consumer.ConsumerCancelled += (object sender, ConsumerEventArgs e) =>
                         {
                             onConsumerStopped(sender, e);
-                        });
+                        };
                     }
-                    this.Channel.BasicCancel(_consumer.ConsumerTag);
+                    Channel.BasicCancel(_consumer.ConsumerTag);
                 }
             }
         }
 
         public void AcknowlegdeDeliveredMessage(IDelivered deliveredMessage)
         {
-            this.Channel.BasicAck(ulong.Parse(deliveredMessage.DeliveryTag), false);
+            Channel.BasicAck(ulong.Parse(deliveredMessage.DeliveryTag), false);
         }
-        
 
         public void RejectDeliveredMessage(IDelivered deliveredMessage)
         {
-            this.Channel.BasicNack(ulong.Parse(deliveredMessage.DeliveryTag), false, true);
+            Channel.BasicNack(ulong.Parse(deliveredMessage.DeliveryTag), false, true);
         }
-
     }
 }

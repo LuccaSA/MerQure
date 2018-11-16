@@ -9,7 +9,7 @@ namespace MerQure
     public interface IConsumer : IDisposable
     {
         /// <summary>
-        /// name of the queue subscribed by the consumer
+        /// Name of the queue subscribed by the consumer
         /// </summary>
         string QueueName { get; }
 
@@ -27,7 +27,7 @@ namespace MerQure
         /// <summary>
         /// Unregister Consumer from the queue
         /// </summary>
-        /// <param name="onConsumerStopped">Handler called when queu has unregistered the consumer</param>
+        /// <param name="onConsumerStopped">Handler called when queue has unregistered the consumer</param>
         void StopConsuming(EventHandler onConsumerStopped);
         
         /// <summary>

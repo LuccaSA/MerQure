@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MerQure.RbMQ.Config
+﻿namespace MerQure.RbMQ.Config
 {
     public class MerQureConfiguration
     {
@@ -10,9 +8,9 @@ namespace MerQure.RbMQ.Config
         private const long PublisherAcknowledgementsTimeoutInMillisecondsDefaultValue = 10000;
         private const ushort DefaultPrefetchCountDefaultValue = 1;
          
-        public Boolean Durable { get; set; } = true;
+        public bool Durable { get; set; } = true;
          
-        public Boolean AutoDeleteQueue { get; set; } = false;
+        public bool AutoDeleteQueue { get; set; } = false;
          
         public ushort DefaultPrefetchCount { get; set; } = DefaultPrefetchCountDefaultValue;
          

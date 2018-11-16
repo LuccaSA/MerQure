@@ -29,6 +29,7 @@ namespace MerQure.RbMQ
             {
                 return;
             }
+
             Durable = _merQureConfiguration.Value.Durable;
             AutoDeleteQueue = _merQureConfiguration.Value.AutoDeleteQueue;
             DefaultPrefetchCount = _merQureConfiguration.Value.DefaultPrefetchCount;
@@ -37,7 +38,7 @@ namespace MerQure.RbMQ
 
         public void DeclareExchange(string exchangeName)
         {
-            DeclareExchange(exchangeName, this.ExchangeType);
+            DeclareExchange(exchangeName, ExchangeType);
         }
 
         public void DeclareExchange(string exchangeName, string exchangeType)
@@ -46,13 +47,14 @@ namespace MerQure.RbMQ
 
             using (var channel = CurrentConnection.CreateModel())
             {
-                channel.ExchangeDeclare(exchangeName.ToLowerInvariant(), exchangeType, this.Durable);
+                channel.ExchangeDeclare(exchangeName.ToLowerInvariant(), exchangeType, Durable);
             }
         }
 
         public void DeclareQueue(string queueName, byte maxPriority)
         {
-            var queueArgs = new Dictionary<string, object> {
+            var queueArgs = new Dictionary<string, object>
+            {
                 { Constants.QueueMaxPriority, maxPriority }
             };
             DeclareQueue(queueName, queueArgs);
@@ -68,10 +70,12 @@ namespace MerQure.RbMQ
             if (string.IsNullOrWhiteSpace(deadLetterExchange)) throw new ArgumentNullException(nameof(deadLetterExchange));
             if (messageTimeToLive <= 0) throw new ArgumentOutOfRangeException(nameof(messageTimeToLive));
 
-            var queueArgs = new Dictionary<string, object> {
+            var queueArgs = new Dictionary<string, object>
+            {
                 { Constants.QueueDeadLetterExchange, deadLetterExchange },
                 { Constants.QueueMessageTTL, messageTimeToLive }
             };
+
             if (!string.IsNullOrEmpty(deadLetterRoutingKey))
             {
                 queueArgs.Add(Constants.QueueDeadLetterRoutingKey, deadLetterRoutingKey);
@@ -86,7 +90,7 @@ namespace MerQure.RbMQ
 
             using (var channel = CurrentConnection.CreateModel())
             {
-                channel.QueueDeclare(queueName.ToLowerInvariant(), this.Durable, false, this.AutoDeleteQueue, queueArgs);
+                channel.QueueDeclare(queueName.ToLowerInvariant(), Durable, false, AutoDeleteQueue, queueArgs);
             }
         }
 

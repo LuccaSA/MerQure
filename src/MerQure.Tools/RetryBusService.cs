@@ -1,13 +1,8 @@
-﻿using MerQure;
-using MerQure.Messages;
-using MerQure.Tools.Configurations;
+﻿using MerQure.Messages;
 using MerQure.Tools.Buses;
-using MerQure.Tools.Messages;
+using MerQure.Tools.Configurations;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MerQure.Tools
 {
@@ -51,6 +46,7 @@ namespace MerQure.Tools
         {
             string errorExchangeName = $"{configuration.BusName}.{RetryStrategyConfiguration.ErrorExchangeSuffix}";
             _messagingService.DeclareExchange(errorExchangeName, Constants.ExchangeTypeDirect);
+
             foreach (Channel channel in configuration.Channels)
             {
                 string errorQueueName = $"{channel.Value}.{RetryStrategyConfiguration.ErrorExchangeSuffix}";
@@ -68,6 +64,7 @@ namespace MerQure.Tools
             {
                 string retryExchangeName = $"{configuration.BusName}.{RetryStrategyConfiguration.RetryExchangeSuffix}";
                 _messagingService.DeclareExchange(retryExchangeName, Constants.ExchangeTypeDirect);
+
                 foreach (int delay in configuration.DelaysInMsBetweenEachRetry)
                 {
                     CreateRetryChannelsForOneDelay(configuration, retryExchangeName, delay);
@@ -99,6 +96,5 @@ namespace MerQure.Tools
                 _messagingService.DeclareBinding(configuration.BusName, channel.Value, $"{channel.Value}.#");
             }
         }
-
     }
 }

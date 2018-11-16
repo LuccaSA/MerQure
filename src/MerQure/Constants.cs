@@ -7,15 +7,15 @@
         /// </summary>
         public const string ExchangeTypeDirect = "direct";
         /// <summary>
-        /// simple broadcasting, without binding capabilities
+        /// Simple broadcasting, without binding capabilities
         /// </summary>
         public const string ExchangeTypeFanout = "fanout";
         /// <summary>
-        /// binding messages matching the header's properties pattern
+        /// Binding messages matching the header's properties pattern
         /// </summary>
         public const string ExchangeTypeHeaders = "headers";
         /// <summary>
-        /// binding messages matching the routingKey pattern
+        /// Binding messages matching the routingKey pattern
         /// </summary>
         public const string ExchangeTypeTopic = "topic";
     }

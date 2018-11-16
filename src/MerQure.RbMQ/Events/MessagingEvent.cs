@@ -1,15 +1,15 @@
 ﻿namespace MerQure.RbMQ.Events
 {
-    class MessagingEvent : IMessagingEvent
+    internal class MessagingEvent : IMessagingEvent
     {
         public IMessage Message { get; set; }
 
         public string DeliveryTag { get; set; }
 
-        public MessagingEvent(IMessage Message, string DeliveryTag)
+        public MessagingEvent(IMessage message, string deliveryTag)
         {
-            this.Message = Message;
-            this.DeliveryTag = DeliveryTag;
+            Message = message;
+            DeliveryTag = deliveryTag;
         }
     }
 }

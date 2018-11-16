@@ -1,6 +1,4 @@
-﻿
-using MerQure.Messages;
-using MerQure.Tools.Messages;
+﻿using MerQure.Messages;
 
 namespace MerQure.Tools.Samples.RetryBusExample.Domain
 {

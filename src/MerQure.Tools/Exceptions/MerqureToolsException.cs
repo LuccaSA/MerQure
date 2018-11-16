@@ -9,12 +9,12 @@ namespace MerQure.Tools.Exceptions
         }
 
         public MerqureToolsException(string message)
-        : base(message)
+            : base(message)
         {
         }
 
         public MerqureToolsException(string message, Exception inner)
-        : base(message, inner)
+            : base(message, inner)
         {
         }
     }
