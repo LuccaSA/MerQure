@@ -1,3 +1,7 @@
+## 0.5.2 - 2018-11-21
+### Added
+- 2 new parameters on rabbitMq connection: friendlyName & requestedChannelMax
+
 ## 0.5.1 - 2018-09-25
 ### Fixed
 - SharedConnection is disposable to properly close rabbitMq connection

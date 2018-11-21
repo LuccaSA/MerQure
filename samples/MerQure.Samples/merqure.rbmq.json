@@ -5,6 +5,7 @@
     "publisherAcknowledgementsTimeoutInMilliseconds": 10000,
     "connection": {
         "connectionString": "amqp://guest:guest@localhost:5672/",
+        "friendlyName": "merqure-sample",
         "automaticRecoveryEnabled": false,
         "topologyRecoveryEnabled": false
     }

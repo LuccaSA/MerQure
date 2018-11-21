@@ -27,7 +27,9 @@ namespace MerQure.RbMQ
             {
                 Uri = new Uri(rabbitMqConnection.ConnectionString),
                 AutomaticRecoveryEnabled = rabbitMqConnection.AutomaticRecoveryEnabled,
-                TopologyRecoveryEnabled = rabbitMqConnection.TopologyRecoveryEnabled
+                TopologyRecoveryEnabled = rabbitMqConnection.TopologyRecoveryEnabled,
+                ClientProvidedName = rabbitMqConnection.FriendlyName,
+                RequestedChannelMax = rabbitMqConnection.RequestedChannelMax
             };
             return connectionFactory.CreateConnection();
         }
