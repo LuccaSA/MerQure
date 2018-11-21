@@ -6,6 +6,8 @@
   
   <connection
     connectionString="amqp://guest:guest@localhost:5672/"
+    friendlyName="myAppName"
+    requestedChannelMax="0"
     automaticRecoveryEnabled="true"
     topologyRecoveryEnabled="true" />
 
