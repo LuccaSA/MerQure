@@ -1,3 +1,7 @@
+## 0.5.3 - 2018-12-06
+### Fixed
+- RabbitMQ : An empty routing key was throwing an ArgumentNullException on DeclareBinding.
+
 ## 0.5.2 - 2018-11-21
 ### Added
 - 2 new parameters on rabbitMq connection: friendlyName & requestedChannelMax

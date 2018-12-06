@@ -98,7 +98,7 @@ namespace MerQure.RbMQ
         {
             if (string.IsNullOrWhiteSpace(exchangeName)) throw new ArgumentNullException(nameof(exchangeName));
             if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
-            if (string.IsNullOrWhiteSpace(routingKey)) throw new ArgumentNullException(nameof(routingKey));
+            if (routingKey == null) throw new ArgumentNullException(nameof(routingKey));
 
             using (var channel = CurrentConnection.CreateModel())
             {
@@ -110,7 +110,7 @@ namespace MerQure.RbMQ
         {
             if (string.IsNullOrWhiteSpace(exchangeName)) throw new ArgumentNullException(nameof(exchangeName));
             if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
-            if (string.IsNullOrWhiteSpace(routingKey)) throw new ArgumentNullException(nameof(routingKey));
+            if (routingKey == null) throw new ArgumentNullException(nameof(routingKey));
 
             using (var channel = CurrentConnection.CreateModel())
             {
