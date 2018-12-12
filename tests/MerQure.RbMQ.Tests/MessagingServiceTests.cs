@@ -31,6 +31,8 @@ namespace MerQure.RbMQ.Tests
 
             Assert.Throws<ArgumentNullException>(() => messagingService.DeclareBinding(null, "queue", "routing"));
             Assert.Throws<ArgumentNullException>(() => messagingService.DeclareBinding("exhange", null, "routing"));
+            Assert.Throws<ArgumentNullException>(() => messagingService.DeclareBinding("", "queue", "routing"));
+            Assert.Throws<ArgumentNullException>(() => messagingService.DeclareBinding("exhange", "", "routing"));
             Assert.Throws<ArgumentNullException>(() => messagingService.DeclareBinding("exhange", "queue", null));
         }
 
