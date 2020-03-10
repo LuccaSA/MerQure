@@ -1,7 +1,7 @@
 image: Visual Studio 2017
 
 version: 1.0.{build}
-       
+
 environment:
   SONAR_TOKEN:
     secure: c6IKYB2JPnRQUNahHFnh8vAmkorjL8rrQ69EhkHkrgC3qsg2xyd7kGSM6kHzoMqZ
@@ -32,16 +32,16 @@ install:
   - ps: $version = Compute "src\MerQure\MerQure.csproj" $env:APPVEYOR_BUILD_NUMBER $env:APPVEYOR_REPO_TAG $env:APPVEYOR_PULL_REQUEST_NUMBER
   - ps: Update-AppveyorBuild -Version $version.Semver
   - dotnet tool install --global dotnet-sonarscanner
-  - nuget install OpenCover -Version 4.6.519 
-  - nuget install Codecov -Version 1.0.5 
+  - nuget install OpenCover -Version 4.6.519
+  - nuget install Codecov -Version 1.0.5
 
 before_build:
 - dotnet restore
 - cmd: >-
     IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" (
-    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.analysis.mode=publish" /d:"sonar.host.url=https://sonarcloud.io" /d:"sonar.organization=luccaintegration-github" /d:"sonar.login=%SONAR_TOKEN%"
+    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.host.url=https://sonarcloud.io" /d:"sonar.organization=lucca" /d:"sonar.login=%SONAR_TOKEN%"
     ) ELSE (
-    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.host.url=https://sonarcloud.io" /d:"sonar.organization=luccaintegration-github" /d:"sonar.login=%SONAR_TOKEN%" /d:"sonar.github.oauth=%GITHUB_ACCESS_TOKEN%" /d:"sonar.pullrequest.provider=github" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" /d:"sonar.pullrequest.github.repository=LuccaSA/MerQure" /d:"sonar.pullrequest.github.endpoint=https://api.github.com"
+    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.host.url=https://sonarcloud.io" /d:"sonar.organization=lucca" /d:"sonar.login=%SONAR_TOKEN%" /d:"sonar.github.oauth=%GITHUB_ACCESS_TOKEN%" /d:"sonar.pullrequest.provider=github" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" /d:"sonar.pullrequest.github.repository=LuccaSA/MerQure" /d:"sonar.pullrequest.github.endpoint=https://api.github.com"
     )
 
 build_script:
