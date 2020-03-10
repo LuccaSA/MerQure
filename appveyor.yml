@@ -39,9 +39,9 @@ before_build:
 - dotnet restore
 - cmd: >-
     IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" (
-    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.host.url=https://sonarcloud.io" /d:"sonar.organization=lucca" /d:"sonar.login=%SONAR_TOKEN%"
+    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.host.url=https://sonarcloud.io" /o:lucca /d:"sonar.login=%SONAR_TOKEN%"
     ) ELSE (
-    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.host.url=https://sonarcloud.io" /d:"sonar.organization=lucca" /d:"sonar.login=%SONAR_TOKEN%" /d:"sonar.github.oauth=%GITHUB_ACCESS_TOKEN%" /d:"sonar.pullrequest.provider=github" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" /d:"sonar.pullrequest.github.repository=LuccaSA/MerQure" /d:"sonar.pullrequest.github.endpoint=https://api.github.com"
+    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.host.url=https://sonarcloud.io" /o:lucca" /d:"sonar.login=%SONAR_TOKEN%" /d:"sonar.github.oauth=%GITHUB_ACCESS_TOKEN%" /d:"sonar.pullrequest.provider=github" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" /d:"sonar.pullrequest.github.repository=LuccaSA/MerQure" /d:"sonar.pullrequest.github.endpoint=https://api.github.com"
     )
 
 build_script:
