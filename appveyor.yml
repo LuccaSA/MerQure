@@ -1,4 +1,4 @@
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 version: 1.0.{build}
 
@@ -31,26 +31,27 @@ install:
   - ps: . .\ComputeVersion.ps1
   - ps: $version = Compute "src\MerQure\MerQure.csproj" $env:APPVEYOR_BUILD_NUMBER $env:APPVEYOR_REPO_TAG $env:APPVEYOR_PULL_REQUEST_NUMBER
   - ps: Update-AppveyorBuild -Version $version.Semver
-  - dotnet tool install --global dotnet-sonarscanner
-  - nuget install OpenCover -Version 4.6.519
-  - nuget install Codecov -Version 1.0.5
+  - dotnet tool install --global dotnet-sonarscanner 
+  - dotnet tool install --global dotnet-reportgenerator-globaltool
+  - dotnet tool install --global Codecov.Tool
 
 before_build:
 - dotnet restore
 - cmd: >-
     IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" (
-    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.host.url=https://sonarcloud.io" /o:lucca /d:"sonar.login=%SONAR_TOKEN%" /d:sonar.cs.opencover.reportsPaths="coverage-opencover.xml"
+    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.host.url=https://sonarcloud.io" /o:lucca /d:"sonar.login=%SONAR_TOKEN%" /d:sonar.coverageReportPaths="./sonarCoverage/SonarQube.xml"
     ) ELSE (
-    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.host.url=https://sonarcloud.io" /o:lucca /d:"sonar.login=%SONAR_TOKEN%" /d:"sonar.github.oauth=%GITHUB_ACCESS_TOKEN%" /d:"sonar.pullrequest.provider=github" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" /d:"sonar.pullrequest.github.repository=LuccaSA/MerQure" /d:"sonar.pullrequest.github.endpoint=https://api.github.com"
+    dotnet sonarscanner begin /k:"MerQure" /d:"sonar.host.url=https://sonarcloud.io" /o:lucca /d:"sonar.login=%SONAR_TOKEN%" /d:sonar.coverageReportPaths="./sonarCoverage/SonarQube.xml" /d:"sonar.github.oauth=%GITHUB_ACCESS_TOKEN%" /d:"sonar.pullrequest.provider=github" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" /d:"sonar.pullrequest.github.repository=LuccaSA/MerQure" /d:"sonar.pullrequest.github.endpoint=https://api.github.com"
     )
 
 build_script:
 - ps: dotnet build MerQure.sln -c Debug -v minimal
 
 test_script:
-- OpenCover.4.6.519\tools\OpenCover.Console.exe -returntargetcode -oldstyle -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test /p:DebugType=full -c Debug .\tests\MerQure.RbMQ.Tests\MerQure.RbMQ.Tests.csproj" -filter:"+[MerQure*]* -[MerQure.RbMQ.Tests*]*" -excludebyattribute:"*.ExcludeFromCodeCoverage*" -output:coverage-opencover.xml
+- dotnet test -f netcoreapp3.1 /p:DebugType=full -c Debug --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory:./coverage
+- reportgenerator -reports:./coverage/*/*.xml -targetdir:./sonarCoverage -reporttypes:SonarQube
 - dotnet sonarscanner end /d:"sonar.login=%SONAR_TOKEN%"
-- Codecov.1.0.5\tools\codecov -f coverage-opencover.xml
+- codecov -f "coverage/**/*.xml"
 
 after_test:
 - ps: dotnet pack src\MerQure\MerQure.csproj --include-symbols /p:$("VersionPrefix="+$version.Prefix+";VersionSuffix="+$version.Suffix) /p:Configuration=Release /p:SourceLinkEnabled=true /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o ..\..\artifacts
