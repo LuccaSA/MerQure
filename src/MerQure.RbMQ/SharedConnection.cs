@@ -32,9 +32,14 @@ namespace MerQure.RbMQ
                 RequestedChannelMax = rabbitMqConnection.RequestedChannelMax
             };
 
+            if (rabbitMqConnection.ConnectionCluster == null && string.IsNullOrEmpty(rabbitMqConnection.ConnectionString))
+            {
+                throw new ArgumentException("MerQureConnection should provide a ConnectionCluster or ConnectionString");
+            }
+
             if (rabbitMqConnection.ConnectionCluster != null && !string.IsNullOrEmpty(rabbitMqConnection.ConnectionString))
             {
-                throw new ArgumentException("MerQureConnection could not provide a ConnectionCluster or ConnectionString");
+                throw new ArgumentException("MerQureConnection could not provide a ConnectionCluster and ConnectionString at the same time");
             }
 
             if (rabbitMqConnection.ConnectionCluster is null)
@@ -43,7 +48,7 @@ namespace MerQure.RbMQ
                 return connectionFactory.CreateConnection();
             }
             InitCluster(connectionFactory, rabbitMqConnection.ConnectionCluster);
-            return connectionFactory.CreateConnection();
+            return connectionFactory.CreateConnection(rabbitMqConnection.ConnectionCluster.Nodes);
 
         }
 
