@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using System;
+using System.Net.Security;
 
 namespace MerQure.RbMQ
 {
@@ -25,13 +26,39 @@ namespace MerQure.RbMQ
         {
             ConnectionFactory connectionFactory = new ConnectionFactory
             {
-                Uri = new Uri(rabbitMqConnection.ConnectionString),
                 AutomaticRecoveryEnabled = rabbitMqConnection.AutomaticRecoveryEnabled,
                 TopologyRecoveryEnabled = rabbitMqConnection.TopologyRecoveryEnabled,
                 ClientProvidedName = rabbitMqConnection.FriendlyName,
                 RequestedChannelMax = rabbitMqConnection.RequestedChannelMax
             };
+
+            if (rabbitMqConnection.ConnectionCluster != null && !string.IsNullOrEmpty(rabbitMqConnection.ConnectionString))
+            {
+                throw new ArgumentException("MerQureConnection could not provide a ConnectionCluster or ConnectionString");
+            }
+
+            if (rabbitMqConnection.ConnectionCluster is null)
+            {
+                connectionFactory.Uri = new Uri(rabbitMqConnection.ConnectionString);
+                return connectionFactory.CreateConnection();
+            }
+            InitCluster(connectionFactory, rabbitMqConnection.ConnectionCluster);
             return connectionFactory.CreateConnection();
+
+        }
+
+        private static void InitCluster(ConnectionFactory connectionFactory, MerQureConnectionCluster rabbitMqConnectionCluster)
+        {
+            connectionFactory.VirtualHost = rabbitMqConnectionCluster.VirtualHost;
+            connectionFactory.UserName = rabbitMqConnectionCluster.UserName;
+            connectionFactory.Password = rabbitMqConnectionCluster.Password;
+
+            if (rabbitMqConnectionCluster.Ssl)
+            {
+                connectionFactory.Ssl.Enabled = true;
+                connectionFactory.Ssl.Version = connectionFactory.AmqpUriSslProtocols;
+                connectionFactory.Ssl.AcceptablePolicyErrors = SslPolicyErrors.RemoteCertificateNameMismatch;
+            }
         }
 
         public void Dispose()
