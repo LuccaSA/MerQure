@@ -15,8 +15,9 @@
     <PackageVersion>0.0.7</PackageVersion>
 
     <Company>Lucca SA</Company>
-    <PackageLicenseUrl>https://github.com/LuccaSA/MerQure/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl></PackageProjectUrl>
+    <PackageIcon>MerQure-logo.png</PackageIcon>
     <PackageIconUrl>https://raw.githubusercontent.com/LuccaSA/MerQure/master/MerQure-logo.png</PackageIconUrl>
     <PackageTags>MessageBroker AMQP RabbitMQ</PackageTags>
     <RepositoryUrl>https://github.com/LuccaSA/MerQure</RepositoryUrl>
@@ -26,19 +27,18 @@
     <Copyright>Copyright Lucca 2021</Copyright>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="D:\a\MerQure\MerQure\MerQure-logo.png" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
   <PropertyGroup>
-    <SourceLinkEnabled Condition="'$(SourceLinkEnabled)' == ''">false</SourceLinkEnabled>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(SourceLinkEnabled)' == 'true'">
-    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <Deterministic>true</Deterministic>
-    <DeterministicSourcePaths>false</DeterministicSourcePaths>
+	<EmbedUntrackedSources>true</EmbedUntrackedSources>
+	<IncludeSymbols>true</IncludeSymbols>
+	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(SourceLinkEnabled)' == 'true'">
+  <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
   </ItemGroup>
 

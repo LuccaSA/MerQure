@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MerQure", "src\MerQure\MerQure.csproj", "{E38F2572-D955-475B-A79A-DE4E9A607A87}"
 EndProject
@@ -13,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MerQure.RbMQ.Tests", "tests
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6E10C224-EE90-469E-BE32-E6A1F7035765}"
 	ProjectSection(SolutionItems) = preProject
-		appveyor.yml = appveyor.yml
 		build_local.ps1 = build_local.ps1
 		Directory.Build.props = Directory.Build.props
+		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MerQure.Tools", "src\MerQure.Tools\MerQure.Tools.csproj", "{46469C09-4E46-4C96-8588-49D121B4E4C0}"
