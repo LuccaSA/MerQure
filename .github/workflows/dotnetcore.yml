@@ -66,7 +66,7 @@ jobs:
 
     - name: Nuget org push
       if: startsWith(github.ref, 'refs/tags/')
-      run: dotnet nuget push "artifacts/**/*.snupkg" --skip-duplicate --source https://api.nuget.org/v3/index.json -k ${{ secrets.GLOBAL_NUGET_PUBLISH }}
+      run: dotnet nuget push "artifacts/**/*.nupkg" --skip-duplicate --source https://api.nuget.org/v3/index.json -k ${{ secrets.GLOBAL_NUGET_PUBLISH }}
       env:
         NUGET_PUBLISH: ${{ secrets.NUGET_PUBLISH }}
          
