@@ -51,7 +51,7 @@ namespace MerQure.RbMQ.Clients
             return new Message(
                 args.RoutingKey,
                 ParseHeader(args),
-                Encoding.UTF8.GetString(args.Body)
+                Encoding.UTF8.GetString(args.Body.ToArray())
             );
         }
 
@@ -92,7 +92,11 @@ namespace MerQure.RbMQ.Clients
                             onConsumerStopped(sender, e);
                         });
                     }
-                    this.Channel.BasicCancel(_consumer.ConsumerTag);
+
+                    foreach (var tag in _consumer.ConsumerTags)
+                    {
+                        Channel.BasicCancel(tag);
+                    }
                 }
             }
         }
