@@ -242,3 +242,4 @@ ModelManifest.xml
 .fake/
 /.versionCounter
 /ComputeVersion.ps1
+.idea/
