@@ -36,13 +36,13 @@ jobs:
         architecture: x64
         
     - name: Setup SonarScanner
-      run: dotnet tool install --tool-path artifacts dotnet-sonarscanner
+      run: dotnet tool install --tool-path tools dotnet-sonarscanner
 
     - name: Setup ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
     - name: SonarScanner begin
-      run: artifacts/dotnet-sonarscanner begin /k:"MerQure" /o:"lucca" /d:sonar.login=${{ secrets.SONAR_TOKEN }} /d:sonar.host.url="https://sonarcloud.io/" /d:sonar.coverageReportPaths="./sonarCoverage/SonarQube.xml"
+      run: tools/dotnet-sonarscanner begin /k:"MerQure" /o:"lucca" /d:sonar.login=${{ secrets.SONAR_TOKEN }} /d:sonar.host.url="https://sonarcloud.io/" /d:sonar.coverageReportPaths="./sonarCoverage/SonarQube.xml"
 
     - name: Test
       run: dotnet test --configuration Release /p:CollectCoverage=true --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory:./coverage
@@ -51,7 +51,7 @@ jobs:
       run: reportgenerator -reports:./coverage/*/*.xml -targetdir:./sonarCoverage -reporttypes:SonarQube
 
     - name: SonarScanner end
-      run: artifacts/dotnet-sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }}
+      run: tools/dotnet-sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
  
