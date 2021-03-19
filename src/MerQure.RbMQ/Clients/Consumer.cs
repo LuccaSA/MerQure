@@ -4,6 +4,7 @@ using MerQure.RbMQ.Events;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -57,7 +58,10 @@ namespace MerQure.RbMQ.Clients
 
         private Header ParseHeader(BasicDeliverEventArgs args)
         {
-            return new Header(args.BasicProperties.Headers.ToDictionary(kvp => kvp.Key, kvp => ParseHeaderProperty(kvp.Value)));
+            return new Header(
+                args.BasicProperties.Headers?
+                    .ToDictionary(kvp => kvp.Key, kvp => ParseHeaderProperty(kvp.Value)) 
+                ?? new Dictionary<string, object>());
         }
         /// <summary>
         /// Parse header properties, ignoring complex type as "Nested Table"
