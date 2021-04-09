@@ -62,7 +62,7 @@ jobs:
       run: dotnet pack src\MerQure.RbMQ\MerQure.RbMQ.csproj --configuration Release -o artifacts -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
     - name: Pack MerQure.Tools
-      run: dotnet src\MerQure.Tools\MerQure.Tools.csproj --configuration Release -o artifacts -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }}
+      run: dotnet pack src\MerQure.Tools\MerQure.Tools.csproj --configuration Release -o artifacts -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
     - name: Nuget org push
       if: startsWith(github.ref, 'refs/tags/')
