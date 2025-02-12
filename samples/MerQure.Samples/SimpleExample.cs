@@ -16,7 +16,7 @@ namespace MerQure.Samples
         {
             // RabbitMQ init
             _messagingService.DeclareExchange("simple.exchange");
-            _messagingService.DeclareQueue("simple.queue");
+            _messagingService.DeclareQueue("simple.queue", isQuorum: true);
             _messagingService.DeclareBinding("simple.exchange", "simple.queue", "simple.message.*");
 
             // Get the publisher and declare Exhange where publish messages

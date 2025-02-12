@@ -1,5 +1,4 @@
-﻿using MerQure.RbMQ;
-using MerQure.RbMQ.Content;
+﻿using MerQure.RbMQ.Content;
 using System;
 using System.Collections.Generic;
 
@@ -18,12 +17,12 @@ namespace MerQure.Samples
         {
             // RabbitMQ init
             _messagingService.DeclareExchange("deadletter.exchange", Constants.ExchangeTypeFanout);
-            _messagingService.DeclareQueue("deadletter.queue");
+            _messagingService.DeclareQueue("deadletter.queue", isQuorum: true);
             _messagingService.DeclareBinding("deadletter.exchange", "deadletter.queue", "#");
 
             _messagingService.DeclareExchange("delay.exchange", Constants.ExchangeTypeHeaders);
-            _messagingService.DeclareQueueWithDeadLetterPolicy("deadletter.queue.5", "deadletter.exchange", 5000, null);
-            _messagingService.DeclareQueueWithDeadLetterPolicy("deadletter.queue.30", "deadletter.exchange", 30000, null);
+            _messagingService.DeclareQueueWithDeadLetterPolicy("deadletter.queue.5", "deadletter.exchange", 5000, null, isQuorum: true);
+            _messagingService.DeclareQueueWithDeadLetterPolicy("deadletter.queue.30", "deadletter.exchange", 30000, null, isQuorum: true);
 
             _messagingService.DeclareBinding("delay.exchange", "deadletter.queue.5", "#", new Dictionary<string, object> { { "delay", 5 } });
             _messagingService.DeclareBinding("delay.exchange", "deadletter.queue.30", "#", new Dictionary<string, object> { { "delay", 30 } });

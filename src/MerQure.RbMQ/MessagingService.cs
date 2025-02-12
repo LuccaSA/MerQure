@@ -50,20 +50,20 @@ namespace MerQure.RbMQ
             }
         }
 
-        public void DeclareQueue(string queueName, byte maxPriority)
+        public string DeclareQueue(string queueName, byte maxPriority, bool isQuorum)
         {
             var queueArgs = new Dictionary<string, object> {
                 { Constants.QueueMaxPriority, maxPriority }
             };
-            DeclareQueue(queueName, queueArgs);
+            return DeclareQueue(queueName, queueArgs, isQuorum);
         }
 
-        public void DeclareQueue(string queueName)
+        public string DeclareQueue(string queueName, bool isQuorum)
         {
-            DeclareQueue(queueName, new Dictionary<string, object>());
+            return DeclareQueue(queueName, new Dictionary<string, object>(), isQuorum);
         }
 
-        public void DeclareQueueWithDeadLetterPolicy(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey)
+        public string DeclareQueueWithDeadLetterPolicy(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey, bool isQuorum)
         {
             if (string.IsNullOrWhiteSpace(deadLetterExchange)) throw new ArgumentNullException(nameof(deadLetterExchange));
             if (messageTimeToLive <= 0) throw new ArgumentOutOfRangeException(nameof(messageTimeToLive));
@@ -76,18 +76,41 @@ namespace MerQure.RbMQ
             {
                 queueArgs.Add(Constants.QueueDeadLetterRoutingKey, deadLetterRoutingKey);
             }
-            DeclareQueue(queueName, queueArgs);
+            return DeclareQueue(queueName, queueArgs, isQuorum);
         }
+        private const string QuorumQueueNameSuffix ="-q";
 
-        public void DeclareQueue(string queueName, Dictionary<string, object> queueArgs)
+        public string DeclareQueue(string queueName, Dictionary<string, object> queueArgs, bool isQuorum)
         {
             if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
             if (queueArgs == null) throw new ArgumentNullException(nameof(queueArgs));
 
+            Dictionary<string, object> effectiveQueueArgs;
+            string effectiveQueueName;
+            if(isQuorum)
+            {
+                if(!Durable || AutoDeleteQueue)
+                {
+                    throw new ArgumentException("Quorum queues must be durable and non-auto-delete");
+                }
+                effectiveQueueArgs = new Dictionary<string, object>(queueArgs)
+                {
+                    { Constants.HeaderQueueType, Constants.HeaderQueueTypeQuorumValue }
+                };
+                effectiveQueueName = $"{queueName}{QuorumQueueNameSuffix}";
+            }
+            else
+            {
+                effectiveQueueArgs = queueArgs;
+                effectiveQueueName = queueName;
+            }
+
             using (var channel = CurrentConnection.CreateModel())
             {
-                channel.QueueDeclare(queueName.ToLowerInvariant(), this.Durable, false, this.AutoDeleteQueue, queueArgs);
+                channel.QueueDeclare(effectiveQueueName.ToLowerInvariant(), this.Durable, false, this.AutoDeleteQueue, effectiveQueueArgs);
             }
+
+            return effectiveQueueName;
         }
 
         public void DeclareBinding(string exchangeName, string queueName, string routingKey)

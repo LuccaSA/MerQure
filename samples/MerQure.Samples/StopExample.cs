@@ -1,5 +1,4 @@
-﻿using MerQure.RbMQ;
-using MerQure.RbMQ.Content;
+﻿using MerQure.RbMQ.Content;
 using System;
 
 namespace MerQure.Samples
@@ -17,7 +16,7 @@ namespace MerQure.Samples
         {
             // RabbitMQ init
             _messagingService.DeclareExchange("stop.exchange");
-            _messagingService.DeclareQueue("stop.queue");
+            _messagingService.DeclareQueue("stop.queue", isQuorum: true);
             _messagingService.DeclareBinding("stop.exchange", "stop.queue", "stop.message.* ");
 
             // Get the publisher and declare Exhange where publish messages
