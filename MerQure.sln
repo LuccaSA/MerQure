@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
 		CHANGELOG.md = CHANGELOG.md
 		GitVersion.yml = GitVersion.yml
+		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MerQure.Tools", "src\MerQure.Tools\MerQure.Tools.csproj", "{46469C09-4E46-4C96-8588-49D121B4E4C0}"
