@@ -33,7 +33,7 @@ namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
                 DeliveryDelayInMilliseconds = 1000
             };
 
-            SampleBus = _retryBusService.CreateNewBus<Sample>(sampleConfiguration);
+            SampleBus = _retryBusService.CreateNewBus<Sample>(sampleConfiguration, isQuorum: true);
         }
 
         public void Send(Sample sample)

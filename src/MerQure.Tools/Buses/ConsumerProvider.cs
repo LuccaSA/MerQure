@@ -1,12 +1,11 @@
 ﻿using MerQure.Tools.Configurations;
-using System;
 using System.Collections.Generic;
 
 namespace MerQure.Tools.Buses
 {
 	public class ConsumerProvider
     {
-        private static object _syncRoot = new Object();
+        private static readonly object _syncRoot = new();
 
         private readonly Dictionary<string, IConsumer> _consumers = new Dictionary<string, IConsumer>();
         private readonly IMessagingService _messagingService;
@@ -21,9 +20,9 @@ namespace MerQure.Tools.Buses
             IConsumer consumer;
             lock (_syncRoot)
             {
-                if (_consumers.ContainsKey(channel.Value))
+                if (_consumers.TryGetValue(channel.Value, out var foundConsumer))
                 {
-                    consumer = _consumers[channel.Value];
+                    consumer = foundConsumer;
                 }
                 else
                 {

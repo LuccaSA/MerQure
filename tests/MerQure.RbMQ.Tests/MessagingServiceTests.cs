@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xunit;
-using MerQure.RbMQ;
 
 namespace MerQure.RbMQ.Tests
 {
@@ -15,14 +15,21 @@ namespace MerQure.RbMQ.Tests
             Assert.Throws<ArgumentNullException>(() => messagingService.DeclareExchange("    "));
         }
 
-        [Fact]
-        public void DeclareQueueFailWithEmptyName()
+        [Theory]
+        [MemberData(nameof(IsQuorumPossibleValues))]
+        public void DeclareQueueFailWithEmptyName(bool isQuorum)
         {
             var messagingService = new MessagingService(null, null);
 
-            Assert.Throws<ArgumentNullException>(() => messagingService.DeclareQueue(null));
-            Assert.Throws<ArgumentNullException>(() => messagingService.DeclareQueue("    "));
+            Assert.Throws<ArgumentNullException>(() => messagingService.DeclareQueue(null, isQuorum: isQuorum));
+            Assert.Throws<ArgumentNullException>(() => messagingService.DeclareQueue("    ", isQuorum: isQuorum));
         }
+        public static IEnumerable<object[]> IsQuorumPossibleValues =>
+            new List<object[]>
+            {
+                new object[] { true },
+                new object[] { false }
+            };
 
         [Fact]
         public void DeclareBindingFailWithEmptyParameters()

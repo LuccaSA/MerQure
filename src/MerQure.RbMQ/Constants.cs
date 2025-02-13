@@ -59,5 +59,8 @@
         /// Routing Dead-Lettered Messages
         /// </summary>
         public const string QueueDeadLetterRoutingKey = "x-dead-letter-routing-key";
+        
+        public const string HeaderQueueType = "x-queue-type";
+        public const string HeaderQueueTypeQuorumValue = "quorum";
     }
 }

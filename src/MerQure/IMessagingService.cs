@@ -20,30 +20,33 @@ namespace MerQure
         /// <param name="exchangeType">fanout, direct, topic, headers</param>
         void DeclareExchange(string exchangeName, string exchangeType);
 
-        void DeclareQueue(string queueName, byte maxPriority);
-
         /// <summary>
-        /// Declare a queue iwth dead letter policy
+        /// Declare a queue with dead letter policy
         /// </summary>
         /// <param name="queueName"></param>
         /// <param name="deadLetterExchange"></param>
         /// <param name="messageTimeToLive"></param>
         /// <param name="deadLetterRoutingKey"></param>
+        /// <param name="isQuorum">Whether created queue should be quorum (when true, quorum arguments will be added to arguments used for queue creation)</param>
         /// <see cref="https://www.rabbitmq.com/dlx.html"/>
-        void DeclareQueueWithDeadLetterPolicy(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey);
+        string DeclareQueueWithDeadLetterPolicy(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey, bool isQuorum);
+
+        string DeclareQueue(string queueName, byte maxPriority, bool isQuorum);
 
         /// <summary>
-        /// Declare a queue (if it doesn't exists) with specifi arguments
+        /// Declare a queue (if it doesn't exists) with specific arguments
         /// </summary>
         /// <param name="queueName"></param>
         /// <param name="queueArgs">Queue's arguments</param>
-        void DeclareQueue(string queueName, Dictionary<string, object> queueArgs);
+        /// <param name="isQuorum">Whether created queue should be quorum (when true, quorum arguments will be added to arguments used for queue creation)</param>
+        string DeclareQueue(string queueName, Dictionary<string, object> queueArgs, bool isQuorum);
 
         /// <summary>
         /// Declare a queue (if it doesn't exists)
         /// </summary>
         /// <param name="queueName"></param>
-        void DeclareQueue(string queueName);
+        /// <param name="isQuorum">Whether created queue should be quorum (when true, quorum arguments will be added to arguments used for queue creation)</param>
+        string DeclareQueue(string queueName, bool isQuorum);
 
         /// <summary>
         /// Declare an Binding (if it doesn't exists)
