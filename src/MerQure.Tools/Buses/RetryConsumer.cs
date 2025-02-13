@@ -35,7 +35,7 @@ namespace MerQure.Tools.Buses
 
         public MessageInformations ForceRetryStrategy(Channel channel, T message, int attemptNumber)
         {
-            var retryInformations = new RetryInformations()
+            var retryInformations = new RetryInformations
             {
                 NumberOfRetry = attemptNumber > 0 ? attemptNumber - 1 : 0   
             };

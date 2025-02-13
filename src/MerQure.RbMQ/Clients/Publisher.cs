@@ -3,7 +3,6 @@ using System;
 using MerQure.RbMQ.Helpers;
 using MerQure.RbMQ.Content;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace MerQure.RbMQ.Clients
 {

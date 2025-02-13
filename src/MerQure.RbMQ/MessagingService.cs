@@ -18,21 +18,19 @@ namespace MerQure.RbMQ
         protected IConnection CurrentConnection => _sharedConnection.CurrentConnection;
 
         private readonly SharedConnection _sharedConnection;
-        private readonly IOptions<MerQureConfiguration> _merQureConfiguration;
 
         public MessagingService(IOptions<MerQureConfiguration> merQureConfiguration, SharedConnection sharedConnection)
         {
-            _merQureConfiguration = merQureConfiguration;
             _sharedConnection = sharedConnection;
 
-            if (_merQureConfiguration == null)
+            if (merQureConfiguration == null)
             {
                 return;
             }
-            Durable = _merQureConfiguration.Value.Durable;
-            AutoDeleteQueue = _merQureConfiguration.Value.AutoDeleteQueue;
-            DefaultPrefetchCount = _merQureConfiguration.Value.DefaultPrefetchCount;
-            PublisherAcknowledgementsTimeoutInMilliseconds = _merQureConfiguration.Value.PublisherAcknowledgementsTimeoutInMilliseconds;
+            Durable = merQureConfiguration.Value.Durable;
+            AutoDeleteQueue = merQureConfiguration.Value.AutoDeleteQueue;
+            DefaultPrefetchCount = merQureConfiguration.Value.DefaultPrefetchCount;
+            PublisherAcknowledgementsTimeoutInMilliseconds = merQureConfiguration.Value.PublisherAcknowledgementsTimeoutInMilliseconds;
         }
 
         public void DeclareExchange(string exchangeName)

@@ -20,8 +20,6 @@ namespace MerQure
         /// <param name="exchangeType">fanout, direct, topic, headers</param>
         void DeclareExchange(string exchangeName, string exchangeType);
 
-        string DeclareQueue(string queueName, byte maxPriority, bool isQuorum);
-
         /// <summary>
         /// Declare a queue with dead letter policy
         /// </summary>
@@ -32,6 +30,8 @@ namespace MerQure
         /// <param name="isQuorum">Whether created queue should be quorum (when true, quorum arguments will be added to arguments used for queue creation)</param>
         /// <see cref="https://www.rabbitmq.com/dlx.html"/>
         string DeclareQueueWithDeadLetterPolicy(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey, bool isQuorum);
+
+        string DeclareQueue(string queueName, byte maxPriority, bool isQuorum);
 
         /// <summary>
         /// Declare a queue (if it doesn't exists) with specific arguments

@@ -46,9 +46,9 @@ namespace MerQure.Tools
         {
             string errorExchangeName = $"{configuration.BusName}.{RetryStrategyConfiguration.ErrorExchangeSuffix}";
             _messagingService.DeclareExchange(errorExchangeName, Constants.ExchangeTypeDirect);
-            foreach (Channel channel in configuration.Channels)
+            foreach (var channelValue in configuration.Channels.Select(channel => channel.Value ))
             {
-                string errorQueueName = $"{channel.Value}.{RetryStrategyConfiguration.ErrorExchangeSuffix}";
+                string errorQueueName = $"{channelValue}.{RetryStrategyConfiguration.ErrorExchangeSuffix}";
                 var effectiveQueueName = _messagingService.DeclareQueue(errorQueueName, isQuorum);
                 _messagingService.DeclareBinding(errorExchangeName, effectiveQueueName , errorQueueName);
             }
@@ -77,21 +77,21 @@ namespace MerQure.Tools
 
         private void CreateRetryChannelsForOneDelay(RetryStrategyConfiguration configuration, string retryExchangeName, int delay, bool isQuorum)
         {
-            foreach (Channel channel in configuration.Channels)
+            foreach (var channelValue in configuration.Channels.Select(channel => channel.Value ))
             {
-                string retryQueueName = $"{channel.Value}.{delay}";
+                string retryQueueName = $"{channelValue}.{delay}";
                 var effectiveQueueName = _messagingService.DeclareQueueWithDeadLetterPolicy(retryQueueName, configuration.BusName, delay, null, isQuorum);
-                _messagingService.DeclareBinding(retryExchangeName, effectiveQueueName, $"{channel.Value}.{delay}", null);
+                _messagingService.DeclareBinding(retryExchangeName, effectiveQueueName, $"{channelValue}.{delay}", null);
             }
         }
 
         private void CreateMainExchange(RetryStrategyConfiguration configuration, bool isQuorum)
         {
             _messagingService.DeclareExchange(configuration.BusName, Constants.ExchangeTypeTopic);
-            foreach (Channel channel in configuration.Channels)
+            foreach (var channelValue in configuration.Channels.Select(channel => channel.Value ))
             {
-                var effectiveQueueName = _messagingService.DeclareQueue(channel.Value, isQuorum);
-                _messagingService.DeclareBinding(configuration.BusName, effectiveQueueName, $"{channel.Value}.#");
+                var effectiveQueueName = _messagingService.DeclareQueue(channelValue, isQuorum);
+                _messagingService.DeclareBinding(configuration.BusName, effectiveQueueName, $"{channelValue}.#");
             }
         }
     }

@@ -67,7 +67,7 @@ namespace MerQure.Tools.Buses
             }
             else
             {
-                delay = delays.Last();
+                delay = delays[delays.Count-1];
             }
             retryInformations.NumberOfRetry++;
             RetryMessage<T> retryMessage = new RetryMessage<T>
@@ -97,7 +97,7 @@ namespace MerQure.Tools.Buses
             }
         }
 
-        internal void TryPublishWithBrokerAcknowledgement(IPublisher publisher, string channelName, string message)
+        private static void TryPublishWithBrokerAcknowledgement(IPublisher publisher, string channelName, string message)
         {
             bool published = publisher.PublishWithAcknowledgement(channelName, message);
             if (!published)
@@ -106,7 +106,7 @@ namespace MerQure.Tools.Buses
             }
         }
 
-        internal void PublishWithTransaction(IPublisher publisher, string channelName, IEnumerable<string> messages)
+        private static void PublishWithTransaction(IPublisher publisher, string channelName, List<string> messages)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace MerQure.Tools.Buses
             }
         }
 
-        private RetryMessage<T> CreateRetryMessage(T message)
+        private static RetryMessage<T> CreateRetryMessage(T message)
         {
             return new RetryMessage<T>
             {
