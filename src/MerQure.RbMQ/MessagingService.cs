@@ -48,20 +48,20 @@ namespace MerQure.RbMQ
             }
         }
 
-        public string DeclareQueue(string queueName, byte maxPriority, bool isQuorum)
+        public string DeclareQueue(string proposedQueueName, byte maxPriority, bool isQuorum)
         {
             var queueArgs = new Dictionary<string, object> {
                 { Constants.QueueMaxPriority, maxPriority }
             };
-            return DeclareQueue(queueName, queueArgs, isQuorum);
+            return DeclareQueue(proposedQueueName, queueArgs, isQuorum);
         }
 
-        public string DeclareQueue(string queueName, bool isQuorum)
+        public string DeclareQueue(string proposedQueueName, bool isQuorum)
         {
-            return DeclareQueue(queueName, new Dictionary<string, object>(), isQuorum);
+            return DeclareQueue(proposedQueueName, new Dictionary<string, object>(), isQuorum);
         }
 
-        public string DeclareQueueWithDeadLetterPolicy(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey, bool isQuorum)
+        public string DeclareQueueWithDeadLetterPolicy(string proposedQueueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey, bool isQuorum)
         {
             if (string.IsNullOrWhiteSpace(deadLetterExchange)) throw new ArgumentNullException(nameof(deadLetterExchange));
             if (messageTimeToLive <= 0) throw new ArgumentOutOfRangeException(nameof(messageTimeToLive));
@@ -74,17 +74,19 @@ namespace MerQure.RbMQ
             {
                 queueArgs.Add(Constants.QueueDeadLetterRoutingKey, deadLetterRoutingKey);
             }
-            return DeclareQueue(queueName, queueArgs, isQuorum);
+            return DeclareQueue(proposedQueueName, queueArgs, isQuorum);
         }
-        private const string QuorumQueueNameSuffix ="-q";
 
-        public string DeclareQueue(string queueName, Dictionary<string, object> queueArgs, bool isQuorum)
+        public const string QuorumQueueNameSuffix ="-q";
+        public string QueueNameTransformationUsedByDeclareQueue(string proposedQueueName, bool isQuorum) => isQuorum ? $"{proposedQueueName}{QuorumQueueNameSuffix}" : proposedQueueName;
+
+        public string DeclareQueue(string proposedQueueName, Dictionary<string, object> queueArgs, bool isQuorum)
         {
-            if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
+            if (string.IsNullOrWhiteSpace(proposedQueueName)) throw new ArgumentNullException(nameof(proposedQueueName));
             if (queueArgs == null) throw new ArgumentNullException(nameof(queueArgs));
 
+            string effectiveQueueName = QueueNameTransformationUsedByDeclareQueue(proposedQueueName, isQuorum);;
             Dictionary<string, object> effectiveQueueArgs;
-            string effectiveQueueName;
             if(isQuorum)
             {
                 if(!Durable || AutoDeleteQueue)
@@ -95,12 +97,10 @@ namespace MerQure.RbMQ
                 {
                     { Constants.HeaderQueueType, Constants.HeaderQueueTypeQuorumValue }
                 };
-                effectiveQueueName = $"{queueName}{QuorumQueueNameSuffix}";
             }
             else
             {
                 effectiveQueueArgs = queueArgs;
-                effectiveQueueName = queueName;
             }
 
             using (var channel = CurrentConnection.CreateModel())

@@ -2,6 +2,7 @@
 using Moq;
 using System;
 using System.Collections.Generic;
+using MerQure.RbMQ;
 using Xunit;
 
 namespace MerQure.Tools.Tests
@@ -22,8 +23,11 @@ namespace MerQure.Tools.Tests
         {
             _mockMessagingService = new Mock<IMessagingService>();
             _mockMessagingService
+                .Setup(service => service.QueueNameTransformationUsedByDeclareQueue(It.IsAny<string>(), It.IsAny<bool>()))
+                .Returns((string proposedQueueName, bool isQuorum) => isQuorum ? $"{proposedQueueName}{MessagingService.QuorumQueueNameSuffix}" : proposedQueueName);
+            _mockMessagingService
                 .Setup(service => service.DeclareQueue(It.IsAny<string>(), It.IsAny<bool>()))
-                .Returns((string queueName, bool isQuorum) => isQuorum ? queueName + "-q" : queueName);
+                .Returns((string proposedQueueName, bool isQuorum) => isQuorum ? $"{proposedQueueName}{MessagingService.QuorumQueueNameSuffix}" : proposedQueueName);
             
             _retryBusService = new RetryBusService(_mockMessagingService.Object); 
         }
@@ -111,8 +115,8 @@ namespace MerQure.Tools.Tests
             _retryBusService.CreateNewBus<TestMessage>(retryStrategy, isQuorum: true);
 
             //Assert 
-            _mockMessagingService.Verify(m => m.DeclareBinding(retryStrategy.BusName, $"{_channelNames[0]}-q", It.IsAny<string>()));
-            _mockMessagingService.Verify(m => m.DeclareBinding(retryStrategy.BusName, $"{_channelNames[1]}-q", It.IsAny<string>()));
+            _mockMessagingService.Verify(m => m.DeclareBinding(retryStrategy.BusName, $"{_channelNames[0]}{MessagingService.QuorumQueueNameSuffix}", It.IsAny<string>()));
+            _mockMessagingService.Verify(m => m.DeclareBinding(retryStrategy.BusName, $"{_channelNames[1]}{MessagingService.QuorumQueueNameSuffix}", It.IsAny<string>()));
         }
 
         [Theory]
