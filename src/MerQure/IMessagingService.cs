@@ -21,32 +21,43 @@ namespace MerQure
         void DeclareExchange(string exchangeName, string exchangeType);
 
         /// <summary>
+        /// Implementation of name transformation between proposedQueueName and queue name effectively used made by each DeclareQueueXxxx method
+        /// </summary>
+        /// <param name="proposedQueueName"></param>
+        /// <param name="isQuorum"></param>
+        /// <returns>Effective queue name</returns>
+        string QueueNameTransformationUsedByDeclareQueue(string proposedQueueName, bool isQuorum);
+        
+        /// <summary>
         /// Declare a queue with dead letter policy
         /// </summary>
-        /// <param name="queueName"></param>
+        /// <param name="proposedQueueName">Proposed queue name (will be transformetransformed by <see cref="QueueNameTransformationUsedByDeclareQueue"/>)</param>
         /// <param name="deadLetterExchange"></param>
         /// <param name="messageTimeToLive"></param>
         /// <param name="deadLetterRoutingKey"></param>
         /// <param name="isQuorum">Whether created queue should be quorum (when true, quorum arguments will be added to arguments used for queue creation)</param>
         /// <see cref="https://www.rabbitmq.com/dlx.html"/>
-        string DeclareQueueWithDeadLetterPolicy(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey, bool isQuorum);
+        /// <returns>Effective queue name used by created queue</returns>
+        string DeclareQueueWithDeadLetterPolicy(string proposedQueueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey, bool isQuorum);
 
-        string DeclareQueue(string queueName, byte maxPriority, bool isQuorum);
+        string DeclareQueue(string proposedQueueName, byte maxPriority, bool isQuorum);
 
         /// <summary>
         /// Declare a queue (if it doesn't exists) with specific arguments
         /// </summary>
-        /// <param name="queueName"></param>
+        /// <param name="proposedQueueName">Proposed queue name (transformed by <see cref="QueueNameTransformationUsedByDeclareQueue"/>)</param>
         /// <param name="queueArgs">Queue's arguments</param>
         /// <param name="isQuorum">Whether created queue should be quorum (when true, quorum arguments will be added to arguments used for queue creation)</param>
-        string DeclareQueue(string queueName, Dictionary<string, object> queueArgs, bool isQuorum);
+        /// <returns>Effective queue name used by created queue</returns>
+        string DeclareQueue(string proposedQueueName, Dictionary<string, object> queueArgs, bool isQuorum);
 
         /// <summary>
         /// Declare a queue (if it doesn't exists)
         /// </summary>
-        /// <param name="queueName"></param>
+        /// <param name="proposedQueueName">Proposed queue name (transformed by <see cref="QueueNameTransformationUsedByDeclareQueue"/>)</param>
         /// <param name="isQuorum">Whether created queue should be quorum (when true, quorum arguments will be added to arguments used for queue creation)</param>
-        string DeclareQueue(string queueName, bool isQuorum);
+        /// <returns>Effective queue name used by created queue</returns>
+        string DeclareQueue(string proposedQueueName, bool isQuorum);
 
         /// <summary>
         /// Declare an Binding (if it doesn't exists)
