@@ -1,53 +1,53 @@
 ﻿using MerQure.Tools.Buses;
 using MerQure.Tools.Configurations;
 using Moq;
+using System.Threading.Tasks;
 using Xunit;
 
-namespace MerQure.Tools.Tests.Buses
+namespace MerQure.Tools.Tests.Buses;
+
+public class ConsumerProviderTests
 {
-    public class ConsumerProviderTests
+    private Mock<IMessagingService> _mockMessagingService;
+    private Mock<IConsumer> _mockMerQureConsumer;
+
+    private ConsumerProvider _consumerProvider;
+
+    public ConsumerProviderTests()
     {
-        private Mock<IMessagingService> _mockMessagingService;
-        private Mock<IConsumer> _mockMerQureConsumer;
+        _mockMerQureConsumer = new Mock<IConsumer>();
 
-        private ConsumerProvider _consumerProvider;
+        _mockMessagingService = new Mock<IMessagingService>();
+        _mockMessagingService.Setup(m => m.GetConsumerAsync(It.IsAny<string>())).ReturnsAsync(_mockMerQureConsumer.Object);
 
-        public ConsumerProviderTests()
-        {
-            _mockMerQureConsumer = new Mock<IConsumer>();
+        _consumerProvider = new ConsumerProvider(_mockMessagingService.Object);
+    }
 
-            _mockMessagingService = new Mock<IMessagingService>();
-            _mockMessagingService.Setup(m => m.GetConsumer(It.IsAny<string>())).Returns(_mockMerQureConsumer.Object);
+    [Fact]
+    public async Task ConsumerProvider_Get_ShouldReturnNewConsumer_WhenChannelIsUnknown()
+    {
+        //Arrange
+        string queueName = "testQueue";
+        //Act
+        await _consumerProvider.GetAsync(new Channel(queueName));
+        //Assert
+        _mockMessagingService.Verify(m => m.GetConsumerAsync(queueName), Times.Once);
+    }
 
-            _consumerProvider = new ConsumerProvider(_mockMessagingService.Object);
-        }
+    [Fact]
+    public async Task ConsumerProvider_Get_ShouldReturnExistingConsumer_WhenChannelIsknown()
+    {
+        //Arrange
+        string queueName = "testQueue";
+        //create the existing consumer
+        await _consumerProvider.GetAsync(new Channel(queueName));
 
-        [Fact]
-        public void ConsumerProvider_Get_ShouldReturnNewConsumer_WhenChannelIsUnknown()
-        {
-            //Arrange
-            string queueName = "testQueue"; 
-            //Act
-            _consumerProvider.Get(new Channel(queueName));
-            //Assert
-            _mockMessagingService.Verify(m => m.GetConsumer(queueName), Times.Once);
-        }
+        //Act
+        //get same consumer
+        await _consumerProvider.GetAsync(new Channel(queueName));
 
-        [Fact]
-        public void ConsumerProvider_Get_ShouldReturnExistingConsumer_WhenChannelIsknown()
-        {
-            //Arrange
-            string queueName = "testQueue";
-            //create the existing consumer
-            _consumerProvider.Get(new Channel(queueName));
-
-            //Act
-            //get same consumer
-            _consumerProvider.Get(new Channel(queueName));
-
-            //Assert
-            // external get consumer should be call only once
-            _mockMessagingService.Verify(m => m.GetConsumer(queueName), Times.Once);
-        }
+        //Assert
+        // external get consumer should be call only once
+        _mockMessagingService.Verify(m => m.GetConsumerAsync(queueName), Times.Once);
     }
 }
