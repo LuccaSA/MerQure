@@ -85,7 +85,6 @@ class Consumer : RabbitMqClient, IConsumer
         return _consumer != null && _consumer.IsRunning;
     }
 
-    // TODO : async
     public async Task StopConsuming(AsyncEventHandler<ConsumerEventArgs> onConsumerStopped)
     {
         if (IsConsuming())
