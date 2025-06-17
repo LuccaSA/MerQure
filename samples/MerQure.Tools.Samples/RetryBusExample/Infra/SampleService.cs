@@ -1,67 +1,71 @@
 ﻿using MerQure.Tools.Buses;
 using MerQure.Tools.Configurations;
 using MerQure.Tools.Samples.RetryBusExample.Domain;
-using MerQure.Tools.Samples.RetryBusExample.Infra;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
+namespace MerQure.Tools.Samples.RetryBusExample.Infra;
 
-namespace MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra
+public class SampleService : ISampleService
 {
-	public class SampleService : ISampleService
+    public const string BusName = "sample";
+    private readonly IRetryBusService _retryBusService;
+
+    public SampleService(IRetryBusService retryBusService)
     {
-        public const string BusName = "sample";
-        private readonly IRetryBusService _retryBusService;
+        _retryBusService = retryBusService;
+    }
 
-        public IBus<Sample> SampleBus { get; set; }
-
-        public SampleService(IRetryBusService retryBusService)
+    private Task<IBus<Sample>> CreateSampleBus()
+    {
+        RetryStrategyConfiguration sampleConfiguration = new RetryStrategyConfiguration
         {
-            _retryBusService = retryBusService;
-
-            RetryStrategyConfiguration sampleConfiguration = new RetryStrategyConfiguration
+            Channels = SampleChannels.GetAllChannels(),
+            BusName = BusName,
+            DelaysInMsBetweenEachRetry = new List<int>
             {
-                Channels = SampleChannels.GetAllChannels(),
-                BusName = BusName,
-                DelaysInMsBetweenEachRetry = new List<int>
-                    {
-                        {5000 },
-                        {6000 },
-                        {10000 }
-                    },
-                MessageIsGoingIntoErrorBusAfterAllRepeat = true,
-                DeliveryDelayInMilliseconds = 1000
-            };
+                { 5000 },
+                { 6000 },
+                { 10000 }
+            },
+            MessageIsGoingIntoErrorBusAfterAllRepeat = true,
+            DeliveryDelayInMilliseconds = 1000
+        };
 
-            SampleBus = _retryBusService.CreateNewBus<Sample>(sampleConfiguration, isQuorum: true);
-        }
+        return _retryBusService.CreateNewBusAsync<Sample>(sampleConfiguration, isQuorum: true);
+    }
 
-        public void Send(Sample sample)
+    public async Task SendAsync(Sample sample)
+    {
+        var sampleBus = await CreateSampleBus();
+        await sampleBus.PublishAsync(SampleChannels.MessageSended, sample, true);
+    }
+
+    public async Task ConsumeAsync(EventHandler<Sample> onSampleReceived)
+    {
+        var sampleBus = await CreateSampleBus();
+        await sampleBus.OnMessageReceivedAsync(SampleChannels.MessageSended, (object sender, Sample sample) =>
         {
-            SampleBus.Publish(SampleChannels.MessageSended, sample, true);
-        }
+            onSampleReceived(this, sample);
+        });
+    }
 
-        public void Consume(EventHandler<Sample> onSampleReceived)
-        {
-            SampleBus.OnMessageReceived(SampleChannels.MessageSended, (object sender, Sample sample) =>
-            {
-                onSampleReceived(this, sample);
-            });
-        }
+    public async Task RetryLaterAsync(Sample sample)
+    {
+        var sampleBus = await CreateSampleBus();
+        await sampleBus.ApplyRetryStrategyAsync(SampleChannels.MessageSended, sample);
+    }
 
-        public void RetryLater(Sample sample)
-        {
-            SampleBus.ApplyRetryStrategy(SampleChannels.MessageSended, sample);
-        }
+    public async Task AcknowlegdeAsync(Sample sample)
+    {
+        var sampleBus = await CreateSampleBus();
+        await sampleBus.AcknowlegdeDeliveredMessageAsync(SampleChannels.MessageSended, sample);
+    }
 
-        public void Acknowlegde(Sample sample)
-        {
-            SampleBus.AcknowlegdeDeliveredMessage(SampleChannels.MessageSended, sample);
-        }
-
-        public void SendOnError(Sample sample)
-        {
-            SampleBus.SendDeliveredMessageToErrorBus(SampleChannels.MessageSended, sample);
-        }
+    public async Task SendOnErrorAsync(Sample sample)
+    {
+        var sampleBus = await CreateSampleBus();
+        await sampleBus.SendDeliveredMessageToErrorBusAsync(SampleChannels.MessageSended, sample);
     }
 }

@@ -1,54 +1,54 @@
 ﻿using MerQure.RbMQ.Content;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace MerQure.Samples
+namespace MerQure.Samples;
+
+public class StopExample
 {
-    public class StopExample
+    private readonly IMessagingService _messagingService;
+
+    public StopExample(IMessagingService messagingService)
     {
-        private readonly IMessagingService _messagingService;
+        _messagingService = messagingService;
+    }
 
-        public StopExample(IMessagingService messagingService)
+    public async Task RunAsync()
+    {
+        // RabbitMQ init
+        await _messagingService.DeclareExchangeAsync("stop.exchange");
+        await _messagingService.DeclareQueueAsync("stop.queue", isQuorum: true);
+        await _messagingService.DeclareBindingAsync("stop.exchange", "stop.queue", "stop.message.* ");
+
+        // Get the publisher and declare Exhange where publish messages
+        await using var publisher = await _messagingService.GetPublisherAsync("stop.exchange");
+        // publish messages
+        for (int i = 0; i <= 20; i++)
         {
-            _messagingService = messagingService;
+            await publisher.PublishAsync(new Message("stop.message.test" + i, $"Hello world {i} !"));
         }
 
-        public void Run()
+        // Get the consumer on the existing queue and consume its messages
+        var consumer = await _messagingService.GetConsumerAsync("stop.queue");
+        await consumer.ConsumeAsync((_, args) =>
         {
-            // RabbitMQ init
-            _messagingService.DeclareExchange("stop.exchange");
-            _messagingService.DeclareQueue("stop.queue", isQuorum: true);
-            _messagingService.DeclareBinding("stop.exchange", "stop.queue", "stop.message.* ");
+            Console.WriteLine("Consumer Working: " + consumer.IsConsuming());
 
-            // Get the publisher and declare Exhange where publish messages
-            using (var publisher = _messagingService.GetPublisher("stop.exchange"))
-            {
-                // publish messages
-                for (int i = 0; i <= 20; i++)
-                {
-                    publisher.Publish(new Message("stop.message.test" + i, $"Hello world {i} !"));
-                }
-            }
+            // Process one message max every 10 ms
+            Thread.Sleep(10);
+            Console.WriteLine(args.Message.GetBody());
+            // send ACK: acknowlegdment to the queue
+            consumer.AcknowlegdeDeliveredMessageAsync(args);
+        });
 
-            // Get the consumer on the existing queue and consume its messages
-            var consumer = _messagingService.GetConsumer("stop.queue");
-            consumer.Consume((object sender, IMessagingEvent args) =>
-            {
-                Console.WriteLine("Consumer Working: " + consumer.IsConsuming());
-
-                // Process one message max every 10 ms
-                System.Threading.Thread.Sleep(10);
-                Console.WriteLine(args.Message.GetBody());
-                // send ACK: acknowlegdment to the queue 
-                consumer.AcknowlegdeDeliveredMessage(args);
-            });
-
-            // Stop Consuming after 100 ms ~ 10 messages
-            System.Threading.Thread.Sleep(100);
-            Console.WriteLine("Consumer Stopping ...");
-            consumer.StopConsuming((object sender, EventArgs args) =>
-            {
-                Console.WriteLine("Consumer Stopped: " + consumer.IsConsuming().ToString());
-            });
-        }
+        // Stop Consuming after 100 ms ~ 10 messages
+        Thread.Sleep(100);
+        Console.WriteLine("Consumer Stopping ...");
+        await consumer.StopConsuming((_, _) =>
+        {
+            Console.WriteLine("Consumer Stopped: " + consumer.IsConsuming());
+            return Task.CompletedTask;
+        });
     }
 }
