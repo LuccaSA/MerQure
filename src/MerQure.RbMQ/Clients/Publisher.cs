@@ -1,83 +1,92 @@
-﻿using RabbitMQ.Client;
-using System;
+﻿using MerQure.RbMQ.Content;
 using MerQure.RbMQ.Helpers;
-using MerQure.RbMQ.Content;
+using RabbitMQ.Client;
+using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace MerQure.RbMQ.Clients
+namespace MerQure.RbMQ.Clients;
+
+internal class Publisher : RabbitMqClient, IPublisher
 {
-    internal class Publisher : RabbitMqClient, IPublisher
+    internal enum DeliveryMode : byte
     {
-        internal enum DeliveryMode : byte
+        NonPersistent = 1,
+        Persistent = 2
+    }
+
+    public string ExchangeName { get; private set; }
+    public string ExchangeType { get; private set; }
+    public bool Durable { get; private set; }
+    public long TimeoutInMilliseconds { get; set; }
+
+    public Publisher(IChannel channel, string exchangeName, long acknowledgementsTimeoutInMilliseconds) : base(channel)
+    {
+        if (String.IsNullOrWhiteSpace(exchangeName))
         {
-            NonPersistent = 1,
-            Persistent = 2
+            throw new ArgumentException("exchangeName cannot be null or empty", nameof(exchangeName));
         }
+        this.TimeoutInMilliseconds = acknowledgementsTimeoutInMilliseconds;
+        this.ExchangeName = exchangeName.ToLowerInvariant();
+    }
 
-        public string ExchangeName { get; private set; }
-        public string ExchangeType { get; private set; }
-        public bool Durable { get; private set; }
-        public long TimeoutInMilliseconds { get; set; }
-
-        public Publisher(IModel channel, string exchangeName, long acknowledgementsTimeoutInMilliseconds) : base(channel)
+    public async Task PublishWithTransactionAsync(string queueName, IEnumerable<string> messages)
+    {
+        await Channel.TxSelectAsync();
+        try
         {
-            if (String.IsNullOrWhiteSpace(exchangeName))
+            foreach (string message in messages)
             {
-                throw new ArgumentException("exchangeName cannot be null or empty", nameof(exchangeName));
+                await PublishAsync(new Message(queueName, message));
             }
-            this.TimeoutInMilliseconds = acknowledgementsTimeoutInMilliseconds;
-            this.ExchangeName = exchangeName.ToLowerInvariant();
         }
-
-        public void PublishWithTransaction(string queueName, IEnumerable<string> messages)
+        catch (Exception)
         {
-            Channel.TxSelect();
-            try
-            {
-                foreach (string message in messages)
-                {
-                    Publish(new Message(queueName, message));
-                }
-            }
-            catch (Exception)
-            {
-                Channel.TxRollback();
-                throw;
-            }
-            Channel.TxCommit();
+            await Channel.TxRollbackAsync();
+            throw;
         }
+        await Channel.TxCommitAsync();
+    }
 
-        public bool PublishWithAcknowledgement(IMessage message)
+    public async Task PublishWithAcknowledgementAsync(IMessage message)
+    {
+        // Confirmation is now handled by the Publish method
+        // cf : https://github.com/rabbitmq/rabbitmq-dotnet-client/discussions/1720#discussioncomment-11250853
+        await PublishAsync(message);
+    }
+
+    public Task PublishWithAcknowledgementAsync(string queueName, string message)
+    {
+        return PublishWithAcknowledgementAsync(new Message(queueName, message));
+    }
+
+    public Task PublishAsync(IMessage message)
+    {
+        var basicProperties = CreateBasicProperties(message);
+        var addr = new PublicationAddress("", ExchangeName, message.GetRoutingKey());
+        using var cts = new CancellationTokenSource(new TimeSpan(TimeoutInMilliseconds * TimeSpan.TicksPerMillisecond));
+        return Channel.BasicPublishAsync(
+            addr,
+            basicProperties,
+            message.GetBody().ToByte(),
+            cancellationToken: cts.Token)
+            .AsTask();
+    }
+
+    private BasicProperties CreateBasicProperties(IMessage message)
+    {
+        var basicProperties = new BasicProperties
         {
-            Publish(message);
-            return this.Channel.WaitForConfirms(new TimeSpan(TimeoutInMilliseconds * TimeSpan.TicksPerMillisecond));
-        }
-
-        public bool PublishWithAcknowledgement(string queueName, string message)
+            DeliveryMode = DeliveryModes.Persistent,
+            CorrelationId = Guid.NewGuid().ToString(),
+            Headers = message.GetHeader().GetProperties()
+        };
+        if (message.GetPriority() != null)
         {
-            return PublishWithAcknowledgement(new Message(queueName, message));
+            basicProperties.Priority = message.GetPriority().Value;
         }
 
-        public void Publish(IMessage message)
-        {
-            IBasicProperties basicProperties = CreateBasicProperties(message);
-            this.Channel.BasicPublish(ExchangeName, message.GetRoutingKey(), basicProperties, message.GetBody().ToByte());
-        }
-
-        private IBasicProperties CreateBasicProperties(IMessage message)
-        {
-            IBasicProperties basicProperties = this.Channel.CreateBasicProperties();
-            basicProperties.DeliveryMode = (byte)DeliveryMode.Persistent;
-            basicProperties.CorrelationId = Guid.NewGuid().ToString();
-            basicProperties.Headers = message.GetHeader().GetProperties();
-            if (message.GetPriority() != null)
-            {
-                basicProperties.Priority = message.GetPriority().Value;
-            }
-
-            return basicProperties;
-        }
-
-
+        return basicProperties;
     }
 }

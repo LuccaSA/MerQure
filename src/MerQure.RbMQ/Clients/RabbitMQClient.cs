@@ -1,23 +1,23 @@
 ﻿using System;
 using RabbitMQ.Client;
+using System.Threading.Tasks;
 
-namespace MerQure.RbMQ.Clients
+namespace MerQure.RbMQ.Clients;
+
+internal abstract class RabbitMqClient : IAsyncDisposable
 {
-    internal abstract class RabbitMqClient : IDisposable
+    /// <summary>
+    /// rabbitmq-dotnet-client key objet
+    /// </summary>
+    public IChannel Channel { get; set; }
+
+    protected RabbitMqClient(IChannel channel)
     {
-        /// <summary>
-        /// rabbitmq-dotnet-client key objet
-        /// </summary>
-        public IModel Channel { get; set; }
+        Channel = channel;
+    }
 
-        protected RabbitMqClient(IModel channel)
-        {
-            Channel = channel;
-        }
-
-        public void Dispose()
-        {
-            Channel?.Close();
-        }
+    public ValueTask DisposeAsync()
+    {
+        return new ValueTask(Channel?.CloseAsync());
     }
 }
