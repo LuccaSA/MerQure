@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using System;
 using System.Net.Security;
+using System.Threading.Tasks;
 
 namespace MerQure.RbMQ
 {
@@ -12,17 +13,17 @@ namespace MerQure.RbMQ
     public class SharedConnection : IDisposable
     {
         private readonly MerQureConnection _config;
-        private readonly Lazy<IConnection> _currentConnection;
+        private readonly Lazy<Task<IConnection>> _currentConnection;
 
         public SharedConnection(IOptions<MerQureConfiguration> options)
         {
             _config = options.Value.Connection;
-            _currentConnection = new Lazy<IConnection>(() => GetRabbitMqConnection(_config));
+            _currentConnection = new Lazy<Task<IConnection>>(() => GetRabbitMqConnectionAsync(_config));
         }
 
-        public IConnection CurrentConnection => _currentConnection.Value;
+        public Task<IConnection> CurrentConnection => _currentConnection.Value;
 
-        private static IConnection GetRabbitMqConnection(MerQureConnection rabbitMqConnection)
+        private static Task<IConnection> GetRabbitMqConnectionAsync(MerQureConnection rabbitMqConnection)
         {
             ConnectionFactory connectionFactory = new ConnectionFactory
             {
@@ -45,11 +46,10 @@ namespace MerQure.RbMQ
             if (rabbitMqConnection.ConnectionCluster is null)
             {
                 connectionFactory.Uri = new Uri(rabbitMqConnection.ConnectionString);
-                return connectionFactory.CreateConnection();
+                return connectionFactory.CreateConnectionAsync();
             }
             InitCluster(connectionFactory, rabbitMqConnection.ConnectionCluster);
-            return connectionFactory.CreateConnection(rabbitMqConnection.ConnectionCluster.Nodes);
-
+            return connectionFactory.CreateConnectionAsync(rabbitMqConnection.ConnectionCluster.Nodes);
         }
 
         private static void InitCluster(ConnectionFactory connectionFactory, MerQureConnectionCluster rabbitMqConnectionCluster)

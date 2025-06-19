@@ -6,154 +6,154 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
-namespace MerQure.Tools.Tests.Buses
+namespace MerQure.Tools.Tests.Buses;
+
+public class PublisherTests : IDisposable
 {
-    public class PublisherTests : IDisposable
+    private Mock<IPublisher> _mockMerQurePublisher;
+    private Mock<IMessagingService> _mockMessagingService;
+
+    private Publisher<TestMessage> _publisher;
+    private RetryStrategyConfiguration _retryStrategy;
+
+    public PublisherTests()
     {
-        private Mock<IPublisher> _mockMerQurePublisher;
-        private Mock<IMessagingService> _mockMessagingService;
+        _mockMerQurePublisher = new Mock<IPublisher>();
+        _mockMessagingService = new Mock<IMessagingService>();
 
-        private Publisher<TestMessage> _publisher;
-        private RetryStrategyConfiguration _retryStrategy;
-
-        public PublisherTests()
+        _retryStrategy = new RetryStrategyConfiguration()
         {
-            _mockMerQurePublisher = new Mock<IPublisher>();
-            _mockMessagingService = new Mock<IMessagingService>();
-
-            _retryStrategy = new RetryStrategyConfiguration()
+            BusName = "testBus",
+            Channels = new List<Channel>()
             {
-                BusName = "testBus",
-                Channels = new List<Channel>()
-                {
-                    new Channel("testChannel")
-                },
-                DelaysInMsBetweenEachRetry = new List<int>()
-                {
-                    1000,
-                    2000
-                },
-                DeliveryDelayInMilliseconds = 0,
-                MessageIsGoingIntoErrorBusAfterAllRepeat = false
-            };
-
-            _publisher = new Publisher<TestMessage>(_mockMessagingService.Object, _retryStrategy);
-        }
-
-        public void Dispose()
-        {
-            _mockMerQurePublisher = null;
-            _mockMessagingService = null;
-            _publisher = null;
-            _retryStrategy = null;
-        }
-
-        [Fact]
-        public void Publisher_Publish_MessageShouldBePublishedOnRightBusAndChannel()
-        {
-            //Arrange
-            Channel channel = new Channel("testChannel");
-            TestMessage message = TestMessage.GetFilledTestMessage();
-
-            _mockMessagingService.Setup(m => m.GetPublisher(It.IsAny<string>(), true)).Returns(_mockMerQurePublisher.Object);
-            _mockMerQurePublisher.Setup(p => p.PublishWithAcknowledgement(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
-
-            //Act
-            _publisher.Publish(channel, message, false);
-
-            //Assert
-            _mockMessagingService.Verify(p => p.GetPublisher(It.Is<string>(busName => busName.Contains(_retryStrategy.BusName)), true));
-            _mockMerQurePublisher.Verify(p => p.PublishWithAcknowledgement(It.Is<string>(channelName => channelName.Contains(channel.Value)), It.IsAny<string>()), Times.Once);
-        }
-
-        [Fact]
-        public void Publisher_Publish_ShouldThrow_WhenPublishFailed()
-        {
-            //Arrange
-            Channel channel = new Channel("testChannel");
-            TestMessage message = TestMessage.GetFilledTestMessage();
-
-            _mockMessagingService.Setup(m => m.GetPublisher(It.IsAny<string>(), true)).Returns(_mockMerQurePublisher.Object);
-            _mockMerQurePublisher.Setup(p => p.PublishWithAcknowledgement(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
-
-            //Act && Assert
-            Assert.Throws<MerqureToolsException>(() => _publisher.Publish(channel, message, false));
-        }
-
-        [Fact]
-        public void Publisher_PublishWithTransaction_MessageShouldBePublishedOnRightBusAndChannel()
-        {
-            //Arrange
-            Channel channel = new Channel("testChannel");
-            var messages = new List<TestMessage>
+                new Channel("testChannel")
+            },
+            DelaysInMsBetweenEachRetry = new List<int>()
             {
-                TestMessage.GetFilledTestMessage()
-            };
+                1000,
+                2000
+            },
+            DeliveryDelayInMilliseconds = 0,
+            MessageIsGoingIntoErrorBusAfterAllRepeat = false
+        };
 
-            _mockMessagingService.Setup(m => m.GetPublisher(It.IsAny<string>(), false)).Returns(_mockMerQurePublisher.Object);
+        _publisher = new Publisher<TestMessage>(_mockMessagingService.Object, _retryStrategy);
+    }
 
-            //Act
-            _publisher.PublishWithTransaction(channel, messages, false);
+    public void Dispose()
+    {
+        _mockMerQurePublisher = null;
+        _mockMessagingService = null;
+        _publisher = null;
+        _retryStrategy = null;
+    }
 
-            //Assert
-            _mockMessagingService.Verify(p => p.GetPublisher(It.Is<string>(busName => busName.Contains(_retryStrategy.BusName)), false));
-            _mockMerQurePublisher.Verify(p => p.PublishWithTransaction(It.Is<string>(channelName => channelName.Contains(channel.Value)), It.IsAny<List<string>>()), Times.Once);
-        }
+    [Fact]
+    public async Task Publisher_Publish_MessageShouldBePublishedOnRightBusAndChannel()
+    {
+        //Arrange
+        Channel channel = new Channel("testChannel");
+        TestMessage message = TestMessage.GetFilledTestMessage();
 
-        [Fact]
-        public void Publisher_PublishWithTransaction_ShouldThrow_WhenPublishWithTransactionFailed()
+        _mockMessagingService.Setup(m => m.GetPublisherAsync(It.IsAny<string>(), true)).ReturnsAsync(_mockMerQurePublisher.Object);
+        _mockMerQurePublisher.Setup(p => p.PublishWithAcknowledgementAsync(It.IsAny<string>(), It.IsAny<string>()));
+
+        //Act
+        await _publisher.PublishAsync(channel, message, false);
+
+        //Assert
+        _mockMessagingService.Verify(p => p.GetPublisherAsync(It.Is<string>(busName => busName.Contains(_retryStrategy.BusName)), true));
+        _mockMerQurePublisher.Verify(p => p.PublishWithAcknowledgementAsync(It.Is<string>(channelName => channelName.Contains(channel.Value)), It.IsAny<string>()), Times.Once);
+    }
+
+    [Fact]
+    public void Publisher_Publish_ShouldThrow_WhenPublishFailed()
+    {
+        //Arrange
+        Channel channel = new Channel("testChannel");
+        TestMessage message = TestMessage.GetFilledTestMessage();
+
+        _mockMessagingService.Setup(m => m.GetPublisherAsync(It.IsAny<string>(), true)).ReturnsAsync(_mockMerQurePublisher.Object);
+        _mockMerQurePublisher.Setup(p => p.PublishWithAcknowledgementAsync(It.IsAny<string>(), It.IsAny<string>()));
+
+        //Act && Assert
+        Assert.ThrowsAsync<MerqureToolsException>(() => _publisher.PublishAsync(channel, message, false));
+    }
+
+    [Fact]
+    public async Task Publisher_PublishWithTransaction_MessageShouldBePublishedOnRightBusAndChannel()
+    {
+        //Arrange
+        Channel channel = new Channel("testChannel");
+        var messages = new List<TestMessage>
         {
-            //Arrange
-            Channel channel = new Channel("testChannel");
-            var messages = new List<TestMessage>
-            {
-                TestMessage.GetFilledTestMessage()
-            };
+            TestMessage.GetFilledTestMessage()
+        };
 
-            _mockMessagingService.Setup(m => m.GetPublisher(It.IsAny<string>(), false)).Returns(_mockMerQurePublisher.Object);
-            _mockMerQurePublisher.Setup(p => p.PublishWithTransaction(It.IsAny<string>(), It.IsAny<List<string>>())).Throws<Exception>();
+        _mockMessagingService.Setup(m => m.GetPublisherAsync(It.IsAny<string>(), false)).ReturnsAsync(_mockMerQurePublisher.Object);
 
-            //Act && Assert
-            Assert.Throws<MerqureToolsException>(() => _publisher.PublishWithTransaction(channel, messages, false));
-        }
+        //Act
+        await _publisher.PublishWithTransactionAsync(channel, messages, false);
 
-        [Fact]
-        public void Publisher_PublishOnRetryExchange_MessageShouldBePublishedOnRightBusAndChannel()
+        //Assert
+        _mockMessagingService.Verify(p => p.GetPublisherAsync(It.Is<string>(busName => busName.Contains(_retryStrategy.BusName)), false));
+        _mockMerQurePublisher.Verify(p => p.PublishWithTransactionAsync(It.Is<string>(channelName => channelName.Contains(channel.Value)), It.IsAny<List<string>>()), Times.Once);
+    }
+
+    [Fact]
+    public void Publisher_PublishWithTransaction_ShouldThrow_WhenPublishWithTransactionFailed()
+    {
+        //Arrange
+        Channel channel = new Channel("testChannel");
+        var messages = new List<TestMessage>
         {
-            Channel channel = new Channel("testChannel");
-            TestMessage message = TestMessage.GetFilledTestMessage();
+            TestMessage.GetFilledTestMessage()
+        };
 
-            _mockMessagingService.Setup(m => m.GetPublisher(It.IsAny<string>(), true)).Returns(_mockMerQurePublisher.Object);
-            _mockMerQurePublisher.Setup(p => p.PublishWithAcknowledgement(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+        _mockMessagingService.Setup(m => m.GetPublisherAsync(It.IsAny<string>(), false)).ReturnsAsync(_mockMerQurePublisher.Object);
+        _mockMerQurePublisher.Setup(p => p.PublishWithTransactionAsync(It.IsAny<string>(), It.IsAny<List<string>>())).Throws<Exception>();
 
-            _publisher.PublishOnRetryExchange(channel, message, new RetryInformations
-            {
-                NumberOfRetry = 0
-            });
+        //Act && Assert
+        Assert.ThrowsAsync<MerqureToolsException>(() => _publisher.PublishWithTransactionAsync(channel, messages, false));
+    }
 
-            _mockMessagingService.Verify(p => p.GetPublisher(It.Is<string>(busName => busName.Contains(_retryStrategy.BusName)), true));
-            _mockMerQurePublisher.Verify(p => p.PublishWithAcknowledgement(It.Is<string>(channelName => channelName.Contains(channel.Value)), It.IsAny<string>()), Times.Once);
-        }
+    [Fact]
+    public async Task Publisher_PublishOnRetryExchange_MessageShouldBePublishedOnRightBusAndChannel()
+    {
+        Channel channel = new Channel("testChannel");
+        TestMessage message = TestMessage.GetFilledTestMessage();
 
-        [Fact]
-        public void Publisher_PublishOnRetryExchange_QueueNameShouldContainsFirstDelay_WhenItsTheFirstRetry()
+        _mockMessagingService.Setup(m => m.GetPublisherAsync(It.IsAny<string>(), true)).ReturnsAsync(_mockMerQurePublisher.Object);
+        _mockMerQurePublisher.Setup(p => p.PublishWithAcknowledgementAsync(It.IsAny<string>(), It.IsAny<string>()));
+
+        await _publisher.PublishOnRetryExchangeAsync(channel, message, new RetryInformations
         {
-            Channel channel = new Channel("testChannel");
-            TestMessage message = TestMessage.GetFilledTestMessage();
+            NumberOfRetry = 0
+        });
 
-            _mockMessagingService.Setup(m => m.GetPublisher(It.IsAny<string>(), true)).Returns(_mockMerQurePublisher.Object);
-            _mockMerQurePublisher.Setup(p => p.PublishWithAcknowledgement(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+        _mockMessagingService.Verify(p => p.GetPublisherAsync(It.Is<string>(busName => busName.Contains(_retryStrategy.BusName)), true));
+        _mockMerQurePublisher.Verify(p => p.PublishWithAcknowledgementAsync(It.Is<string>(channelName => channelName.Contains(channel.Value)), It.IsAny<string>()), Times.Once);
+    }
 
-            _publisher.PublishOnRetryExchange(channel, message, new RetryInformations
-            {
-                NumberOfRetry = 0
-            });
+    [Fact]
+    public async Task Publisher_PublishOnRetryExchange_QueueNameShouldContainsFirstDelay_WhenItsTheFirstRetry()
+    {
+        Channel channel = new Channel("testChannel");
+        TestMessage message = TestMessage.GetFilledTestMessage();
 
-            _mockMessagingService.Verify(p => p.GetPublisher(It.Is<string>(busName => busName.Contains(_retryStrategy.BusName)), true));
-            _mockMerQurePublisher.Verify(p => p.PublishWithAcknowledgement(It.Is<string>(channelName => channelName.Contains(_retryStrategy.DelaysInMsBetweenEachRetry.First().ToString())), 
-                                                                           It.IsAny<string>()), Times.Once);
-        }
+        _mockMessagingService.Setup(m => m.GetPublisherAsync(It.IsAny<string>(), true)).ReturnsAsync(_mockMerQurePublisher.Object);
+        _mockMerQurePublisher.Setup(p => p.PublishWithAcknowledgementAsync(It.IsAny<string>(), It.IsAny<string>()));
+
+        await _publisher.PublishOnRetryExchangeAsync(channel, message, new RetryInformations
+        {
+            NumberOfRetry = 0
+        });
+
+        _mockMessagingService.Verify(p => p.GetPublisherAsync(It.Is<string>(busName => busName.Contains(_retryStrategy.BusName)), true));
+        _mockMerQurePublisher.Verify(p => p.PublishWithAcknowledgementAsync(It.Is<string>(channelName => channelName.Contains(_retryStrategy.DelaysInMsBetweenEachRetry.First().ToString())),
+            It.IsAny<string>()), Times.Once);
     }
 }

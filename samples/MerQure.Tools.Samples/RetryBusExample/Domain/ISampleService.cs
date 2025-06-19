@@ -1,14 +1,14 @@
 ﻿
 using System;
+using System.Threading.Tasks;
 
-namespace MerQure.Tools.Samples.RetryBusExample.Domain
+namespace MerQure.Tools.Samples.RetryBusExample.Domain;
+
+public interface ISampleService
 {
-	public interface ISampleService
-    {
-        void Send(Sample sample);
-        void Consume(EventHandler<Sample> onSampleReceived);
-        void Acknowlegde(Sample sample);
-        void RetryLater(Sample sample);
-        void SendOnError(Sample sample); 
-    }
+    Task SendAsync(Sample sample);
+    Task ConsumeAsync(EventHandler<Sample> onSampleReceived);
+    Task AcknowlegdeAsync(Sample sample);
+    Task RetryLaterAsync(Sample sample);
+    Task SendOnErrorAsync(Sample sample);
 }

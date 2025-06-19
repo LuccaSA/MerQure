@@ -1,11 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MerQure.Samples
 {
     static class Program
     {
-        static void Main()
+        static async Task Main()
         {
             IServiceCollection services = new ServiceCollection();
 
@@ -16,17 +18,17 @@ namespace MerQure.Samples
 
             Console.WriteLine("Running sample 1: simple");
             var simpleExample = serviceProvider.GetService<SimpleExample>();
-            simpleExample.Run();
+            await simpleExample.RunAsync();
 
-            System.Threading.Thread.Sleep(500);
+            Thread.Sleep(500);
             Console.WriteLine("Running sample 2: stop");
             var stopExample = serviceProvider.GetService<StopExample>();
-            stopExample.Run();
+            await stopExample.RunAsync();
 
-            System.Threading.Thread.Sleep(500);
+            Thread.Sleep(500);
             Console.WriteLine("Running sample 3: deadletter");
             var deadLetterExample = serviceProvider.GetService<DeadLetterExample>();
-            deadLetterExample.Run();
+            await deadLetterExample.RunAsync();
         }
     }
 }

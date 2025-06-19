@@ -3,96 +3,96 @@ using MerQure.Tools.Configurations;
 using MerQure.Tools.Buses;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace MerQure.Tools
+namespace MerQure.Tools;
+
+public class RetryBusService : IRetryBusService
 {
-    public class RetryBusService : IRetryBusService
+    private readonly IMessagingService _messagingService;
+
+    public RetryBusService(IMessagingService messagingService)
     {
-        private readonly IMessagingService _messagingService;
+        _messagingService = messagingService;
+    }
 
-        public RetryBusService(IMessagingService messagingService)
+    public async Task<IBus<T>> CreateNewBusAsync<T>(RetryStrategyConfiguration configuration, bool isQuorum) where T : IDelivered
+    {
+        await ApplyNewConfigurationAsync(configuration, isQuorum);
+
+        Publisher<T> producer = new Publisher<T>(_messagingService, configuration);
+        RetryConsumer<T> consumer = new RetryConsumer<T>(_messagingService, configuration, producer);
+
+        return new Bus<T>(producer, consumer);
+    }
+
+    private async Task ApplyNewConfigurationAsync(RetryStrategyConfiguration configuration, bool isQuorum)
+    {
+        if (configuration.Channels == null || !configuration.Channels.Any())
         {
-            _messagingService = messagingService;
+            throw new ArgumentNullException(nameof(configuration.Channels));
         }
 
-        public IBus<T> CreateNewBus<T>(RetryStrategyConfiguration configuration, bool isQuorum) where T : IDelivered
+        if(configuration.DelaysInMsBetweenEachRetry == null)
         {
-            ApplyNewConfiguration(configuration, isQuorum);
-
-            Publisher<T> producer = new Publisher<T>(_messagingService, configuration);
-            RetryConsumer<T> consumer = new RetryConsumer<T>(_messagingService, configuration, producer);
-
-            return new Bus<T>(producer, consumer);
+            throw new ArgumentNullException(nameof(configuration.Channels));
         }
 
-        private void ApplyNewConfiguration(RetryStrategyConfiguration configuration, bool isQuorum)
+        await CreateMainExchange(configuration, isQuorum);
+        await CreateRetryExchangeIfNecessaryAsync(configuration, isQuorum);
+        await CreateErrorExchange(configuration, isQuorum);
+    }
+
+    private async Task CreateErrorExchange(RetryStrategyConfiguration configuration, bool isQuorum)
+    {
+        string errorExchangeName = $"{configuration.BusName}.{RetryStrategyConfiguration.ErrorExchangeSuffix}";
+        await _messagingService.DeclareExchangeAsync(errorExchangeName, Constants.ExchangeTypeDirect);
+        foreach (var channelValue in configuration.Channels.Select(channel => channel.Value ))
         {
-            if (configuration.Channels == null || !configuration.Channels.Any())
-            {
-                throw new ArgumentNullException(nameof(configuration.Channels));
-            }
-
-            if(configuration.DelaysInMsBetweenEachRetry == null)
-            {
-                throw new ArgumentNullException(nameof(configuration.Channels));
-            }
-
-            CreateMainExchange(configuration, isQuorum);
-            CreateRetryExchangeIfNecessary(configuration, isQuorum);
-            CreateErrorExchange(configuration, isQuorum);
+            string errorQueueName = $"{channelValue}.{RetryStrategyConfiguration.ErrorExchangeSuffix}";
+            var effectiveQueueName = await _messagingService.DeclareQueueAsync(errorQueueName, isQuorum);
+            await _messagingService.DeclareBindingAsync(errorExchangeName, effectiveQueueName , errorQueueName);
         }
+    }
 
-        private void CreateErrorExchange(RetryStrategyConfiguration configuration, bool isQuorum)
+    /// <summary>
+    /// Retry exchange is also used to delivery message with delay
+    /// </summary>
+    private async Task CreateRetryExchangeIfNecessaryAsync(RetryStrategyConfiguration configuration, bool isQuorum)
+    {
+        if (configuration.DelaysInMsBetweenEachRetry.Any() || configuration.DeliveryDelayInMilliseconds != 0)
         {
-            string errorExchangeName = $"{configuration.BusName}.{RetryStrategyConfiguration.ErrorExchangeSuffix}";
-            _messagingService.DeclareExchange(errorExchangeName, Constants.ExchangeTypeDirect);
-            foreach (var channelValue in configuration.Channels.Select(channel => channel.Value ))
+            string retryExchangeName = $"{configuration.BusName}.{RetryStrategyConfiguration.RetryExchangeSuffix}";
+            await _messagingService.DeclareExchangeAsync(retryExchangeName, Constants.ExchangeTypeDirect);
+            foreach (int delay in configuration.DelaysInMsBetweenEachRetry)
             {
-                string errorQueueName = $"{channelValue}.{RetryStrategyConfiguration.ErrorExchangeSuffix}";
-                var effectiveQueueName = _messagingService.DeclareQueue(errorQueueName, isQuorum);
-                _messagingService.DeclareBinding(errorExchangeName, effectiveQueueName , errorQueueName);
+                await CreateRetryChannelsForOneDelayAsync(configuration, retryExchangeName, delay, isQuorum);
             }
-        }
 
-        /// <summary>
-        /// Retry exchange is also used to delivery message with delay
-        /// </summary>
-        private void CreateRetryExchangeIfNecessary(RetryStrategyConfiguration configuration, bool isQuorum)
-        {
-            if (configuration.DelaysInMsBetweenEachRetry.Any() || configuration.DeliveryDelayInMilliseconds != 0)
+            if (!configuration.DelaysInMsBetweenEachRetry.Contains(configuration.DeliveryDelayInMilliseconds) && configuration.DeliveryDelayInMilliseconds != 0)
             {
-                string retryExchangeName = $"{configuration.BusName}.{RetryStrategyConfiguration.RetryExchangeSuffix}";
-                _messagingService.DeclareExchange(retryExchangeName, Constants.ExchangeTypeDirect);
-                foreach (int delay in configuration.DelaysInMsBetweenEachRetry)
-                {
-                    CreateRetryChannelsForOneDelay(configuration, retryExchangeName, delay, isQuorum);
-                }
-
-                if (!configuration.DelaysInMsBetweenEachRetry.Contains(configuration.DeliveryDelayInMilliseconds) && configuration.DeliveryDelayInMilliseconds != 0)
-                {
-                    CreateRetryChannelsForOneDelay(configuration, retryExchangeName, configuration.DeliveryDelayInMilliseconds, isQuorum);
-                }
+                await CreateRetryChannelsForOneDelayAsync(configuration, retryExchangeName, configuration.DeliveryDelayInMilliseconds, isQuorum);
             }
         }
+    }
 
-        private void CreateRetryChannelsForOneDelay(RetryStrategyConfiguration configuration, string retryExchangeName, int delay, bool isQuorum)
+    private async Task CreateRetryChannelsForOneDelayAsync(RetryStrategyConfiguration configuration, string retryExchangeName, int delay, bool isQuorum)
+    {
+        foreach (var channelValue in configuration.Channels.Select(channel => channel.Value ))
         {
-            foreach (var channelValue in configuration.Channels.Select(channel => channel.Value ))
-            {
-                string retryQueueName = $"{channelValue}.{delay}";
-                var effectiveQueueName = _messagingService.DeclareQueueWithDeadLetterPolicy(retryQueueName, configuration.BusName, delay, null, isQuorum);
-                _messagingService.DeclareBinding(retryExchangeName, effectiveQueueName, $"{channelValue}.{delay}", null);
-            }
+            string retryQueueName = $"{channelValue}.{delay}";
+            var effectiveQueueName = await _messagingService.DeclareQueueWithDeadLetterPolicyAsync(retryQueueName, configuration.BusName, delay, null, isQuorum);
+            await _messagingService.DeclareBindingAsync(retryExchangeName, effectiveQueueName, $"{channelValue}.{delay}", null);
         }
+    }
 
-        private void CreateMainExchange(RetryStrategyConfiguration configuration, bool isQuorum)
+    private async Task CreateMainExchange(RetryStrategyConfiguration configuration, bool isQuorum)
+    {
+        await _messagingService.DeclareExchangeAsync(configuration.BusName, Constants.ExchangeTypeTopic);
+        foreach (var channelValue in configuration.Channels.Select(channel => channel.Value ))
         {
-            _messagingService.DeclareExchange(configuration.BusName, Constants.ExchangeTypeTopic);
-            foreach (var channelValue in configuration.Channels.Select(channel => channel.Value ))
-            {
-                var effectiveQueueName = _messagingService.DeclareQueue(channelValue, isQuorum);
-                _messagingService.DeclareBinding(configuration.BusName, effectiveQueueName, $"{channelValue}.#");
-            }
+            var effectiveQueueName = await _messagingService.DeclareQueueAsync(channelValue, isQuorum);
+            await _messagingService.DeclareBindingAsync(configuration.BusName, effectiveQueueName, $"{channelValue}.#");
         }
     }
 }

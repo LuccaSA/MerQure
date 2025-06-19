@@ -5,129 +5,125 @@ using MerQure.Tools.Messages;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
-namespace MerQure.Tools.Buses
+namespace MerQure.Tools.Buses;
+
+public class Publisher<T> where T : IDelivered
 {
-	public class Publisher<T> where T : IDelivered
+    private readonly RetryStrategyConfiguration _messageBrokerConfiguration;
+    private readonly IMessagingService _messagingService;
+
+
+    public Publisher(IMessagingService messagingService, RetryStrategyConfiguration retryConfiguration)
     {
-        private readonly RetryStrategyConfiguration _messageBrokerConfiguration;
-        private readonly IMessagingService _messagingService;
+        _messagingService = messagingService;
+        _messageBrokerConfiguration = retryConfiguration;
+    }
 
-
-        public Publisher(IMessagingService messagingService, RetryStrategyConfiguration retryConfiguration)
+    public async Task PublishWithTransactionAsync(Channel channel, IEnumerable<T> messages, bool applyDeliveryDeplay)
+    {
+        var serializedMessages = new List<string>();
+        foreach (T message in messages)
         {
-            _messagingService = messagingService;
-            _messageBrokerConfiguration = retryConfiguration;
+            serializedMessages.Add(JsonConvert.SerializeObject(CreateRetryMessage(message)));
+        }
+        string bindingValue = channel.Value;
+        string busName = _messageBrokerConfiguration.BusName;
+        if (applyDeliveryDeplay && _messageBrokerConfiguration.DeliveryDelayInMilliseconds > 0)
+        {
+            bindingValue = $"{bindingValue}.{_messageBrokerConfiguration.DeliveryDelayInMilliseconds}";
+            busName = $"{busName}.{ RetryStrategyConfiguration.RetryExchangeSuffix}";
         }
 
-        public void PublishWithTransaction(Channel channel, IEnumerable<T> messages, bool applyDeliveryDeplay)
+        await using var publisher = await _messagingService.GetPublisherAsync(busName, false);
+        await PublishWithTransactionAsync(publisher, bindingValue, serializedMessages);
+    }
+
+    public async Task PublishAsync(Channel channel, T message, bool applyDeliveryDeplay)
+    {
+        var encapsuledMessage = CreateRetryMessage(message);
+        string bindingValue = channel.Value;
+        string busName = _messageBrokerConfiguration.BusName;
+        if (applyDeliveryDeplay && _messageBrokerConfiguration.DeliveryDelayInMilliseconds > 0)
         {
-            var serializedMessages = new List<string>();
-            foreach (T message in messages)
-            {
-                serializedMessages.Add(JsonConvert.SerializeObject(CreateRetryMessage(message)));
-            }
-            string bindingValue = channel.Value;
-            string busName = _messageBrokerConfiguration.BusName;
-            if (applyDeliveryDeplay && _messageBrokerConfiguration.DeliveryDelayInMilliseconds > 0)
-            {
-                bindingValue = $"{bindingValue}.{_messageBrokerConfiguration.DeliveryDelayInMilliseconds}";
-                busName = $"{busName}.{ RetryStrategyConfiguration.RetryExchangeSuffix}";
-            }
-            using (var publisher = _messagingService.GetPublisher(busName, false))
-            {
-                PublishWithTransaction(publisher, bindingValue, serializedMessages);
-            }
+            bindingValue = $"{bindingValue}.{_messageBrokerConfiguration.DeliveryDelayInMilliseconds}";
+            busName = $"{busName}.{ RetryStrategyConfiguration.RetryExchangeSuffix}";
         }
 
-        public void Publish(Channel channel, T message, bool applyDeliveryDeplay)
-        {
-            var encapsuledMessage = CreateRetryMessage(message);
-            string bindingValue = channel.Value;
-            string busName = _messageBrokerConfiguration.BusName;
-            if (applyDeliveryDeplay && _messageBrokerConfiguration.DeliveryDelayInMilliseconds > 0)
-            {
-                bindingValue = $"{bindingValue}.{_messageBrokerConfiguration.DeliveryDelayInMilliseconds}";
-                busName = $"{busName}.{ RetryStrategyConfiguration.RetryExchangeSuffix}";
-            }
-            using (var publisher = _messagingService.GetPublisher(busName, true))
-            {
-                TryPublishWithBrokerAcknowledgement(publisher, bindingValue, JsonConvert.SerializeObject(encapsuledMessage));
-            }
-        }
-        
-        public void PublishOnRetryExchange(Channel channel, T message, RetryInformations retryInformations)
-        {
-            List<int> delays = _messageBrokerConfiguration.DelaysInMsBetweenEachRetry;
-            int delay = 0;
-            if (delays.Count >= retryInformations.NumberOfRetry)
-            {
-                delay = delays[retryInformations.NumberOfRetry];
-            }
-            else
-            {
-                delay = delays[delays.Count-1];
-            }
-            retryInformations.NumberOfRetry++;
-            RetryMessage<T> retryMessage = new RetryMessage<T>
-            {
-                OriginalMessage = message,
-                RetryInformations = retryInformations
-            };
+        await using var publisher = await _messagingService.GetPublisherAsync(busName, true);
+        await TryPublishWithBrokerAcknowledgementAsync(publisher, bindingValue, JsonConvert.SerializeObject(encapsuledMessage));
+    }
 
-            string bindingValue = $"{channel.Value}.{delay}";
-            using (var publisher = _messagingService.GetPublisher($"{_messageBrokerConfiguration.BusName}.{RetryStrategyConfiguration.RetryExchangeSuffix}", true))
-            {
-                TryPublishWithBrokerAcknowledgement(publisher, bindingValue, JsonConvert.SerializeObject(retryMessage));
-            }
-        }
-
-        internal void PublishOnErrorExchange(Channel channel, T message, RetryInformations technicalInformations)
+    public async Task PublishOnRetryExchangeAsync(Channel channel, T message, RetryInformations retryInformations)
+    {
+        List<int> delays = _messageBrokerConfiguration.DelaysInMsBetweenEachRetry;
+        int delay = 0;
+        if (delays.Count >= retryInformations.NumberOfRetry)
         {
-            string errorChanel = $"{channel.Value}.error";
-            RetryMessage<T> retryMessage = new RetryMessage<T>
-            {
-                OriginalMessage = message,
-                RetryInformations = technicalInformations
-            };
-            using (var publisher = _messagingService.GetPublisher($"{_messageBrokerConfiguration.BusName}.{RetryStrategyConfiguration.ErrorExchangeSuffix}", true))
-            {
-                TryPublishWithBrokerAcknowledgement(publisher, errorChanel, JsonConvert.SerializeObject(retryMessage));
-            }
+            delay = delays[retryInformations.NumberOfRetry];
         }
-
-        private static void TryPublishWithBrokerAcknowledgement(IPublisher publisher, string channelName, string message)
+        else
         {
-            bool published = publisher.PublishWithAcknowledgement(channelName, message);
-            if (!published)
-            {
-                throw new MerqureToolsException($"unable to send message to the broker. {Environment.NewLine}Channel : {channelName}{Environment.NewLine}Message : {message}");
-            }
+            delay = delays[delays.Count-1];
         }
-
-        private static void PublishWithTransaction(IPublisher publisher, string channelName, List<string> messages)
+        retryInformations.NumberOfRetry++;
+        RetryMessage<T> retryMessage = new RetryMessage<T>
         {
-            try
-            {
-                publisher.PublishWithTransaction(channelName, messages);
-            }
-            catch (Exception e)
-            {
-                throw new MerqureToolsException($"unable to send messages to the broker. {Environment.NewLine}Channel : {channelName}{Environment.NewLine}Messages : {string.Join(" | ", messages.ToArray())}", e);
-            }
-        }
+            OriginalMessage = message,
+            RetryInformations = retryInformations
+        };
 
-        private static RetryMessage<T> CreateRetryMessage(T message)
+        string bindingValue = $"{channel.Value}.{delay}";
+        await using var publisher = await _messagingService.GetPublisherAsync($"{_messageBrokerConfiguration.BusName}.{RetryStrategyConfiguration.RetryExchangeSuffix}", true);
+        await TryPublishWithBrokerAcknowledgementAsync(publisher, bindingValue, JsonConvert.SerializeObject(retryMessage));
+    }
+
+    internal async Task PublishOnErrorExchangeAsync(Channel channel, T message, RetryInformations technicalInformations)
+    {
+        string errorChanel = $"{channel.Value}.error";
+        RetryMessage<T> retryMessage = new RetryMessage<T>
         {
-            return new RetryMessage<T>
-            {
-                RetryInformations = new RetryInformations
-                {
-                    NumberOfRetry = 0
-                },
-                OriginalMessage = message
-            };
+            OriginalMessage = message,
+            RetryInformations = technicalInformations
+        };
+        await using var publisher = await _messagingService.GetPublisherAsync($"{_messageBrokerConfiguration.BusName}.{RetryStrategyConfiguration.ErrorExchangeSuffix}", true);
+        await TryPublishWithBrokerAcknowledgementAsync(publisher, errorChanel, JsonConvert.SerializeObject(retryMessage));
+    }
+
+    private static async Task TryPublishWithBrokerAcknowledgementAsync(IPublisher publisher, string channelName, string message)
+    {
+        try
+        {
+            await publisher.PublishWithAcknowledgementAsync(channelName, message);
         }
+        catch
+        {
+            throw new MerqureToolsException($"unable to send message to the broker. {Environment.NewLine}Channel : {channelName}{Environment.NewLine}Message : {message}");
+        }
+    }
+
+    private static Task PublishWithTransactionAsync(IPublisher publisher, string channelName, List<string> messages)
+    {
+        try
+        {
+            return publisher.PublishWithTransactionAsync(channelName, messages);
+        }
+        catch (Exception e)
+        {
+            throw new MerqureToolsException($"unable to send messages to the broker. {Environment.NewLine}Channel : {channelName}{Environment.NewLine}Messages : {string.Join(" | ", messages.ToArray())}", e);
+        }
+    }
+
+    private static RetryMessage<T> CreateRetryMessage(T message)
+    {
+        return new RetryMessage<T>
+        {
+            RetryInformations = new RetryInformations
+            {
+                NumberOfRetry = 0
+            },
+            OriginalMessage = message
+        };
     }
 }

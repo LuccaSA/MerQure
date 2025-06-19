@@ -4,6 +4,7 @@ using MerQure.Tools.Exceptions;
 using MerQure.Tools.Messages;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MerQure.Tools.Buses
 {
@@ -19,7 +20,7 @@ namespace MerQure.Tools.Buses
             _producer = producer;
         }
 
-        internal void SendToErrorExchange(Channel channel, T deliveredMessage)
+        internal async Task SendToErrorExchangeAsync(Channel channel, T deliveredMessage)
         {
             if (String.IsNullOrEmpty(deliveredMessage.DeliveryTag))
                 throw new ArgumentNullException(nameof(deliveredMessage.DeliveryTag));
@@ -28,51 +29,51 @@ namespace MerQure.Tools.Buses
 
             RetryInformations retryInformations = RetryInformations[deliveredMessage.DeliveryTag];
 
-            _producer.PublishOnErrorExchange(channel, deliveredMessage, retryInformations);
-            AcknowlegdeDeliveredMessage(channel, deliveredMessage);
+            await _producer.PublishOnErrorExchangeAsync(channel, deliveredMessage, retryInformations);
+            await AcknowlegdeDeliveredMessageAsync(channel, deliveredMessage);
             RetryInformations.Remove(deliveredMessage.DeliveryTag);
         }
 
-        public MessageInformations ForceRetryStrategy(Channel channel, T message, int attemptNumber)
+        public async Task<MessageInformations> ForceRetryStrategyAsync(Channel channel, T message, int attemptNumber)
         {
             var retryInformations = new RetryInformations
             {
-                NumberOfRetry = attemptNumber > 0 ? attemptNumber - 1 : 0   
+                NumberOfRetry = attemptNumber > 0 ? attemptNumber - 1 : 0
             };
             var messageInformations = new MessageInformations();
 
             if (IsGoingToErrorExchange(retryInformations))
             {
-                _producer.PublishOnErrorExchange(channel, message, retryInformations);
+                await _producer.PublishOnErrorExchangeAsync(channel, message, retryInformations);
                 messageInformations.IsOnErrorBus = true;
             }
             else
             {
-                _producer.PublishOnRetryExchange(channel, message, retryInformations);
+                await _producer.PublishOnRetryExchangeAsync(channel, message, retryInformations);
             }
             return messageInformations;
         }
-        
-        public MessageInformations ApplyRetryStrategy(Channel channel, T deliveredMessage)
+
+        public async Task<MessageInformations> ApplyRetryStrategyAsync(Channel channel, T deliveredMessage)
         {
             if (String.IsNullOrEmpty(deliveredMessage.DeliveryTag))
                 throw new ArgumentNullException(nameof(deliveredMessage.DeliveryTag));
             if (!RetryInformations.ContainsKey(deliveredMessage.DeliveryTag))
-                throw new MerqureToolsException($"unknown delivery tag {deliveredMessage.DeliveryTag}"); 
+                throw new MerqureToolsException($"unknown delivery tag {deliveredMessage.DeliveryTag}");
 
             RetryInformations retryInformations = RetryInformations[deliveredMessage.DeliveryTag];
             var messageInformations = new MessageInformations();
             if (IsGoingToErrorExchange(retryInformations))
             {
-                _producer.PublishOnErrorExchange(channel, deliveredMessage, retryInformations);
+                await _producer.PublishOnErrorExchangeAsync(channel, deliveredMessage, retryInformations);
                 messageInformations.IsOnErrorBus = true;
             }
             else
             {
-                _producer.PublishOnRetryExchange(channel, deliveredMessage, retryInformations);
+                await _producer.PublishOnRetryExchangeAsync(channel, deliveredMessage, retryInformations);
             }
 
-            AcknowlegdeDeliveredMessage(channel, deliveredMessage);
+            await AcknowlegdeDeliveredMessageAsync(channel, deliveredMessage);
             RetryInformations.Remove(deliveredMessage.DeliveryTag);
             return messageInformations;
         }

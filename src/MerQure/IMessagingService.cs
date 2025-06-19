@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MerQure
 {
     /// <summary>
-    /// This service expose all clients necessary to used basic functionnalities of a Message Broker 
+    /// This service expose all clients necessary to used basic functionnalities of a Message Broker
     /// </summary>
     public interface IMessagingService
     {
@@ -11,14 +12,14 @@ namespace MerQure
         /// Declare an Exchange (if it doesn't exists)
         /// </summary>
         /// <param name="exchangeName"></param>
-        void DeclareExchange(string exchangeName);
+        Task DeclareExchangeAsync(string exchangeName);
 
         /// <summary>
         /// Declare an Exchange (if it doesn't exists)
         /// </summary>
         /// <param name="exchangeName"></param>
         /// <param name="exchangeType">fanout, direct, topic, headers</param>
-        void DeclareExchange(string exchangeName, string exchangeType);
+        Task DeclareExchangeAsync(string exchangeName, string exchangeType);
 
         /// <summary>
         /// Declare a queue with dead letter policy
@@ -29,9 +30,9 @@ namespace MerQure
         /// <param name="deadLetterRoutingKey"></param>
         /// <param name="isQuorum">Whether created queue should be quorum (when true, quorum arguments will be added to arguments used for queue creation)</param>
         /// <see cref="https://www.rabbitmq.com/dlx.html"/>
-        string DeclareQueueWithDeadLetterPolicy(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey, bool isQuorum);
+        Task<string> DeclareQueueWithDeadLetterPolicyAsync(string queueName, string deadLetterExchange, int messageTimeToLive, string deadLetterRoutingKey, bool isQuorum);
 
-        string DeclareQueue(string queueName, byte maxPriority, bool isQuorum);
+        Task<string> DeclareQueueAsync(string queueName, byte maxPriority, bool isQuorum);
 
         /// <summary>
         /// Declare a queue (if it doesn't exists) with specific arguments
@@ -39,14 +40,14 @@ namespace MerQure
         /// <param name="queueName"></param>
         /// <param name="queueArgs">Queue's arguments</param>
         /// <param name="isQuorum">Whether created queue should be quorum (when true, quorum arguments will be added to arguments used for queue creation)</param>
-        string DeclareQueue(string queueName, Dictionary<string, object> queueArgs, bool isQuorum);
+        Task<string> DeclareQueueAsync(string queueName, Dictionary<string, object> queueArgs, bool isQuorum);
 
         /// <summary>
         /// Declare a queue (if it doesn't exists)
         /// </summary>
         /// <param name="queueName"></param>
         /// <param name="isQuorum">Whether created queue should be quorum (when true, quorum arguments will be added to arguments used for queue creation)</param>
-        string DeclareQueue(string queueName, bool isQuorum);
+        Task<string> DeclareQueueAsync(string queueName, bool isQuorum);
 
         /// <summary>
         /// Declare an Binding (if it doesn't exists)
@@ -55,7 +56,7 @@ namespace MerQure
         /// <param name="exchangeName"></param>
         /// <param name="queueName"></param>
         /// <param name="routingKey"></param>
-        void DeclareBinding(string exchangeName, string queueName, string routingKey);
+        Task DeclareBindingAsync(string exchangeName, string queueName, string routingKey);
         /// <summary>
         /// Declare an Binding (if it doesn't exists)
         /// A Binding is the link between an Exchange and a Queue
@@ -64,7 +65,7 @@ namespace MerQure
         /// <param name="queueName"></param>
         /// <param name="routingKey"></param>
         /// <param name="headerBindings"></param>
-        void DeclareBinding(string exchangeName, string queueName, string routingKey, Dictionary<string, object> headerBindings);
+        Task DeclareBindingAsync(string exchangeName, string queueName, string routingKey, Dictionary<string, object> headerBindings);
 
         /// <summary>
         /// Cancel an Binding
@@ -72,26 +73,26 @@ namespace MerQure
         /// <param name="exchangeName"></param>
         /// <param name="queueName"></param>
         /// <param name="routingKey"></param>
-        void CancelBinding(string exchangeName, string queueName, string routingKey);
+        Task CancelBindingAsync(string exchangeName, string queueName, string routingKey);
 
         /// <summary>
         /// Get the publisher, used to declare exchanges et publish messages on it.
         /// </summary>
         /// <param name="exchangeName"></param>
-        IPublisher GetPublisher(string exchangeName);
+        Task<IPublisher> GetPublisherAsync(string exchangeName);
 
         /// <summary>
         /// Get the publisher, used to declare exchanges et publish messages on it.
         /// </summary>
         /// <param name="exchangeName"></param>
         /// <param name"enablePublisherAcknowledgements">required to use publish with acknowledgements</param>
-        IPublisher GetPublisher(string exchangeName, bool enablePublisherAcknowledgements);
+        Task<IPublisher> GetPublisherAsync(string exchangeName, bool enablePublisherAcknowledgements);
 
         /// <summary>
         /// Get the consumer, used to receive messages of a queue
         /// </summary>
         /// <param name="queueName"></param>
-        IConsumer GetConsumer(string queueName);
+        Task<IConsumer> GetConsumerAsync(string queueName);
 
         /// <summary>
         /// Get the consumer, used to receive messages of a queue
@@ -99,6 +100,6 @@ namespace MerQure
         /// <param name="queueName"></param>
         /// <param name="prefetchCount">maximum number of messages that the server will deliver, 0 if unlimited</param>
         /// <returns></returns>
-        IConsumer GetConsumer(string queueName, ushort prefetchCount);
+        Task<IConsumer> GetConsumerAsync(string queueName, ushort prefetchCount);
     }
 }

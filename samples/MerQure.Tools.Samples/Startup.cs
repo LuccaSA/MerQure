@@ -1,7 +1,7 @@
 ﻿using MerQure.RbMQ;
 using MerQure.RbMQ.Config;
 using MerQure.Tools.Samples.RetryBusExample.Domain;
-using MerQure.Tools.Samples.RetryBusExample.RetryExchangeExample.Infra;
+using MerQure.Tools.Samples.RetryBusExample.Infra;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;

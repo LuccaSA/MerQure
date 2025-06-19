@@ -4,58 +4,61 @@ using MerQure.Tools.Messages;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace MerQure.Tools.Buses
+namespace MerQure.Tools.Buses;
+
+public class Consumer<T> where T : IDelivered
 {
-    public class Consumer<T> where T : IDelivered
+    private readonly ConsumerProvider _consumerProvider;
+    public Dictionary<string, RetryInformations> RetryInformations { get; } = new Dictionary<string, RetryInformations>();
+
+    public Consumer(IMessagingService messagingService)
     {
-        private readonly ConsumerProvider _consumerProvider;
-        public Dictionary<string, RetryInformations> RetryInformations { get; } = new Dictionary<string, RetryInformations>();
+        _consumerProvider = new ConsumerProvider(messagingService);
+    }
 
-        public Consumer(IMessagingService messagingService)
+    public async Task ConsumeAsync(Channel channel, EventHandler<T> callback)
+    {
+        var consumer = await _consumerProvider.GetAsync(channel);
+        await consumer.ConsumeAsync((_, messagingEvent) =>
         {
-            _consumerProvider = new ConsumerProvider(messagingService);
-        }
+            OnMessageReceived(callback, messagingEvent);
+        });
+    }
 
-        public void Consume(Channel channel, EventHandler<T> callback)
-        {
-            _consumerProvider.Get(channel).Consume((object sender, IMessagingEvent messagingEvent) =>
-            {
-                OnMessageReceived(callback, messagingEvent);
-            });
-        }
+    public async Task AcknowlegdeDeliveredMessageAsync(Channel channel, IDelivered deliveredMessage)
+    {
+        deliveredMessage.DeliveryTag = DecodeDeliveryTag(deliveredMessage.DeliveryTag);
+        var consumer = await _consumerProvider.GetAsync(channel);
+        await consumer.AcknowlegdeDeliveredMessageAsync(deliveredMessage);
+        RetryInformations.Remove(deliveredMessage.DeliveryTag);
+    }
 
-        public void AcknowlegdeDeliveredMessage(Channel channel, IDelivered deliveredMessage)
-        {
-            deliveredMessage.DeliveryTag = DecodeDeliveryTag(deliveredMessage.DeliveryTag);
-            _consumerProvider.Get(channel).AcknowlegdeDeliveredMessage(deliveredMessage);
-            RetryInformations.Remove(deliveredMessage.DeliveryTag);
-        }
+    public async Task RejectDeliveredMessageAsync(Channel channel, IDelivered deliveredMessage)
+    {
+        deliveredMessage.DeliveryTag = DecodeDeliveryTag(deliveredMessage.DeliveryTag);
+        var consumer = await _consumerProvider.GetAsync(channel);
+        await consumer.RejectDeliveredMessageAsync(deliveredMessage);
+        RetryInformations.Remove(deliveredMessage.DeliveryTag);
+    }
 
-        public void RejectDeliveredMessage(Channel channel, IDelivered deliveredMessage)
-        {
-            deliveredMessage.DeliveryTag = DecodeDeliveryTag(deliveredMessage.DeliveryTag);
-            _consumerProvider.Get(channel).RejectDeliveredMessage(deliveredMessage);
-            RetryInformations.Remove(deliveredMessage.DeliveryTag);
-        }
+    public void OnMessageReceived(EventHandler<T> callback, IMessagingEvent messagingEvent)
+    {
+        RetryMessage<T> retryMessage = JsonConvert.DeserializeObject<RetryMessage<T>>(messagingEvent.Message.GetBody());
+        retryMessage.OriginalMessage.DeliveryTag = EncodeDeliveryTag(messagingEvent.DeliveryTag);
+        RetryInformations.Add(retryMessage.OriginalMessage.DeliveryTag, retryMessage.RetryInformations);
 
-        public void OnMessageReceived(EventHandler<T> callback, IMessagingEvent messagingEvent)
-        {
-            RetryMessage<T> retryMessage = JsonConvert.DeserializeObject<RetryMessage<T>>(messagingEvent.Message.GetBody());
-            retryMessage.OriginalMessage.DeliveryTag = EncodeDeliveryTag(messagingEvent.DeliveryTag);
-            RetryInformations.Add(retryMessage.OriginalMessage.DeliveryTag, retryMessage.RetryInformations);
+        callback(this, retryMessage.OriginalMessage);
+    }
 
-            callback(this, retryMessage.OriginalMessage);
-        }
+    private static string EncodeDeliveryTag(string deliveryTag) //TODO CLEAN !! this is just a fast fix ...
+    {
+        return $"{deliveryTag}_{Guid.NewGuid().ToString()}";
+    }
 
-        private static string EncodeDeliveryTag(string deliveryTag) //TODO CLEAN !! this is just a fast fix ...
-        {
-            return $"{deliveryTag}_{Guid.NewGuid().ToString()}";
-        }
-
-        private static string DecodeDeliveryTag(string deliveryTag) //TODO CLEAN !! this is just a fast fix
-        {
-            return deliveryTag.Split('_')[0]; 
-        }
+    private static string DecodeDeliveryTag(string deliveryTag) //TODO CLEAN !! this is just a fast fix
+    {
+        return deliveryTag.Split('_')[0];
     }
 }

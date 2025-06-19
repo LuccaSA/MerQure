@@ -1,36 +1,52 @@
 ﻿using MerQure.Tools.Configurations;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace MerQure.Tools.Buses
+namespace MerQure.Tools.Buses;
+
+public class ConsumerProvider
 {
-	public class ConsumerProvider
+    private static readonly object _syncRoot = new();
+
+    private readonly Dictionary<string, IConsumer> _consumers = new Dictionary<string, IConsumer>();
+    private readonly IMessagingService _messagingService;
+
+    public ConsumerProvider(IMessagingService messagingService)
     {
-        private static readonly object _syncRoot = new();
+        _messagingService = messagingService;
+    }
 
-        private readonly Dictionary<string, IConsumer> _consumers = new Dictionary<string, IConsumer>();
-        private readonly IMessagingService _messagingService;
+    public async Task<IConsumer> GetAsync(Channel channel)
+    {
+        // First check if consumer exists (inside lock)
+        IConsumer consumer;
+        bool consumerExists;
 
-        public ConsumerProvider(IMessagingService messagingService)
+        lock (_syncRoot)
         {
-            _messagingService = messagingService;
+            consumerExists = _consumers.TryGetValue(channel.Value, out consumer);
         }
 
-        public IConsumer Get(Channel channel)
+        // If consumer doesn't exist, create it outside the lock
+        if (!consumerExists)
         {
-            IConsumer consumer;
+            consumer = await _messagingService.GetConsumerAsync(channel.Value);
+
+            // Add to dictionary with lock protection
             lock (_syncRoot)
             {
-                if (_consumers.TryGetValue(channel.Value, out var foundConsumer))
+                if (!_consumers.ContainsKey(channel.Value))
                 {
-                    consumer = foundConsumer;
+                    _consumers.Add(channel.Value, consumer);
                 }
                 else
                 {
-                    consumer = _messagingService.GetConsumer(channel.Value);
-                    _consumers.Add(channel.Value, consumer);
+                    // Another thread may have created the consumer already
+                    consumer = _consumers[channel.Value];
                 }
             }
-            return consumer;
         }
+
+        return consumer;
     }
 }
