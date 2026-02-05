@@ -12,24 +12,24 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
     - run: git fetch --prune --unshallow
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@608ee757cfcce72c2e91e99aca128e0cae67de87 # v1
       with:
         dotnet-version: '8.0.x'
 
     - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.9.7
+      uses: gittools/actions/gitversion/setup@62f943a7b7e1981bb87a8314f304524657551786 # v0.9.7
       with:
         versionSpec: '5.10.1'
 
     - name: Use GitVersion
       id: gitversion # step id used as reference for output values
-      uses: gittools/actions/gitversion/execute@v0.9.7
+      uses: gittools/actions/gitversion/execute@62f943a7b7e1981bb87a8314f304524657551786 # v0.9.7
 
-    - uses: actions/setup-java@v1
+    - uses: actions/setup-java@d202f5dbf7256730fb690ec59f6381650114feb2 # v1.4.3
       with:
         java-version: '11.0.x'
         java-package: jre
