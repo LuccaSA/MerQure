@@ -24,6 +24,7 @@ public class Consumer<T> where T : IDelivered
         await consumer.ConsumeAsync((_, messagingEvent) =>
         {
             OnMessageReceived(callback, messagingEvent);
+            return Task.CompletedTask;
         });
     }
 
