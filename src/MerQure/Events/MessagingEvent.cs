@@ -1,6 +1,9 @@
-﻿namespace MerQure.RbMQ.Events
+using MerQure.Messages;
+using RabbitMQ.Client.Events;
+
+namespace MerQure
 {
-    class MessagingEvent : IMessagingEvent
+    public class MessagingEvent : AsyncEventArgs, IMessagingEvent
     {
         public IMessage Message { get; set; }
 

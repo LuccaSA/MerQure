@@ -51,12 +51,12 @@ public class DeadLetterExample
 
         // Get the consumer on the existing queue and consume its messages
         var consumer = await _messagingService.GetConsumerAsync("deadletter.queue");
-        await consumer.ConsumeAsync((object sender, IMessagingEvent args) =>
+        await consumer.ConsumeAsync((object sender, MessagingEvent args) =>
         {
             var realDelay = DateTime.Now.Subtract(dateStart).TotalSeconds;
             Console.WriteLine(string.Format("{0} received after {1:#.##}s.", args.Message.GetRoutingKey(), realDelay));
             // send ACK: acknowlegdment to the queue
-            consumer.AcknowlegdeDeliveredMessageAsync(args);
+            return consumer.AcknowlegdeDeliveredMessageAsync(args).AsTask();
         });
     }
 }

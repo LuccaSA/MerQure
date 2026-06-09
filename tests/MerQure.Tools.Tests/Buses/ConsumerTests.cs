@@ -1,8 +1,10 @@
-﻿using MerQure.Tools.Buses;
+﻿using MerQure.Messages;
+using MerQure.Tools.Buses;
 using MerQure.Tools.Configurations;
 using MerQure.Tools.Messages;
 using Moq;
 using Newtonsoft.Json;
+using RabbitMQ.Client.Events;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -18,9 +20,9 @@ public class ConsumerTests : IDisposable
     public ConsumerTests()
     {
         _mockMerQureConsumer = new Mock<IConsumer>();
-        _mockMerQureConsumer.Setup(m => m.ConsumeAsync(It.IsAny<EventHandler<IMessagingEvent>>())).Callback((EventHandler<IMessagingEvent> action) =>
+        _mockMerQureConsumer.Setup(m => m.ConsumeAsync(It.IsAny<AsyncEventHandler<MessagingEvent>>())).Callback((AsyncEventHandler<MessagingEvent> action) =>
         {
-            action(this, new Mock<IMessagingEvent>().Object);
+            action(this, new MessagingEvent(new Mock<IMessage>().Object, "1"));
         });
 
         _mockMessagingService = new Mock<IMessagingService>();

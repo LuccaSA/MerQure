@@ -1,12 +1,12 @@
 ﻿using MerQure.Messages;
 using MerQure.RbMQ.Content;
-using MerQure.RbMQ.Events;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MerQure.RbMQ.Clients;
@@ -17,33 +17,37 @@ class Consumer : RabbitMqClient, IConsumer
 
     private AsyncEventingBasicConsumer _consumer;
     private readonly ushort _prefetchCount;
-    private readonly object _consumingLock;
+    private readonly SemaphoreSlim _consumingLock;
 
     public Consumer(IChannel channel, string queueName, ushort prefetchCount)
         : base(channel)
     {
         QueueName = queueName.ToLowerInvariant();
         _prefetchCount = prefetchCount;
-        _consumingLock = new object();
+        _consumingLock = new SemaphoreSlim(1, 1);
     }
 
-    public async Task ConsumeAsync(EventHandler<IMessagingEvent> onMessageReceived)
+    public async Task ConsumeAsync(AsyncEventHandler<MessagingEvent> onMessageReceived)
     {
         await Channel.BasicQosAsync(0, _prefetchCount, false);
 
         _consumer = new AsyncEventingBasicConsumer(Channel);
-        _consumer.ReceivedAsync += (sender, args) =>
+        _consumer.ReceivedAsync += async (sender, args) =>
         {
             if (onMessageReceived != null)
             {
-                lock (_consumingLock)
+                await _consumingLock.WaitAsync();
+                try
                 {
                     var message = ParseDeliveredMessage(args);
                     var messageEventArgs = new MessagingEvent(message, args.DeliveryTag.ToString());
-                    onMessageReceived(sender, messageEventArgs);
+                    await onMessageReceived(sender, messageEventArgs);
+                }
+                finally
+                {
+                    _consumingLock.Release();
                 }
             }
-            return Task.CompletedTask;
         };
 
         await Channel.BasicConsumeAsync(QueueName, false, _consumer);
@@ -89,16 +93,17 @@ class Consumer : RabbitMqClient, IConsumer
     {
         if (IsConsuming())
         {
-            lock (_consumingLock)
+            await _consumingLock.WaitAsync();
+            try
             {
                 if (onConsumerStopped != null)
                 {
-                    _consumer.UnregisteredAsync  += (sender, e) =>
-                    {
-                        onConsumerStopped(sender, e);
-                        return Task.CompletedTask;
-                    };
+                    _consumer.UnregisteredAsync += onConsumerStopped;
                 }
+            }
+            finally
+            {
+                _consumingLock.Release();
             }
 
             // Must be outside the lock to avoid deadlock

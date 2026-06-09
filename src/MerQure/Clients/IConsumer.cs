@@ -19,7 +19,7 @@ namespace MerQure
         /// Start listening on the queue
         /// </summary>
         /// <param name="onMessageReceived">Handler called each time a message arrives for this consumer.</param>
-        Task ConsumeAsync(EventHandler<IMessagingEvent> onMessageReceived);
+        Task ConsumeAsync(AsyncEventHandler<MessagingEvent> onMessageReceived);
 
         /// <summary>
         /// Indicates if the Consumer is registred on the queue and waiting for messages

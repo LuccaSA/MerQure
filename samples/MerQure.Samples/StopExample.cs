@@ -39,7 +39,7 @@ public class StopExample
             Thread.Sleep(10);
             Console.WriteLine(args.Message.GetBody());
             // send ACK: acknowlegdment to the queue
-            consumer.AcknowlegdeDeliveredMessageAsync(args);
+            return consumer.AcknowlegdeDeliveredMessageAsync(args).AsTask();
         });
 
         // Stop Consuming after 100 ms ~ 10 messages

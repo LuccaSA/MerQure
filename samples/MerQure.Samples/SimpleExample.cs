@@ -32,20 +32,20 @@ public class SimpleExample
         // Get the consumer on the existing queue and consume its messages
         var consumer = await _messagingService.GetConsumerAsync("simple.queue");
         var random = new Random();
-        await consumer.ConsumeAsync((object sender, IMessagingEvent args) =>
+        await consumer.ConsumeAsync((object sender, MessagingEvent args) =>
         {
             // we simulate the delivery success
             if (random.Next() % 2 == 0)
             {
                 Console.WriteLine("Retry " + args.Message.GetRoutingKey());
                 // send NACK: negative acknowlegdment to the queue
-                consumer.RejectDeliveredMessageAsync(args);
+                return consumer.RejectDeliveredMessageAsync(args).AsTask();
             }
             else
             {
                 Console.WriteLine(args.Message.GetBody());
                 // send ACK: acknowlegdment to the queue
-                consumer.AcknowlegdeDeliveredMessageAsync(args);
+                return consumer.AcknowlegdeDeliveredMessageAsync(args).AsTask();
             }
         });
     }
