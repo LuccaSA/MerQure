@@ -6,13 +6,13 @@ on:
     branches:
       - master
   pull_request:
-permissions:
-  id-token: write
-  contents: read
 
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
     - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
