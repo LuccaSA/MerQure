@@ -10,6 +10,9 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
     - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
@@ -64,9 +67,14 @@ jobs:
     - name: Pack MerQure.Tools
       run: dotnet pack src\MerQure.Tools\MerQure.Tools.csproj --configuration Release -o artifacts -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
-    - name: Nuget org push
-      if: startsWith(github.ref, 'refs/tags/')
-      run: dotnet nuget push "artifacts/**/*.nupkg" --skip-duplicate --source https://api.nuget.org/v3/index.json -k ${{ secrets.GLOBAL_NUGET_PUBLISH }}
-      env:
-        NUGET_PUBLISH: ${{ secrets.NUGET_PUBLISH }}
+    # https://learn.microsoft.com/fr-fr/nuget/nuget-org/trusted-publishing
+    - name: NuGet login (OIDC → temp API key)
+      uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 #v1.2.0
+      id: login
+      with:
+        user: ${{ secrets.NUGET_USER }}
+    
+    # Push the package
+    - name: NuGet push
+      run: dotnet nuget push "artifacts/**/*.nupkg" --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{steps.login.outputs.NUGET_API_KEY}} 
          
