@@ -10,9 +10,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <VersionPrefix>0.0.7</VersionPrefix>
+    <VersionPrefix>3.0.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
-    <PackageVersion>0.0.7</PackageVersion>
+    <PackageVersion>3.0.0</PackageVersion>
 
     <Company>Lucca SA</Company>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="D:\a\MerQure\MerQure\MerQure-logo.png" Pack="true" PackagePath="\"/>
+    <None Include="$(MSBuildThisFileDirectory)MerQure-logo.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <PropertyGroup>
