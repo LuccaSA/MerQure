@@ -37,26 +37,26 @@ public class RetryBusServiceTests : IDisposable
 
     [Theory]
     [MemberData(nameof(IsQuorumPossibleValues))]
-    public void RetryBusService_CreateNewBus_ShouldThrow_WhenEmptyChannels(bool isQuorum)
+    public async Task RetryBusService_CreateNewBus_ShouldThrow_WhenEmptyChannels(bool isQuorum)
     {
         //Arrange
         var retryStrategy = GetMinimalValidConfiguration();
         retryStrategy.Channels = new List<Channel>();
 
         //Act && Assert
-        Assert.ThrowsAsync<ArgumentNullException>(() => _retryBusService.CreateNewBusAsync<TestMessage>(retryStrategy, isQuorum: isQuorum));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _retryBusService.CreateNewBusAsync<TestMessage>(retryStrategy, isQuorum: isQuorum));
     }
 
     [Theory]
     [MemberData(nameof(IsQuorumPossibleValues))]
-    public void RetryBusService_CreateNewBus_ShouldThrow_WhenNullChannels(bool isQuorum)
+    public async Task RetryBusService_CreateNewBus_ShouldThrow_WhenNullChannels(bool isQuorum)
     {
         //Arrange
         var retryStrategy = GetMinimalValidConfiguration();
         retryStrategy.Channels = null;
 
         //Act && Assert
-        Assert.ThrowsAsync<ArgumentNullException>(() => _retryBusService.CreateNewBusAsync<TestMessage>(retryStrategy, isQuorum: isQuorum));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _retryBusService.CreateNewBusAsync<TestMessage>(retryStrategy, isQuorum: isQuorum));
     }
 
     [Theory]

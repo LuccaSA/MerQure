@@ -70,17 +70,17 @@ public class PublisherTests : IDisposable
     }
 
     [Fact]
-    public void Publisher_Publish_ShouldThrow_WhenPublishFailed()
+    public async Task Publisher_Publish_ShouldThrow_WhenPublishFailed()
     {
         //Arrange
         Channel channel = new Channel("testChannel");
         TestMessage message = TestMessage.GetFilledTestMessage();
 
         _mockMessagingService.Setup(m => m.GetPublisherAsync(It.IsAny<string>(), true)).ReturnsAsync(_mockMerQurePublisher.Object);
-        _mockMerQurePublisher.Setup(p => p.PublishWithAcknowledgementAsync(It.IsAny<string>(), It.IsAny<string>()));
+        _mockMerQurePublisher.Setup(p => p.PublishWithAcknowledgementAsync(It.IsAny<string>(), It.IsAny<string>())).Throws<Exception>();
 
         //Act && Assert
-        Assert.ThrowsAsync<MerqureToolsException>(() => _publisher.PublishAsync(channel, message, false));
+        await Assert.ThrowsAsync<MerqureToolsException>(() => _publisher.PublishAsync(channel, message, false));
     }
 
     [Fact]
@@ -104,7 +104,7 @@ public class PublisherTests : IDisposable
     }
 
     [Fact]
-    public void Publisher_PublishWithTransaction_ShouldThrow_WhenPublishWithTransactionFailed()
+    public async Task Publisher_PublishWithTransaction_ShouldThrow_WhenPublishWithTransactionFailed()
     {
         //Arrange
         Channel channel = new Channel("testChannel");
@@ -117,7 +117,7 @@ public class PublisherTests : IDisposable
         _mockMerQurePublisher.Setup(p => p.PublishWithTransactionAsync(It.IsAny<string>(), It.IsAny<List<string>>())).Throws<Exception>();
 
         //Act && Assert
-        Assert.ThrowsAsync<MerqureToolsException>(() => _publisher.PublishWithTransactionAsync(channel, messages, false));
+        await Assert.ThrowsAsync<MerqureToolsException>(() => _publisher.PublishWithTransactionAsync(channel, messages, false));
     }
 
     [Fact]
